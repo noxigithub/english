@@ -1,0 +1,966 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interactive Pronoun Master</title>
+    <style>
+      /* =========================================
+           VARIABLES Y CONFIGURACIÓN GENERAL
+           ========================================= */
+      :root {
+        /* Colores Pedagógicos para asociación mental */
+        --c-subj: #3b82f6; /* Azul para Sujetos */
+        --c-obj: #10b981; /* Verde para Objetos */
+        --c-padj: #f59e0b; /* Naranja para Adj. Posesivos */
+        --c-ppro: #8b5cf6; /* Morado para Pron. Posesivos */
+
+        /* Colores de UI */
+        --primary: #4f46e5;
+        --bg-color: #f8fafc;
+        --card-bg: #ffffff;
+        --text-main: #1e293b;
+        --text-muted: #64748b;
+        --border: #e2e8f0;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Nunito", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* =========================================
+           CABECERA Y PESTAÑAS (TABS)
+           ========================================= */
+      header {
+        background-color: var(--card-bg);
+        padding: 2rem 1rem 1rem;
+        text-align: center;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        z-index: 10;
+      }
+
+      h1 {
+        margin-bottom: 0.5rem;
+        color: var(--primary);
+      }
+
+      .tabs-container {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+      }
+
+      .tab-btn {
+        background-color: var(--bg-color);
+        border: 2px solid var(--border);
+        color: var(--text-muted);
+        padding: 0.75rem 1.5rem;
+        border-radius: 2rem;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .tab-btn:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+      .tab-btn.active {
+        background-color: var(--primary);
+        color: white;
+        border-color: var(--primary);
+        box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+      }
+
+      /* =========================================
+           CONTENEDORES DE PESTAÑAS
+           ========================================= */
+      main {
+        flex-grow: 1;
+        padding: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+      }
+
+      .tab-content {
+        display: none;
+        animation: fadeIn 0.4s ease-in-out;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* =========================================
+           PESTAÑA 1: APRENDER (Tarjetas)
+           ========================================= */
+      .learn-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .concept-card {
+        background: var(--card-bg);
+        padding: 2rem;
+        border-radius: 1rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        border-top: 6px solid transparent;
+      }
+
+      .card-subj {
+        border-color: var(--c-subj);
+      }
+      .card-obj {
+        border-color: var(--c-obj);
+      }
+      .card-padj {
+        border-color: var(--c-padj);
+      }
+      .card-ppro {
+        border-color: var(--c-ppro);
+      }
+
+      .concept-card h2 {
+        margin-bottom: 1rem;
+      }
+      .card-subj h2 {
+        color: var(--c-subj);
+      }
+      .card-obj h2 {
+        color: var(--c-obj);
+      }
+      .card-padj h2 {
+        color: var(--c-padj);
+      }
+      .card-ppro h2 {
+        color: var(--c-ppro);
+      }
+
+      .concept-card p {
+        line-height: 1.6;
+        margin-bottom: 1rem;
+      }
+      .example-box {
+        background: var(--bg-color);
+        padding: 1rem;
+        border-radius: 0.5rem;
+        font-size: 1.1rem;
+        border-left: 4px solid #ccc;
+      }
+
+      /* Clases de texto de color */
+      .t-subj {
+        color: var(--c-subj);
+        font-weight: bold;
+      }
+      .t-obj {
+        color: var(--c-obj);
+        font-weight: bold;
+      }
+      .t-padj {
+        color: var(--c-padj);
+        font-weight: bold;
+      }
+      .t-ppro {
+        color: var(--c-ppro);
+        font-weight: bold;
+      }
+
+      /* =========================================
+           PESTAÑA 2: PRÁCTICA RAPIDA (Juego)
+           ========================================= */
+      .practice-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: var(--card-bg);
+        padding: 2rem;
+        border-radius: 1rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      .score-board {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: var(--text-muted);
+      }
+
+      .question-text {
+        font-size: 1.6rem;
+        margin: 1.5rem 0;
+      }
+      .context-text {
+        color: var(--text-muted);
+        font-size: 1.1rem;
+      }
+      .blank-space {
+        border-bottom: 3px solid var(--text-main);
+        display: inline-block;
+        width: 60px;
+      }
+
+      .options-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-top: 2rem;
+      }
+
+      .btn-option {
+        background: white;
+        border: 2px solid var(--primary);
+        color: var(--primary);
+        padding: 1rem;
+        font-size: 1.2rem;
+        font-weight: bold;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+
+      .btn-option:hover {
+        background: var(--primary);
+        color: white;
+      }
+      .btn-option:disabled {
+        cursor: not-allowed;
+        opacity: 0.8;
+      }
+      .btn-option.correct {
+        background: var(--c-obj);
+        border-color: var(--c-obj);
+        color: white;
+      }
+      .btn-option.wrong {
+        background: #ef4444;
+        border-color: #ef4444;
+        color: white;
+      }
+
+      #next-btn {
+        margin-top: 1.5rem;
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        font-size: 1.2rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        width: 100%;
+        display: none;
+      }
+
+      /* =========================================
+           PESTAÑA 3: LECTURA Y TABLA (Split Screen)
+           ========================================= */
+      .reading-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        align-items: start;
+      }
+
+      @media (max-width: 968px) {
+        .reading-layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .story-container {
+        background: var(--card-bg);
+        padding: 2.5rem;
+        border-radius: 1rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        font-size: 1.2rem;
+        line-height: 2;
+      }
+
+      .story-container h2 {
+        margin-bottom: 1rem;
+        color: var(--primary);
+      }
+
+      select.reading-blank {
+        padding: 0.3rem;
+        font-size: 1.1rem;
+        font-weight: bold;
+        border: 2px solid var(--border);
+        border-radius: 0.4rem;
+        background: var(--bg-color);
+        color: var(--text-main);
+        cursor: pointer;
+        outline: none;
+      }
+
+      select.reading-blank.correct {
+        background: #d1fae5;
+        border-color: var(--c-obj);
+        color: #065f46;
+      }
+      select.reading-blank.wrong {
+        background: #fee2e2;
+        border-color: #ef4444;
+        color: #991b1b;
+      }
+
+      .btn-check-reading {
+        display: block;
+        width: 100%;
+        padding: 1rem;
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 0.5rem;
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-top: 2rem;
+        cursor: pointer;
+      }
+
+      /* Reference Table Styling */
+      .table-container {
+        background: var(--card-bg);
+        padding: 2rem;
+        border-radius: 1rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        overflow-x: auto;
+      }
+
+      .table-container h2 {
+        margin-bottom: 1rem;
+        text-align: center;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: center;
+      }
+
+      th,
+      td {
+        padding: 1rem;
+        border: 1px solid var(--border);
+      }
+
+      th {
+        background-color: var(--bg-color);
+        font-weight: bold;
+      }
+
+      .th-subj {
+        color: var(--c-subj);
+        border-bottom: 3px solid var(--c-subj);
+      }
+      .th-obj {
+        color: var(--c-obj);
+        border-bottom: 3px solid var(--c-obj);
+      }
+      .th-padj {
+        color: var(--c-padj);
+        border-bottom: 3px solid var(--c-padj);
+      }
+      .th-ppro {
+        color: var(--c-ppro);
+        border-bottom: 3px solid var(--c-ppro);
+      }
+
+      td {
+        font-size: 1.1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Master English Pronouns 🚀</h1>
+      <p>Aprende, practica y domina el uso de los pronombres en inglés.</p>
+
+      <div class="tabs-container">
+        <button class="tab-btn active" onclick="switchTab('learn')">
+          📖 1. Aprender
+        </button>
+        <button class="tab-btn" onclick="switchTab('practice')">
+          ⚡ 2. Ejercicios Rápidos
+        </button>
+        <button class="tab-btn" onclick="switchTab('reading')">
+          📝 3. Lectura & Tabla
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <!-- ==========================================
+             PESTAÑA 1: APRENDER
+             ========================================== -->
+      <section id="learn" class="tab-content active">
+        <div class="learn-grid">
+          <!-- Subject -->
+          <div class="concept-card card-subj">
+            <h2>Subject Pronouns</h2>
+            <p>
+              Hacen la acción. Siempre van <strong>antes del verbo</strong>.
+              Sustituyen al sujeto para no repetir su nombre.
+            </p>
+            <p><em>(I, You, He, She, It, We, They)</em></p>
+            <div class="example-box">
+              Maria is my friend. <br />
+              <span class="t-subj">She</span> lives in London. <br />
+              <em>(<span class="t-subj">Ella</span> vive en Londres)</em>
+            </div>
+          </div>
+
+          <!-- Object -->
+          <div class="concept-card card-obj">
+            <h2>Object Pronouns</h2>
+            <p>
+              Reciben la acción. Van <strong>después del verbo</strong> o de una
+              preposición (for, to, with).
+            </p>
+            <p><em>(Me, You, Him, Her, It, Us, Them)</em></p>
+            <div class="example-box">
+              I need to speak with John.<br />
+              I will call <span class="t-obj">him</span> tomorrow. <br />
+              <em>(Lo llamaré a <span class="t-obj">él</span> mañana)</em>
+            </div>
+          </div>
+
+          <!-- Possessive Adjective -->
+          <div class="concept-card card-padj">
+            <h2>Possessive Adjectives</h2>
+            <p>
+              Indican a quién pertenece algo. Siempre van
+              <strong>acompañados de un sustantivo</strong> (la cosa que
+              poseen).
+            </p>
+            <p><em>(My, Your, His, Her, Its, Our, Their)</em></p>
+            <div class="example-box">
+              We bought a new house. <br />
+              <span class="t-padj">Our</span> house is big. <br />
+              <em>(<span class="t-padj">Nuestra</span> casa es grande)</em>
+            </div>
+          </div>
+
+          <!-- Possessive Pronoun -->
+          <div class="concept-card card-ppro">
+            <h2>Possessive Pronouns</h2>
+            <p>
+              Indican posesión, pero
+              <strong>reemplazan al sustantivo</strong> para no repetirlo.
+              Usualmente van al final.
+            </p>
+            <p><em>(Mine, Yours, His, Hers, Ours, Theirs)</em></p>
+            <div class="example-box">
+              This is not my jacket. <br />
+              That jacket is <span class="t-ppro">hers</span>. <br />
+              <em
+                >(Esa chaqueta es
+                <span class="t-ppro">suya [de ella]</span>)</em
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+             PESTAÑA 2: EJERCICIOS RÁPIDOS
+             ========================================== -->
+      <section id="practice" class="tab-content">
+        <div class="practice-container">
+          <div class="score-board">
+            <span>Score: <span id="score">0</span></span>
+            <span>Racha: <span id="streak">0</span> 🔥</span>
+          </div>
+
+          <p id="context-text" class="context-text">Loading context...</p>
+          <h2 id="question-text" class="question-text">Loading question...</h2>
+
+          <div class="options-grid" id="options-grid">
+            <!-- Botones generados por JS -->
+          </div>
+
+          <button id="next-btn" onclick="loadNextQuestion()">
+            Next Exercise ➔
+          </button>
+        </div>
+      </section>
+
+      <!-- ==========================================
+             PESTAÑA 3: LECTURA Y TABLA
+             ========================================== -->
+      <section id="reading" class="tab-content">
+        <div class="reading-layout">
+          <!-- Lectura (Izquierda) -->
+          <div class="story-container">
+            <h2>Meet The Robinsons 🏡</h2>
+            <p>
+              Hello! My name is Leo. Today is my sister's birthday. I bought a
+              gift for
+              <select class="reading-blank" data-answer="her">
+                <option value="">---</option>
+                <option value="she">she</option>
+                <option value="her">her</option>
+                <option value="hers">hers</option></select
+              >.
+
+              <select class="reading-blank" data-answer="She">
+                <option value="">---</option>
+                <option value="Her">Her</option>
+                <option value="She">She</option>
+                <option value="He">He</option>
+              </select>
+              loves reading, so I got
+
+              <select class="reading-blank" data-answer="her">
+                <option value="">---</option>
+                <option value="she">she</option>
+                <option value="her">her</option>
+                <option value="him">him</option>
+              </select>
+              a new book.
+            </p>
+            <p>
+              <select class="reading-blank" data-answer="My">
+                <option value="">---</option>
+                <option value="I">I</option>
+                <option value="Me">Me</option>
+                <option value="My">My</option>
+              </select>
+              parents are organizing a party in the garden.
+
+              <select class="reading-blank" data-answer="They">
+                <option value="">---</option>
+                <option value="Them">Them</option>
+                <option value="They">They</option>
+                <option value="Their">Their</option>
+              </select>
+              ordered a big chocolate cake. The cake looks delicious and has
+              Emma's name on
+
+              <select class="reading-blank" data-answer="it">
+                <option value="">---</option>
+                <option value="its">its</option>
+                <option value="it">it</option>
+                <option value="him">him</option></select
+              >.
+            </p>
+            <p>
+              We invited all
+              <select class="reading-blank" data-answer="our">
+                <option value="">---</option>
+                <option value="we">we</option>
+                <option value="us">us</option>
+                <option value="our">our</option>
+              </select>
+              friends.
+
+              <select class="reading-blank" data-answer="Their">
+                <option value="">---</option>
+                <option value="They">They</option>
+                <option value="Their">Their</option>
+                <option value="Theirs">Theirs</option>
+              </select>
+              cars are already parked outside. This beautiful house is
+
+              <select class="reading-blank" data-answer="ours">
+                <option value="">---</option>
+                <option value="our">our</option>
+                <option value="us">us</option>
+                <option value="ours">ours</option></select
+              >, so we love hosting parties here!
+            </p>
+
+            <button class="btn-check-reading" onclick="checkReading()">
+              Check Answers ✔️
+            </button>
+          </div>
+
+          <!-- Tabla (Derecha) -->
+          <div class="table-container">
+            <h2>Pronouns Reference Table</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th class="th-subj">Subject</th>
+                  <th class="th-obj">Object</th>
+                  <th class="th-padj">Poss. Adjective</th>
+                  <th class="th-ppro">Poss. Pronoun</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="t-subj">I</td>
+                  <td class="t-obj">Me</td>
+                  <td class="t-padj">My</td>
+                  <td class="t-ppro">Mine</td>
+                </tr>
+                <tr>
+                  <td class="t-subj">You</td>
+                  <td class="t-obj">You</td>
+                  <td class="t-padj">Your</td>
+                  <td class="t-ppro">Yours</td>
+                </tr>
+                <tr>
+                  <td class="t-subj">He</td>
+                  <td class="t-obj">Him</td>
+                  <td class="t-padj">His</td>
+                  <td class="t-ppro">His</td>
+                </tr>
+                <tr>
+                  <td class="t-subj">She</td>
+                  <td class="t-obj">Her</td>
+                  <td class="t-padj">Her</td>
+                  <td class="t-ppro">Hers</td>
+                </tr>
+                <tr>
+                  <td class="t-subj">It</td>
+                  <td class="t-obj">It</td>
+                  <td class="t-padj">Its</td>
+                  <td class="t-ppro">-</td>
+                </tr>
+                <tr>
+                  <td class="t-subj">We</td>
+                  <td class="t-obj">Us</td>
+                  <td class="t-padj">Our</td>
+                  <td class="t-ppro">Ours</td>
+                </tr>
+                <tr>
+                  <td class="t-subj">They</td>
+                  <td class="t-obj">Them</td>
+                  <td class="t-padj">Their</td>
+                  <td class="t-ppro">Theirs</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      /* =========================================
+           LÓGICA DE PESTAÑAS
+           ========================================= */
+      function switchTab(tabId) {
+        // Ocultar todos los contenidos
+        document.querySelectorAll(".tab-content").forEach((tab) => {
+          tab.classList.remove("active");
+        });
+        // Quitar clase activa de los botones
+        document.querySelectorAll(".tab-btn").forEach((btn) => {
+          btn.classList.remove("active");
+        });
+
+        // Mostrar el seleccionado
+        document.getElementById(tabId).classList.add("active");
+        event.currentTarget.classList.add("active");
+      }
+
+      /* =========================================
+           LÓGICA DE EJERCICIOS RÁPIDOS (+25 Ejercicios)
+           ========================================= */
+      const exercises = [
+        // --- SUBJECT PRONOUNS ---
+        {
+          context: "Maria is my friend.",
+          question: "___ works at the hospital.",
+          answer: "She",
+          options: ["He", "She", "They", "It"],
+        },
+        {
+          context: "My brother and I are hungry.",
+          question: "___ want to eat pizza.",
+          answer: "We",
+          options: ["They", "We", "You", "Us"],
+        },
+        {
+          context: "Look at those clouds.",
+          question: "___ are going to rain soon.",
+          answer: "They",
+          options: ["It", "Them", "They", "We"],
+        },
+        {
+          context: "Where is the dog?",
+          question: "___ is sleeping in the yard.",
+          answer: "It",
+          options: ["He", "It", "Its", "They"],
+        },
+        {
+          context: "David and Paul are late.",
+          question: "___ missed the bus.",
+          answer: "They",
+          options: ["Them", "He", "We", "They"],
+        },
+        {
+          context: "Hello, Sarah.",
+          question: "Are ___ coming to the party?",
+          answer: "you",
+          options: ["you", "your", "she", "they"],
+        },
+        {
+          context: "I love apples.",
+          question: "___ are my favorite fruit.",
+          answer: "They",
+          options: ["It", "They", "Them", "Their"],
+        },
+
+        // --- OBJECT PRONOUNS ---
+        {
+          context: "I can't find my keys.",
+          question: "Did you see ___?",
+          answer: "them",
+          options: ["they", "it", "them", "their"],
+        },
+        {
+          context: "John is calling.",
+          question: "Please answer ___.",
+          answer: "him",
+          options: ["he", "his", "him", "them"],
+        },
+        {
+          context: "I need help with this box.",
+          question: "Can you help ___?",
+          answer: "me",
+          options: ["I", "my", "me", "mine"],
+        },
+        {
+          context: "We are going to the mall.",
+          question: "Do you want to come with ___?",
+          answer: "us",
+          options: ["we", "our", "ours", "us"],
+        },
+        {
+          context: "The teacher is talking to Anna.",
+          question: "She is giving ___ the exam.",
+          answer: "her",
+          options: ["she", "hers", "her", "him"],
+        },
+        {
+          context: "This computer is broken.",
+          question: "Don't use ___.",
+          answer: "it",
+          options: ["its", "it", "him", "them"],
+        },
+        {
+          context: "You forgot your wallet.",
+          question: "I brought it for ___.",
+          answer: "you",
+          options: ["your", "yours", "you", "me"],
+        },
+
+        // --- POSSESSIVE ADJECTIVES ---
+        {
+          context: "I have a new car.",
+          question: "___ car is blue.",
+          answer: "My",
+          options: ["Mine", "I", "My", "Me"],
+        },
+        {
+          context: "The dog is eating.",
+          question: "It is eating ___ food.",
+          answer: "its",
+          options: ["it's", "it", "its", "their"],
+        },
+        {
+          context: "Sarah forgot the phone.",
+          question: "This is ___ phone.",
+          answer: "her",
+          options: ["hers", "she", "her", "him"],
+        },
+        {
+          context: "They bought a television.",
+          question: "___ television is huge.",
+          answer: "Their",
+          options: ["They", "Theirs", "Them", "Their"],
+        },
+        {
+          context: "We are painting the living room.",
+          question: "___ house looks great now.",
+          answer: "Our",
+          options: ["Ours", "We", "Us", "Our"],
+        },
+        {
+          context: "Carlos, is this pen yours?",
+          question: "Is this ___ pen?",
+          answer: "your",
+          options: ["you", "yours", "your", "my"],
+        },
+        {
+          context: "The boy lost a shoe.",
+          question: "Where is ___ shoe?",
+          answer: "his",
+          options: ["he", "him", "his", "hers"],
+        },
+
+        // --- POSSESSIVE PRONOUNS ---
+        {
+          context: "This jacket belongs to me.",
+          question: "This jacket is ___.",
+          answer: "mine",
+          options: ["my", "me", "mine", "I"],
+        },
+        {
+          context: "We paid for this pizza.",
+          question: "The pizza is ___.",
+          answer: "ours",
+          options: ["our", "we", "ours", "us"],
+        },
+        {
+          context: "That laptop belongs to David.",
+          question: "It is ___.",
+          answer: "his",
+          options: ["him", "he", "his", "hers"],
+        },
+        {
+          context: "The red car is for Susan.",
+          question: "The car is ___.",
+          answer: "hers",
+          options: ["her", "she", "hers", "his"],
+        },
+        {
+          context: "I didn't bring an umbrella.",
+          question: "Can I borrow ___?",
+          answer: "yours",
+          options: ["your", "you", "yours", "mine"],
+        },
+        {
+          context: "These tickets belong to the boys.",
+          question: "They are ___.",
+          answer: "theirs",
+          options: ["their", "them", "theirs", "they"],
+        },
+      ];
+
+      let currentQuestion = {};
+      let score = 0;
+      let streak = 0;
+
+      function loadNextQuestion() {
+        // Esconder botón siguiente
+        document.getElementById("next-btn").style.display = "none";
+        const optionsContainer = document.getElementById("options-grid");
+        optionsContainer.innerHTML = "";
+
+        // Escoger aleatoriamente
+        const randomIdx = Math.floor(Math.random() * exercises.length);
+        currentQuestion = exercises[randomIdx];
+
+        // Renderizar Textos
+        document.getElementById("context-text").innerText =
+          currentQuestion.context;
+        document.getElementById("question-text").innerHTML =
+          currentQuestion.question.replace(
+            "___",
+            '<span class="blank-space"></span>',
+          );
+
+        // Mezclar opciones y crear botones
+        const shuffled = [...currentQuestion.options].sort(
+          () => Math.random() - 0.5,
+        );
+
+        shuffled.forEach((opt) => {
+          const btn = document.createElement("button");
+          btn.classList.add("btn-option");
+          btn.innerText = opt;
+          btn.onclick = () => selectAnswer(btn, opt);
+          optionsContainer.appendChild(btn);
+        });
+      }
+
+      function selectAnswer(btn, selected) {
+        const isCorrect = selected === currentQuestion.answer;
+        const allBtns = document.querySelectorAll(".btn-option");
+        const qText = document.getElementById("question-text");
+
+        // Deshabilitar todos
+        allBtns.forEach((b) => {
+          b.disabled = true;
+          if (b.innerText === currentQuestion.answer) {
+            b.classList.add("correct"); // Resaltar siempre la correcta
+          }
+        });
+
+        if (isCorrect) {
+          score += 10;
+          streak++;
+          // Reemplazar la linea en blanco con la respuesta coloreada
+          qText.innerHTML = currentQuestion.question.replace(
+            "___",
+            `<span style="color: var(--c-obj); text-decoration: underline;">${selected}</span>`,
+          );
+        } else {
+          streak = 0;
+          btn.classList.add("wrong");
+          // Reemplazar mostrando el error y la correcta
+          qText.innerHTML = currentQuestion.question.replace(
+            "___",
+            `<span style="color: #ef4444; text-decoration: line-through;">${selected}</span> <span style="color: var(--c-obj);">${currentQuestion.answer}</span>`,
+          );
+        }
+
+        document.getElementById("score").innerText = score;
+        document.getElementById("streak").innerText = streak;
+        document.getElementById("next-btn").style.display = "block";
+      }
+
+      // Inicializar la primera pregunta al cargar
+      window.onload = loadNextQuestion;
+
+      /* =========================================
+           LÓGICA DE LECTURA (READING TAB)
+           ========================================= */
+      function checkReading() {
+        const blanks = document.querySelectorAll(".reading-blank");
+        let allCorrect = true;
+
+        blanks.forEach((select) => {
+          const correctAnswer = select.getAttribute("data-answer");
+          const userAnswer = select.value;
+
+          select.classList.remove("correct", "wrong");
+
+          if (userAnswer === correctAnswer) {
+            select.classList.add("correct");
+          } else {
+            select.classList.add("wrong");
+            allCorrect = false;
+          }
+        });
+
+        if (allCorrect) {
+          alert("¡Felicidades! Has completado la lectura correctamente. 🎉");
+        }
+      }
+    </script>
+  </body>
+</html>
