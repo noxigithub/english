@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NY Speaking Challenge: Simple vs Continuous</title>
+    <style>
+      :root {
+        --bg-color: #0f172a;
+        --card-bg: #1e293b;
+        --text-main: #f8fafc;
+        --text-muted: #94a3b8;
+        --accent-1: #3b82f6; /* Blue */
+        --accent-2: #ec4899; /* Pink */
+        --accent-3: #10b981; /* Green */
+        --accent-4: #f59e0b; /* Yellow */
+      }
+
+      body {
+        font-family: "Segoe UI", system-ui, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      .app-container {
+        width: 100%;
+        max-width: 800px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      /* Header y Progreso */
+      .header {
+        text-align: center;
+      }
+
+      .header h1 {
+        background: linear-gradient(to right, var(--accent-1), var(--accent-2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 2.5rem;
+        margin: 0 0 10px 0;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: #334155;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 10px;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent-3), var(--accent-1));
+        width: 0%;
+        transition: width 0.4s ease;
+      }
+
+      .status {
+        display: flex;
+        justify-content: space-between;
+        color: var(--text-muted);
+        font-weight: bold;
+        font-size: 1.1rem;
+      }
+
+      /* Tarjeta Principal */
+      .card {
+        background: var(--card-bg);
+        border-radius: 20px;
+        padding: 40px 30px;
+        text-align: center;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+        position: relative;
+        overflow: hidden;
+        border-top: 4px solid var(--accent-1);
+        animation: slideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        min-height: 250px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      @keyframes slideIn {
+        0% {
+          opacity: 0;
+          transform: translateX(50px) scale(0.95);
+        }
+        100% {
+          opacity: 1;
+          transform: translateX(0) scale(1);
+        }
+      }
+
+      .phase-badge {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: bold;
+        color: var(--accent-4);
+      }
+
+      .emoji-icon {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        display: block;
+      }
+
+      .prompt-text {
+        font-size: 1.6rem;
+        line-height: 1.4;
+        font-weight: 600;
+        margin-bottom: 20px;
+      }
+
+      .instruction {
+        color: var(--accent-3);
+        font-size: 1.2rem;
+        font-weight: bold;
+      }
+
+      /* Controles y Temporizador */
+      .controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      button {
+        padding: 15px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        transition:
+          transform 0.1s,
+          opacity 0.2s;
+        color: white;
+      }
+
+      button:active {
+        transform: scale(0.96);
+      }
+      button:hover {
+        opacity: 0.9;
+      }
+
+      .btn-timer {
+        background: var(--accent-2);
+      }
+      .btn-next {
+        background: var(--accent-1);
+      }
+
+      .timer-display {
+        font-size: 3rem;
+        font-weight: bold;
+        text-align: center;
+        color: var(--accent-2);
+        font-variant-numeric: tabular-nums;
+        margin-top: 10px;
+        text-shadow: 0 0 10px rgba(236, 72, 153, 0.5);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <div class="header">
+        <h1>NY Speaking Challenge</h1>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress"></div>
+        </div>
+        <div class="status">
+          <span id="counter">Card: 1 / 35</span>
+          <span id="phase-title">Phase 1: Action NOW!</span>
+        </div>
+      </div>
+
+      <div class="card" id="card-container">
+        <div class="phase-badge" id="badge">Present Continuous</div>
+        <span class="emoji-icon" id="emoji">🎬</span>
+        <div class="prompt-text" id="prompt">
+          Welcome! You have to speak for at least 30 seconds per card. Ready?
+        </div>
+        <div class="instruction" id="instruction">
+          Click "Next Mission" to start!
+        </div>
+      </div>
+
+      <div class="timer-display" id="timer">00:30</div>
+
+      <div class="controls">
+        <button class="btn-timer" onclick="startTimer()">⏳ Start Timer</button>
+        <button class="btn-next" onclick="nextCard()">🚀 Next Mission</button>
+      </div>
+    </div>
+
+    <script>
+      // 35 Ejercicios enfocados 100% en Speaking para un estudiante hablador
+      const exercises = [
+        // PHASE 1: Present Continuous (Action right now) - 15 cards
+        {
+          phase: "Phase 1: Action NOW!",
+          badge: "Present Continuous",
+          emoji: "🗽",
+          text: "Look at the Statue of Liberty! Imagine tourists around it. What are they doing?",
+          inst: "Describe 3 actions happening right now.",
+        },
+        {
+          phase: "Phase 1: Action NOW!",
+          badge: "Present Continuous",
+          emoji: "🍕",
+          text: "You are in a NY pizzeria. The chef is angry. What is he doing?",
+          inst: "Invent a crazy situation happening right now.",
+        },
+        {
+          phase: "Phase 1: Action NOW!",
+          badge: "Present Continuous",
+          emoji: "🚕",
+          text: "You are stuck in traffic in a yellow cab. Look out the window.",
+          inst: "Describe what the people on the street are doing.",
+        },
+        {
+          phase: "Phase 1: Action NOW!",
+          badge: "Present Continuous",
+          emoji: "🌧️",
+          text: "It is raining heavily in Central Park.",
+          inst: "What are the animals and people doing to stay dry?",
+        },
+        {
+          phase: "Phase 1: Action NOW!",
+          badge: "Present Continuous",
+          emoji: "🦸‍♂️",
+          text: "Spider-Man is swinging through Manhattan!",
+          inst: "What is he wearing? Who is he chasing right now?",
+        },
+        {
+          phase: "Phase 1: Action NOW!",
+          badge: "Present Continuous",
+          emoji: "🚇",
+          text: "You are on the subway. A man has a guitar.",
+          inst: "What is he playing? What are the passengers doing?",
+        },
+        {
+          phase: "Phase 1: Action NOW!",
+          badge: "Present Continuous",
+          emoji: "☕",
+          text: "I'm calling you! 'Hey, let's get coffee!'",
+          inst: "Refuse the invitation. Say what you are doing right now (Make an excuse!).",
+        },
+        {
+          phase: "Phase 1: Action NOW!",
+          badge: "Present Continuous",
+          emoji: "📸",
+          text: "You are a reporter live from Times Square.",
+          inst: "Report what the crowd is doing at this exact moment.",
+        },
+        {
+          phase: "Phase 1: Action NOW!",
+          badge: "Present Continuous",
+          emoji: "🏃",
+          text: "Someone is running very fast down 5th Avenue.",
+          inst: "Who is running? Why are they running? What are they carrying?",
+        },
+        {
+          phase: "Phase 1: Action NOW!",
+          badge: "Present Continuous",
+          emoji: "📱",
+          text: "Your phone is ringing but you can't answer.",
+          inst: "Explain to the person what you are doing with your hands right now.",
+        },
+        {
+          phase: "Phase 1: Action NOW!",
+          badge: "Present Continuous",
+          emoji: "🎭",
+          text: "You are watching a Broadway show. The actor forgets his lines.",
+          inst: "What is he doing? What is the audience doing?",
+        },
+        {
+          phase: "Phase 1: Action NOW!",
+          badge: "Present Continuous",
+          emoji: "🌭",
+          text: "A hot dog vendor is having a problem with a bird.",
+          inst: "Describe the fight! What is the bird doing?",
+        },
+        {
+          phase: "Phase 1: Action NOW!",
+          badge: "Present Continuous",
+          emoji: "🎧",
+          text: "Mime an action right now in front of the camera.",
+          inst: "Ask your teacher: 'What am I doing?'",
+        },
+        {
+          phase: "Phase 1: Action NOW!",
+          badge: "Present Continuous",
+          emoji: "🏢",
+          text: "Look at the Empire State Building.",
+          inst: "Imagine King Kong is there. What is he doing right now?",
+        },
+        {
+          phase: "Phase 1: Action NOW!",
+          badge: "Present Continuous",
+          emoji: "🛍️",
+          text: "People are shopping on Black Friday.",
+          inst: "What are they buying? Are they fighting?",
+        },
+
+        // PHASE 2: Contrast (Simple vs Continuous) - 20 cards
+        {
+          phase: "Phase 2: The Contrast",
+          badge: "Simple vs Continuous",
+          emoji: "👟",
+          text: "Usually (wear sneakers) / Today (wear boots)",
+          inst: "Make a full sentence contrasting your routine with today.",
+        },
+        {
+          phase: "Phase 2: The Contrast",
+          badge: "Simple vs Continuous",
+          emoji: "🍳",
+          text: "Normally (eat eggs) / Right now (eat a bagel)",
+          inst: "Connect the two ideas in one sentence.",
+        },
+        {
+          phase: "Phase 2: The Contrast",
+          badge: "Simple vs Continuous",
+          emoji: "🚆",
+          text: "Every day (take the subway) / Today (walk to work)",
+          inst: "Why? Explain the change in your routine.",
+        },
+        {
+          phase: "Phase 2: The Contrast",
+          badge: "Simple vs Continuous",
+          emoji: "😴",
+          text: "Usually (sleep at 10 PM) / Tonight (watch movies at 2 AM)",
+          inst: "Contrast your habit with your current action.",
+        },
+        {
+          phase: "Phase 2: The Contrast",
+          badge: "Simple vs Continuous",
+          emoji: "🌧️",
+          text: "It rarely (snow) in October / Look! It (snow) right now!",
+          inst: "Use the correct verbs to express surprise.",
+        },
+        {
+          phase: "Phase 2: The Contrast",
+          badge: "Simple vs Continuous",
+          emoji: "🎸",
+          text: "My roommate always (play loud music) / Right now he (sleep)",
+          inst: "Complain about your roommate!",
+        },
+        {
+          phase: "Phase 2: The Contrast",
+          badge: "Simple vs Continuous",
+          emoji: "💼",
+          text: "I work in an office. (Routine)",
+          inst: "Say what you do every day, and what you are doing right now on vacation.",
+        },
+        {
+          phase: "Phase 2: The Contrast",
+          badge: "Simple vs Continuous",
+          emoji: "🍔",
+          text: "Vegetarians never (eat meat) / Look at John, he (eat a burger!)",
+          inst: "React to this crazy situation using both tenses.",
+        },
+        {
+          phase: "Phase 2: The Contrast",
+          badge: "Simple vs Continuous",
+          emoji: "🗣️",
+          text: "Normally (speak Spanish) / Right now (speak English)",
+          inst: "Talk about your language learning process.",
+        },
+        {
+          phase: "Phase 2: The Contrast",
+          badge: "Simple vs Continuous",
+          emoji: "📖",
+          text: "The teacher usually (give homework) / Today he (play a game)",
+          inst: "Make a sentence about this class!",
+        },
+        {
+          phase: "Phase 2: The Contrast",
+          badge: "Simple vs Continuous",
+          emoji: "🌞",
+          text: "The sun (rise) in the east. (Fact) / The sun (shine) beautifully today.",
+          inst: "Combine the fact with the current observation.",
+        },
+        {
+          phase: "Phase 2: The Contrast",
+          badge: "Simple vs Continuous",
+          emoji: "🐕",
+          text: "My dog usually (bark at the mailman) / Today he (hide under the bed)",
+          inst: "What is happening with the dog?",
+        },
+        {
+          phase: "Phase 2: The Contrast",
+          badge: "Simple vs Continuous",
+          emoji: "📺",
+          text: "I never (watch the news) / But today I (watch it)",
+          inst: "Explain why you are changing your habit today.",
+        },
+        {
+          phase: "Phase 2: The Contrast",
+          badge: "Simple vs Continuous",
+          emoji: "💸",
+          text: "He always (save his money) / Today he (buy a Ferrari)",
+          inst: "Contrast his personality with his current action.",
+        },
+        {
+          phase: "Phase 2: The Contrast",
+          badge: "Simple vs Continuous",
+          emoji: "🥶",
+          text: "Winters in NY (be) very cold. / Today I (freeze)!",
+          inst: "Talk about the weather in general vs right now.",
+        },
+        {
+          phase: "Phase 2: The Contrast",
+          badge: "Simple vs Continuous",
+          emoji: "🥗",
+          text: "Usually (cook dinner) / Tonight (order delivery)",
+          inst: "Explain your lazy night.",
+        },
+        {
+          phase: "Phase 2: The Contrast",
+          badge: "Simple vs Continuous",
+          emoji: "🚙",
+          text: "I usually (drive fast) / Today I (drive slowly)",
+          inst: "Explain why. Is there police around?",
+        },
+        {
+          phase: "Phase 2: The Contrast",
+          badge: "Simple vs Continuous",
+          emoji: "📞",
+          text: "She never (call me) / Right now her name (ring on my phone)",
+          inst: "Describe your reaction.",
+        },
+        {
+          phase: "Phase 2: The Contrast",
+          badge: "Simple vs Continuous",
+          emoji: "🧹",
+          text: "We clean the house on Sundays. (Routine)",
+          inst: "Say what is happening today because it's a holiday.",
+        },
+        {
+          phase: "Phase 2: The Contrast",
+          badge: "Simple vs Continuous",
+          emoji: "🏆",
+          text: "Final Boss! Tell me 2 things you do every day, and 2 things you are doing right now.",
+          inst: "Speak for 1 minute without stopping!",
+        },
+      ];
+
+      let currentIndex = -1; // -1 for the welcome screen
+      let timerInterval;
+      let timeLeft = 30;
+
+      function nextCard() {
+        currentIndex++;
+
+        if (currentIndex >= exercises.length) {
+          alert("🎉 Challenge Completed! Your speaking is awesome!");
+          currentIndex = 0; // Restart
+        }
+
+        const current = exercises[currentIndex];
+
+        // Re-trigger CSS animation
+        const card = document.getElementById("card-container");
+        card.style.animation = "none";
+        card.offsetHeight; // trigger reflow
+        card.style.animation = "slideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1)";
+        card.style.borderColor =
+          currentIndex < 15 ? "var(--accent-1)" : "var(--accent-3)";
+
+        // Update Content
+        document.getElementById("badge").innerText = current.badge;
+        document.getElementById("emoji").innerText = current.emoji;
+        document.getElementById("prompt").innerText = current.text;
+        document.getElementById("instruction").innerText = current.inst;
+
+        // Update Headers
+        document.getElementById("counter").innerText =
+          `Card: ${currentIndex + 1} / 35`;
+        document.getElementById("phase-title").innerText = current.phase;
+
+        // Update Progress
+        const progressPercentage =
+          ((currentIndex + 1) / exercises.length) * 100;
+        document.getElementById("progress").style.width =
+          `${progressPercentage}%`;
+
+        resetTimer();
+      }
+
+      // Timer Logic (Gamification)
+      function resetTimer() {
+        clearInterval(timerInterval);
+        timeLeft = 30; // 30 seconds for regular cards
+        if (currentIndex === exercises.length - 1) timeLeft = 60; // 1 minute for final boss
+        updateTimerDisplay();
+        document.getElementById("timer").style.color = "var(--accent-2)";
+      }
+
+      function updateTimerDisplay() {
+        document.getElementById("timer").innerText =
+          `00:${timeLeft.toString().padStart(2, "0")}`;
+      }
+
+      function startTimer() {
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+          if (timeLeft > 0) {
+            timeLeft--;
+            updateTimerDisplay();
+            if (timeLeft <= 10) {
+              document.getElementById("timer").style.color = "#ef4444"; // Red warning
+            }
+          } else {
+            clearInterval(timerInterval);
+            document.getElementById("timer").innerText = "TIME'S UP!";
+          }
+        }, 1000);
+      }
+    </script>
+  </body>
+</html>
