@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NY Memory Detective: Past Tense</title>
+    <style>
+      :root {
+        --bg-color: #0f172a; /* Slate 900 */
+        --card-bg: #1e293b; /* Slate 800 */
+        --primary: #f59e0b; /* Amber */
+        --primary-hover: #d97706;
+        --secondary: #3b82f6; /* Blue */
+        --text-main: #f8fafc;
+        --text-muted: #94a3b8;
+        --success: #10b981;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        padding: 2rem 1rem;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+      .header h1 {
+        font-size: 3rem;
+        color: var(--primary);
+        font-weight: 900;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+      .header p {
+        font-size: 1.2rem;
+        color: var(--text-muted);
+        margin-top: 5px;
+      }
+
+      .app-container {
+        width: 100%;
+        max-width: 800px;
+        background: var(--card-bg);
+        border-radius: 20px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        overflow: hidden;
+        border: 2px solid #334155;
+      }
+
+      /* Top Bar */
+      .case-bar {
+        background: #000;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 4px solid var(--primary);
+      }
+      .case-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--primary);
+      }
+      .case-counter {
+        font-weight: bold;
+        color: var(--text-muted);
+      }
+
+      /* Story Area (Reading & Listening) */
+      .story-section {
+        padding: 3rem 2rem;
+        text-align: center;
+        transition: opacity 0.3s;
+      }
+
+      .story-text {
+        font-size: 1.6rem;
+        line-height: 1.8;
+        color: var(--text-main);
+        margin-bottom: 2rem;
+        text-align: justify;
+      }
+
+      .highlight-verb {
+        color: var(--primary);
+        font-weight: bold;
+        border-bottom: 2px dashed var(--primary);
+      }
+
+      /* Interrogation Area (Memory & Speaking) */
+      .interrogation-section {
+        display: none;
+        padding: 3rem 2rem;
+        text-align: center;
+        background: repeating-linear-gradient(
+          45deg,
+          #1e293b,
+          #1e293b 10px,
+          #0f172a 10px,
+          #0f172a 20px
+        );
+      }
+
+      .question-text {
+        font-size: 2.2rem;
+        font-weight: 900;
+        color: #f87171; /* Red 400 */
+        margin-bottom: 2rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      }
+
+      .answer-hint {
+        font-size: 1.3rem;
+        color: var(--text-muted);
+        font-style: italic;
+        margin-bottom: 2rem;
+        display: none; /* Se revela si el estudiante necesita ayuda */
+      }
+
+      /* Buttons */
+      .controls {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        padding: 0 2rem 3rem 2rem;
+        flex-wrap: wrap;
+      }
+
+      button {
+        padding: 1rem 2rem;
+        font-size: 1.2rem;
+        font-weight: bold;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-transform: uppercase;
+      }
+
+      button:active {
+        transform: scale(0.95);
+      }
+
+      .btn-audio {
+        background: var(--secondary);
+        color: white;
+      }
+      .btn-audio:hover {
+        background: #2563eb;
+      }
+
+      .btn-action {
+        background: var(--primary);
+        color: #78350f;
+      }
+      .btn-action:hover {
+        background: var(--primary-hover);
+      }
+
+      .btn-hint {
+        background: transparent;
+        border: 2px solid var(--text-muted);
+        color: var(--text-muted);
+      }
+      .btn-hint:hover {
+        border-color: var(--text-main);
+        color: var(--text-main);
+      }
+
+      .btn-next-q {
+        background: var(--success);
+        color: white;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>🕵️‍♂️ The NY Memory Detective</h1>
+      <p>Read, Listen, Memorize, and Speak!</p>
+    </div>
+
+    <div class="app-container">
+      <div class="case-bar">
+        <div class="case-title" id="case-name">Case File #1: Central Park</div>
+        <div class="case-counter" id="case-counter">Story 1 / 4</div>
+      </div>
+
+      <!-- FASE 1: Lectura y Escucha -->
+      <div class="story-section" id="story-view">
+        <div class="story-text" id="story-content">
+          <!-- Inyectado por JS -->
+        </div>
+        <div class="controls">
+          <button class="btn-audio" onclick="playAudio()">
+            🔊 Listen to Story
+          </button>
+          <button class="btn-action" onclick="startInterrogation()">
+            🚨 Start Interrogation
+          </button>
+        </div>
+      </div>
+
+      <!-- FASE 2: Memoria y Speaking -->
+      <div class="interrogation-section" id="interrogation-view">
+        <div
+          style="
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-weight: bold;
+          "
+        >
+          ANSWER OUT LOUD:
+        </div>
+        <div class="question-text" id="question-content">
+          <!-- Pregunta inyectada por JS -->
+        </div>
+        <div class="answer-hint" id="answer-hint">
+          <!-- Pista inyectada por JS -->
+        </div>
+        <div class="controls">
+          <button class="btn-hint" id="btn-show-hint" onclick="showHint()">
+            👀 Show Hint
+          </button>
+          <button class="btn-next-q" id="btn-next-q" onclick="nextQuestion()">
+            Next Question ➡️
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Historias diseñadas estrictamente con los 50 verbos solicitados
+      const cases = [
+        {
+          title: "Case File #1: The Central Park Wallet",
+          text: "Yesterday, I <span class='highlight-verb'>went</span> to Central Park. I <span class='highlight-verb'>sat</span> on a bench and <span class='highlight-verb'>looked</span> at the trees. Suddenly, I <span class='highlight-verb'>saw</span> a black wallet on the ground. I <span class='highlight-verb'>took</span> it and <span class='highlight-verb'>found</span> an ID card inside. I <span class='highlight-verb'>ran</span> to a police officer and <span class='highlight-verb'>gave</span> it to him. He <span class='highlight-verb'>said</span> 'Thank you!'",
+          plainText:
+            "Yesterday, I went to Central Park. I sat on a bench and looked at the trees. Suddenly, I saw a black wallet on the ground. I took it and found an ID card inside. I ran to a police officer and gave it to him. He said 'Thank you!'",
+          questions: [
+            { q: "Where did you go yesterday?", hint: "Target verb: went" },
+            {
+              q: "What did you do on the bench?",
+              hint: "Target verbs: sat, looked",
+            },
+            { q: "What did you see on the ground?", hint: "Target verb: saw" },
+            {
+              q: "What did you find inside the wallet?",
+              hint: "Target verbs: took, found",
+            },
+            { q: "Who did you give it to?", hint: "Target verbs: ran, gave" },
+            {
+              q: "FINAL CHALLENGE: Retell the whole story in 60 seconds!",
+              hint: "Use: went, sat, saw, took, found, ran, gave.",
+            },
+          ],
+        },
+        {
+          title: "Case File #2: The Subway Musician",
+          text: "This morning, I <span class='highlight-verb'>left</span> my apartment early. I <span class='highlight-verb'>went</span> to the subway station. The train <span class='highlight-verb'>came</span>, but it <span class='highlight-verb'>was</span> very full. I <span class='highlight-verb'>stood</span> near the door. A man <span class='highlight-verb'>played</span> the guitar very well. I <span class='highlight-verb'>liked</span> the music, so I <span class='highlight-verb'>gave</span> him a dollar.",
+          plainText:
+            "This morning, I left my apartment early. I went to the subway station. The train came, but it was very full. I stood near the door. A man played the guitar very well. I liked the music, so I gave him a dollar.",
+          questions: [
+            {
+              q: "When did you leave your apartment?",
+              hint: "Target verb: left",
+            },
+            {
+              q: "How was the train when it came?",
+              hint: "Target verbs: came, was",
+            },
+            { q: "Where did you stand?", hint: "Target verb: stood" },
+            { q: "What did the man play?", hint: "Target verb: played" },
+            {
+              q: "Why did you give him a dollar?",
+              hint: "Target verbs: liked, gave",
+            },
+            {
+              q: "FINAL CHALLENGE: Retell the whole story in 60 seconds!",
+              hint: "Use: left, went, came, was, stood, played, liked, gave.",
+            },
+          ],
+        },
+        {
+          title: "Case File #3: Panic in Times Square",
+          text: "Last night, I <span class='highlight-verb'>went</span> to Times Square. I <span class='highlight-verb'>saw</span> my friend Sarah. We <span class='highlight-verb'>talked</span> for an hour. Then, we <span class='highlight-verb'>heard</span> a loud noise. People <span class='highlight-verb'>ran</span> everywhere! We <span class='highlight-verb'>felt</span> scared, so we <span class='highlight-verb'>left</span> quickly and <span class='highlight-verb'>called</span> a taxi.",
+          plainText:
+            "Last night, I went to Times Square. I saw my friend Sarah. We talked for an hour. Then, we heard a loud noise. People ran everywhere! We felt scared, so we left quickly and called a taxi.",
+          questions: [
+            {
+              q: "Who did you see in Times Square?",
+              hint: "Target verbs: went, saw",
+            },
+            { q: "How long did you talk?", hint: "Target verb: talked" },
+            { q: "What did you hear?", hint: "Target verb: heard" },
+            { q: "What did the people do?", hint: "Target verb: ran" },
+            {
+              q: "How did you feel and what did you do?",
+              hint: "Target verbs: felt, left, called",
+            },
+            {
+              q: "FINAL CHALLENGE: Retell the whole story in 60 seconds!",
+              hint: "Use: went, saw, talked, heard, ran, felt, left, called.",
+            },
+          ],
+        },
+        {
+          title: "Case File #4: The Broken Phone",
+          text: "I <span class='highlight-verb'>had</span> a big problem today. I <span class='highlight-verb'>held</span> my phone in my hand, but it fell. The screen broke! I <span class='highlight-verb'>thought</span> it <span class='highlight-verb'>was</span> completely dead. I <span class='highlight-verb'>tried</span> to fix it, but I <span class='highlight-verb'>needed</span> help. I <span class='highlight-verb'>showed</span> it to a mechanic, and he <span class='highlight-verb'>helped</span> me.",
+          plainText:
+            "I had a big problem today. I held my phone in my hand, but it fell. The screen broke! I thought it was completely dead. I tried to fix it, but I needed help. I showed it to a mechanic, and he helped me.",
+          questions: [
+            {
+              q: "What did you hold in your hand?",
+              hint: "Target verbs: had, held",
+            },
+            {
+              q: "What did you think when it fell?",
+              hint: "Target verbs: thought, was",
+            },
+            {
+              q: "What did you try to do?",
+              hint: "Target verbs: tried, needed",
+            },
+            { q: "Who did you show it to?", hint: "Target verb: showed" },
+            { q: "Did the mechanic help you?", hint: "Target verb: helped" },
+            {
+              q: "FINAL CHALLENGE: Retell the whole story in 60 seconds!",
+              hint: "Use: had, held, thought, tried, needed, showed, helped.",
+            },
+          ],
+        },
+      ];
+
+      let currentStoryIndex = 0;
+      let currentQuestionIndex = 0;
+
+      function loadStory() {
+        const currentCase = cases[currentStoryIndex];
+        document.getElementById("case-name").innerText = currentCase.title;
+        document.getElementById("case-counter").innerText =
+          `Case ${currentStoryIndex + 1} / ${cases.length}`;
+        document.getElementById("story-content").innerHTML = currentCase.text;
+
+        // Reset views
+        document.getElementById("story-view").style.display = "block";
+        document.getElementById("interrogation-view").style.display = "none";
+        currentQuestionIndex = 0;
+      }
+
+      // Web Speech API para lectura
+      function playAudio() {
+        if ("speechSynthesis" in window) {
+          // Detener cualquier audio previo
+          window.speechSynthesis.cancel();
+
+          const currentCase = cases[currentStoryIndex];
+          const utterance = new SpeechSynthesisUtterance(currentCase.plainText);
+          utterance.lang = "en-US";
+          utterance.rate = 0.85; // Un poco más lento para nivel B1
+
+          window.speechSynthesis.speak(utterance);
+        } else {
+          alert("Sorry, your browser doesn't support Text-to-Speech audio.");
+        }
+      }
+
+      function startInterrogation() {
+        window.speechSynthesis.cancel(); // Detener audio si estaba sonando
+        document.getElementById("story-view").style.display = "none";
+        document.getElementById("interrogation-view").style.display = "block";
+        loadQuestion();
+      }
+
+      function loadQuestion() {
+        const currentCase = cases[currentStoryIndex];
+        const qObj = currentCase.questions[currentQuestionIndex];
+
+        document.getElementById("question-content").innerText = qObj.q;
+        document.getElementById("answer-hint").innerText = qObj.hint;
+        document.getElementById("answer-hint").style.display = "none";
+
+        document.getElementById("btn-show-hint").style.display = "inline-block";
+        document.getElementById("btn-next-q").style.display = "inline-block";
+
+        // Cambiar texto del botón si es la última pregunta
+        if (currentQuestionIndex === currentCase.questions.length - 1) {
+          document.getElementById("btn-next-q").innerText = "Finish Case 🏆";
+        } else {
+          document.getElementById("btn-next-q").innerText = "Next Question ➡️";
+        }
+      }
+
+      function showHint() {
+        document.getElementById("answer-hint").style.display = "block";
+        document.getElementById("btn-show-hint").style.display = "none";
+      }
+
+      function nextQuestion() {
+        const currentCase = cases[currentStoryIndex];
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < currentCase.questions.length) {
+          loadQuestion();
+        } else {
+          // Siguiente historia
+          currentStoryIndex++;
+          if (currentStoryIndex < cases.length) {
+            alert("Great job Detective! Let's move to the next case.");
+            loadStory();
+          } else {
+            alert("🎉 YOU SOLVED ALL THE CASES! Your memory is perfect.");
+            currentStoryIndex = 0; // Reiniciar
+            loadStory();
+          }
+        }
+      }
+
+      // Initialize the first story
+      window.onload = loadStory;
+    </script>
+  </body>
+</html>
