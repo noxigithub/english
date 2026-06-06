@@ -1,0 +1,868 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prepositions: On, In, At (Place & Time)</title>
+    <!-- Load Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Custom styles for the Inter font and basic body setup */
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f0f4f8; /* Light blue-gray background */
+        color: #334155; /* Dark text color */
+        line-height: 1.6;
+      }
+      /* Style for the main container */
+      .container {
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background-color: #ffffff; /* White content background */
+        border-radius: 12px; /* Rounded corners */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+      }
+      /* Heading styles */
+      h1,
+      h2,
+      h3 {
+        font-weight: 700;
+        color: #1e293b; /* Darker heading color */
+      }
+      h1 {
+        font-size: 2.5rem;
+        text-align: center;
+        margin-bottom: 2rem;
+        color: #0d9488; /* Teal color for main title */
+      }
+      h2 {
+        font-size: 1.875rem; /* text-3xl */
+        border-bottom: 2px solid #e2e8f0; /* Light border under h2 */
+        padding-bottom: 0.75rem;
+        margin-top: 2rem;
+        margin-bottom: 1.5rem;
+      }
+      h3 {
+        font-size: 1.5rem; /* text-2xl */
+        color: #0f766e; /* Darker teal for subheadings */
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+      }
+      /* Explanation boxes - now just a container for tables */
+      .explanation-section {
+        margin-bottom: 2rem;
+      }
+      .explanation-section p {
+        margin-bottom: 1rem;
+      }
+      /* Table styling for explanations */
+      .explanation-table {
+        width: 100%;
+        border-collapse: separate; /* Allows for rounded corners on cells */
+        border-spacing: 0; /* Remove space between cell borders */
+        margin-top: 1rem;
+        margin-bottom: 1.5rem;
+        border-radius: 8px; /* Rounded corners for the entire table */
+        overflow: hidden; /* Ensures rounded corners apply correctly */
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* Subtle shadow for tables */
+      }
+      .explanation-table th,
+      .explanation-table td {
+        padding: 1rem 1.25rem;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0; /* Light border between rows */
+      }
+      .explanation-table th {
+        background-color: #0d9488; /* Teal header */
+        color: white;
+        font-weight: 600;
+      }
+      .explanation-table tr:nth-child(even) {
+        background-color: #f0fdfa; /* Very light teal for even rows */
+      }
+      .explanation-table tr:nth-child(odd) {
+        background-color: #ffffff; /* White for odd rows */
+      }
+      .explanation-table tr:last-child td {
+        border-bottom: none; /* No border on the last row */
+      }
+      .explanation-table strong {
+        color: #0d9488; /* Highlight prepositions in examples */
+      }
+
+      /* Exercise question styles (from previous version, maintained) */
+      .question {
+        background-color: #f8fafc;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      }
+      .question p {
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+      }
+      .question label {
+        margin-right: 1.5rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+      }
+      .question input[type="radio"] {
+        margin-right: 0.5rem;
+        accent-color: #0d9488; /* Teal accent for radio buttons */
+      }
+      /* Button style */
+      .check-button {
+        display: block;
+        width: fit-content;
+        margin: 2rem auto;
+        padding: 0.75rem 2rem;
+        background-color: #0d9488; /* Teal button */
+        color: white;
+        font-weight: 600;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        border: none;
+      }
+      .check-button:hover {
+        background-color: #0f766e; /* Darker teal on hover */
+      }
+      /* Results section */
+      #results {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background-color: #e0f2f7; /* Light blue background for results */
+        border-radius: 12px;
+        text-align: center;
+        font-weight: 600;
+        font-size: 1.125rem; /* text-lg */
+        border: 1px solid #a7d9eb;
+        display: none; /* Hidden by default */
+      }
+      .correct-feedback {
+        color: #10b981; /* Green for correct answers */
+        font-weight: 600;
+      }
+      .incorrect-feedback {
+        color: #ef4444; /* Red for incorrect answers */
+        font-weight: 600;
+      }
+      .border-correct {
+        border: 2px solid #10b981;
+        box-shadow: 0 0 5px rgba(16, 185, 129, 0.5);
+      }
+      .border-incorrect {
+        border: 2px solid #ef4444;
+        box-shadow: 0 0 5px rgba(239, 68, 68, 0.5);
+      }
+    </style>
+  </head>
+  <body class="p-4 sm:p-6 md:p-8">
+    <div class="container">
+      <h1>Understanding Prepositions: On, In, At</h1>
+      <p class="text-center text-lg mb-8">
+        Master the usage of 'on', 'in', and 'at' for both place and time with
+        clear explanations and practice exercises.
+      </p>
+
+      <hr class="my-8 border-gray-300" />
+
+      <!-- Prepositions of Place Explanation -->
+      <h2>Prepositions of Place 📍</h2>
+      <p class="mb-4">
+        These prepositions help us indicate the exact location of something or
+        someone.
+      </p>
+
+      <div class="explanation-section">
+        <h3>On</h3>
+        <div class="overflow-x-auto">
+          <table class="explanation-table">
+            <thead>
+              <tr>
+                <th>Usage</th>
+                <th>Description</th>
+                <th>Examples</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Surfaces</strong></td>
+                <td>When something is directly touching a surface.</td>
+                <td>
+                  The book is <strong>on</strong> the table.<br />The picture is
+                  <strong>on</strong> the wall.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Lines/Roads/Streets</strong></td>
+                <td>For a specific street or road.</td>
+                <td>
+                  My house is <strong>on</strong> Elm Street.<br />The bus
+                  travels <strong>on</strong> the highway.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Floors (in a building)</strong></td>
+                <td>To indicate a level in a building.</td>
+                <td>
+                  My office is <strong>on</strong> the third floor.<br />The
+                  restaurant is <strong>on</strong> the ground floor.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Public Transport (large)</strong></td>
+                <td>
+                  Inside a public vehicle where you can stand and walk around.
+                </td>
+                <td>
+                  We are <strong>on</strong> the bus.<br />She is
+                  <strong>on</strong> the train/plane.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="explanation-section">
+        <h3>In</h3>
+        <div class="overflow-x-auto">
+          <table class="explanation-table">
+            <thead>
+              <tr>
+                <th>Usage</th>
+                <th>Description</th>
+                <th>Examples</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Enclosed Spaces</strong></td>
+                <td>
+                  When something is inside a confined area with boundaries.
+                </td>
+                <td>
+                  The cat is <strong>in</strong> the box.<br />I am
+                  <strong>in</strong> the room.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Cities, Countries, Continents</strong></td>
+                <td>For large geographical areas.</td>
+                <td>
+                  I live <strong>in</strong> London.<br />She was born
+                  <strong>in</strong> Brazil.<br />We are
+                  <strong>in</strong> Europe.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Bodies of Water</strong></td>
+                <td>When something is submerged or present in water.</td>
+                <td>
+                  There are fish <strong>in</strong> the river.<br />He's
+                  swimming <strong>in</strong> the pool.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Cars/Taxis</strong></td>
+                <td>When you are inside a private vehicle.</td>
+                <td>
+                  She is <strong>in</strong> her car.<br />He's
+                  <strong>in</strong> a taxi.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Books/Newspapers</strong></td>
+                <td>To refer to content within them.</td>
+                <td>
+                  I read it <strong>in</strong> the newspaper.<br />The story is
+                  <strong>in</strong> the book.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="explanation-section">
+        <h3>At</h3>
+        <div class="overflow-x-auto">
+          <table class="explanation-table">
+            <thead>
+              <tr>
+                <th>Usage</th>
+                <th>Description</th>
+                <th>Examples</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Specific Points/Locations</strong></td>
+                <td>For precise addresses or exact spots.</td>
+                <td>
+                  I'll meet you <strong>at</strong> the corner.<br />She lives
+                  <strong>at</strong> 10 Downing Street.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Events/Public Places</strong></td>
+                <td>
+                  Referring to a general location or an activity taking place
+                  there.
+                </td>
+                <td>
+                  We were <strong>at</strong> the party.<br />I study
+                  <strong>at</strong> the university.<br />She's
+                  <strong>at</strong> the bus stop.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Buildings (general sense)</strong></td>
+                <td>
+                  To indicate being present in a building without specifying
+                  inside/outside.
+                </td>
+                <td>
+                  He's <strong>at</strong> the bank.<br />We're
+                  <strong>at</strong> the restaurant.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Home/Work/School</strong></td>
+                <td>Common fixed locations.</td>
+                <td>
+                  I am <strong>at</strong> home.<br />He is
+                  <strong>at</strong> work.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <hr class="my-8 border-gray-300" />
+
+      <!-- Prepositions of Time Explanation -->
+      <h2>Prepositions of Time ⏰</h2>
+      <p class="mb-4">
+        These prepositions help us indicate when something happens.
+      </p>
+
+      <div class="explanation-section">
+        <h3>On</h3>
+        <div class="overflow-x-auto">
+          <table class="explanation-table">
+            <thead>
+              <tr>
+                <th>Usage</th>
+                <th>Description</th>
+                <th>Examples</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Specific Days</strong></td>
+                <td>For days of the week.</td>
+                <td>
+                  I have a meeting <strong>on</strong> Monday.<br />We leave
+                  <strong>on</strong> Friday.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Specific Dates</strong></td>
+                <td>For full dates.</td>
+                <td>
+                  Her birthday is <strong>on</strong> July 15th.<br />The party
+                  is <strong>on</strong> Christmas Day.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Specific Parts of Days (with dates/days)</strong>
+                </td>
+                <td>When combined with a day or date.</td>
+                <td>
+                  <strong>on</strong> a rainy afternoon,<br /><strong
+                    >on</strong
+                  >
+                  Monday morning.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="explanation-section">
+        <h3>In</h3>
+        <div class="overflow-x-auto">
+          <table class="explanation-table">
+            <thead>
+              <tr>
+                <th>Usage</th>
+                <th>Description</th>
+                <th>Examples</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Months</strong></td>
+                <td>For specific months.</td>
+                <td>
+                  My vacation is <strong>in</strong> August.<br />It gets cold
+                  <strong>in</strong> December.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Years</strong></td>
+                <td>For specific years.</td>
+                <td>
+                  I was born <strong>in</strong> 1990.<br />The event happened
+                  <strong>in</strong> 2023.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Seasons</strong></td>
+                <td>For seasons of the year.</td>
+                <td>
+                  We go skiing <strong>in</strong> winter.<br />Flowers bloom
+                  <strong>in</strong> spring.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Long Periods</strong></td>
+                <td>For decades, centuries, or the past/future.</td>
+                <td>
+                  <strong>in</strong> the 1980s,<br /><strong>in</strong> the
+                  21st century,<br /><strong>in</strong> the future.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Parts of the Day (general)</strong></td>
+                <td>
+                  For "morning," "afternoon," "evening." (Exception:
+                  <strong>at</strong> night)
+                </td>
+                <td>
+                  I like to read <strong>in</strong> the morning.<br />We work
+                  <strong>in</strong> the afternoon.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="explanation-section">
+        <h3>At</h3>
+        <div class="overflow-x-auto">
+          <table class="explanation-table">
+            <thead>
+              <tr>
+                <th>Usage</th>
+                <th>Description</th>
+                <th>Examples</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Specific Times</strong></td>
+                <td>For exact clock times.</td>
+                <td>
+                  The meeting starts <strong>at</strong> 9 AM.<br />I wake up
+                  <strong>at</strong> 7 o'clock.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Night</strong></td>
+                <td>This is a common exception.</td>
+                <td>
+                  We often go out <strong>at</strong> night.<br />The stars
+                  shine <strong>at</strong> night.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Weekend (British English often)</strong></td>
+                <td>Used especially in British English.</td>
+                <td>
+                  I'll see you <strong>at</strong> the weekend.<br />What are
+                  you doing <strong>at</strong> the weekend?
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Holidays (without "Day")</strong></td>
+                <td>For general holiday periods. (But "on Christmas Day")</td>
+                <td>
+                  We exchange gifts <strong>at</strong> Christmas.<br />They
+                  visit family <strong>at</strong> Easter.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <hr class="my-8 border-gray-300" />
+
+      <!-- Exercises Section -->
+      <h2>Exercises: Choose the Correct Preposition</h2>
+      <p class="mb-6 text-center text-lg">
+        Select the best preposition for each sentence. Good luck!
+      </p>
+
+      <!-- Place Exercises -->
+      <h3>1. Prepositions of Place Exercises</h3>
+      <form id="place-exercises" class="space-y-4 mb-8">
+        <div class="question" data-answer="on">
+          <p>1. The painting hangs ______ the wall.</p>
+          <label><input type="radio" name="place1" value="on" /> On</label>
+          <label><input type="radio" name="place1" value="in" /> In</label>
+          <label><input type="radio" name="place1" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="in">
+          <p>2. She lives ______ a small apartment ______ the city center.</p>
+          <label><input type="radio" name="place2" value="on" /> On</label>
+          <label><input type="radio" name="place2" value="in" /> In</label>
+          <label><input type="radio" name="place2" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="at">
+          <p>3. Let's meet ______ the cafe ______ the corner of Main Street.</p>
+          <label><input type="radio" name="place3" value="on" /> On</label>
+          <label><input type="radio" name="place3" value="in" /> In</label>
+          <label><input type="radio" name="place3" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="on">
+          <p>4. My keys are ______ the kitchen counter.</p>
+          <label><input type="radio" name="place4" value="on" /> On</label>
+          <label><input type="radio" name="place4" value="in" /> In</label>
+          <label><input type="radio" name="place4" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="in">
+          <p>5. There are many trees ______ the park.</p>
+          <label><input type="radio" name="place5" value="on" /> On</label>
+          <label><input type="radio" name="place5" value="in" /> In</label>
+          <label><input type="radio" name="place5" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="at">
+          <p>6. The concert is being held ______ the stadium.</p>
+          <label><input type="radio" name="place6" value="on" /> On</label>
+          <label><input type="radio" name="place6" value="in" /> In</label>
+          <label><input type="radio" name="place6" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="on">
+          <p>7. The cat is sleeping ______ the roof.</p>
+          <label><input type="radio" name="place7" value="on" /> On</label>
+          <label><input type="radio" name="place7" value="in" /> In</label>
+          <label><input type="radio" name="place7" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="in">
+          <p>8. He works ______ an office building ______ downtown.</p>
+          <label><input type="radio" name="place8" value="on" /> On</label>
+          <label><input type="radio" name="place8" value="in" /> In</label>
+          <label><input type="radio" name="place8" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="at">
+          <p>9. The train arrived ______ Platform 3.</p>
+          <label><input type="radio" name="place9" value="on" /> On</label>
+          <label><input type="radio" name="place9" value="in" /> In</label>
+          <label><input type="radio" name="place9" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="on">
+          <p>10. There's a new restaurant ______ this street.</p>
+          <label><input type="radio" name="place10" value="on" /> On</label>
+          <label><input type="radio" name="place10" value="in" /> In</label>
+          <label><input type="radio" name="place10" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="in">
+          <p>11. The children are playing ______ the garden.</p>
+          <label><input type="radio" name="place11" value="on" /> On</label>
+          <label><input type="radio" name="place11" value="in" /> In</label>
+          <label><input type="radio" name="place11" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="on">
+          <p>12. Put the groceries ______ the table.</p>
+          <label><input type="radio" name="place12" value="on" /> On</label>
+          <label><input type="radio" name="place12" value="in" /> In</label>
+          <label><input type="radio" name="place12" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="at">
+          <p>13. She works ______ the hospital.</p>
+          <label><input type="radio" name="place13" value="on" /> On</label>
+          <label><input type="radio" name="place13" value="in" /> In</label>
+          <label><input type="radio" name="place13" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="in">
+          <p>14. My phone is ______ my pocket.</p>
+          <label><input type="radio" name="place14" value="on" /> On</label>
+          <label><input type="radio" name="place14" value="in" /> In</label>
+          <label><input type="radio" name="place14" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="on">
+          <p>15. We're going for a ride ______ the lake.</p>
+          <label><input type="radio" name="place15" value="on" /> On</label>
+          <label><input type="radio" name="place15" value="in" /> In</label>
+          <label><input type="radio" name="place15" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="at">
+          <p>16. I saw him ______ the cinema last night.</p>
+          <label><input type="radio" name="place16" value="on" /> On</label>
+          <label><input type="radio" name="place16" value="in" /> In</label>
+          <label><input type="radio" name="place16" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="in">
+          <p>17. There's a lot of traffic ______ the city today.</p>
+          <label><input type="radio" name="place17" value="on" /> On</label>
+          <label><input type="radio" name="place17" value="in" /> In</label>
+          <label><input type="radio" name="place17" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="on">
+          <p>18. He wears a ring ______ his finger.</p>
+          <label><input type="radio" name="place18" value="on" /> On</label>
+          <label><input type="radio" name="place18" value="in" /> In</label>
+          <label><input type="radio" name="place18" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="at">
+          <p>19. My grandparents live ______ the farm.</p>
+          <label><input type="radio" name="place19" value="on" /> On</label>
+          <label><input type="radio" name="place19" value="in" /> In</label>
+          <label><input type="radio" name="place19" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="in">
+          <p>20. The remote control is ______ the drawer.</p>
+          <label><input type="radio" name="place20" value="on" /> On</label>
+          <label><input type="radio" name="place20" value="in" /> In</label>
+          <label><input type="radio" name="place20" value="at" /> At</label>
+        </div>
+      </form>
+
+      <h3>2. Prepositions of Time Exercises</h3>
+      <form id="time-exercises" class="space-y-4 mb-8">
+        <div class="question" data-answer="at">
+          <p>1. The movie starts ______ 7:00 PM.</p>
+          <label><input type="radio" name="time1" value="on" /> On</label>
+          <label><input type="radio" name="time1" value="in" /> In</label>
+          <label><input type="radio" name="time1" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="in">
+          <p>2. I usually wake up early ______ the morning.</p>
+          <label><input type="radio" name="time2" value="on" /> On</label>
+          <label><input type="radio" name="time2" value="in" /> In</label>
+          <label><input type="radio" name="time2" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="on">
+          <p>3. Her birthday is ______ May 20th.</p>
+          <label><input type="radio" name="time3" value="on" /> On</label>
+          <label><input type="radio" name="time3" value="in" /> In</label>
+          <label><input type="radio" name="time3" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="at">
+          <p>4. We often go for a walk ______ night.</p>
+          <label><input type="radio" name="time4" value="on" /> On</label>
+          <label><input type="radio" name="time4" value="in" /> In</label>
+          <label><input type="radio" name="time4" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="in">
+          <p>5. They got married ______ 2010.</p>
+          <label><input type="radio" name="time5" value="on" /> On</label>
+          <label><input type="radio" name="time5" value="in" /> In</label>
+          <label><input type="radio" name="time5" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="on">
+          <p>6. I have an appointment ______ Tuesday afternoon.</p>
+          <label><input type="radio" name="time6" value="on" /> On</label>
+          <label><input type="radio" name="time6" value="in" /> In</label>
+          <label><input type="radio" name="time6" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="in">
+          <p>7. It's very hot here ______ summer.</p>
+          <label><input type="radio" name="time7" value="on" /> On</label>
+          <label><input type="radio" name="time7" value="in" /> In</label>
+          <label><input type="radio" name="time7" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="at">
+          <p>8. We always have a big dinner ______ Christmas.</p>
+          <label><input type="radio" name="time8" value="on" /> On</label>
+          <label><input type="radio" name="time8" value="in" /> In</label>
+          <label><input type="radio" name="time8" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="on">
+          <p>9. The store opens ______ weekdays.</p>
+          <label><input type="radio" name="time9" value="on" /> On</label>
+          <label><input type="radio" name="time9" value="in" /> In</label>
+          <label><input type="radio" name="time9" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="in">
+          <p>10. I like to listen to music ______ the evening.</p>
+          <label><input type="radio" name="time10" value="on" /> On</label>
+          <label><input type="radio" name="time10" value="in" /> In</label>
+          <label><input type="radio" name="time10" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="on">
+          <p>11. The presentation is scheduled ______ Wednesday.</p>
+          <label><input type="radio" name="time11" value="on" /> On</label>
+          <label><input type="radio" name="time11" value="in" /> In</label>
+          <label><input type="radio" name="time11" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="in">
+          <p>12. He graduated from college ______ June.</p>
+          <label><input type="radio" name="time12" value="on" /> On</label>
+          <label><input type="radio" name="time12" value="in" /> In</label>
+          <label><input type="radio" name="time12" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="at">
+          <p>13. We'll have dinner ______ 8 o'clock.</p>
+          <label><input type="radio" name="time13" value="on" /> On</label>
+          <label><input type="radio" name="time13" value="in" /> In</label>
+          <label><input type="radio" name="time13" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="in">
+          <p>14. The world changed a lot ______ the 20th century.</p>
+          <label><input type="radio" name="time14" value="on" /> On</label>
+          <label><input type="radio" name="time14" value="in" /> In</label>
+          <label><input type="radio" name="time14" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="on">
+          <p>15. She usually goes jogging ______ Sundays.</p>
+          <label><input type="radio" name="time15" value="on" /> On</label>
+          <label><input type="radio" name="time15" value="in" /> In</label>
+          <label><input type="radio" name="time15" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="at">
+          <p>16. I'll pick you up ______ noon.</p>
+          <label><input type="radio" name="time16" value="on" /> On</label>
+          <label><input type="radio" name="time16" value="in" /> In</label>
+          <label><input type="radio" name="time16" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="in">
+          <p>17. The project is due ______ two weeks.</p>
+          <label><input type="radio" name="time17" value="on" /> On</label>
+          <label><input type="radio" name="time17" value="in" /> In</label>
+          <label><input type="radio" name="time17" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="on">
+          <p>18. He's working ______ a special project ______ his birthday.</p>
+          <label><input type="radio" name="time18" value="on" /> On</label>
+          <label><input type="radio" name="time18" value="in" /> In</label>
+          <label><input type="radio" name="time18" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="at">
+          <p>19. Let's meet ______ the weekend.</p>
+          <label><input type="radio" name="time19" value="on" /> On</label>
+          <label><input type="radio" name="time19" value="in" /> In</label>
+          <label><input type="radio" name="time19" value="at" /> At</label>
+        </div>
+        <div class="question" data-answer="in">
+          <p>20. I love going for walks ______ autumn.</p>
+          <label><input type="radio" name="time20" value="on" /> On</label>
+          <label><input type="radio" name="time20" value="in" /> In</label>
+          <label><input type="radio" name="time20" value="at" /> At</label>
+        </div>
+      </form>
+
+      <button onclick="checkAnswers()" class="check-button">
+        Check Answers
+      </button>
+
+      <div id="results" class="hidden">
+        <p>Your Score: <span id="score">0</span> out of 40</p>
+        <p id="place-score">Place Exercises: 0/20</p>
+        <p id="time-score">Time Exercises: 0/20</p>
+        <button
+          onclick="resetQuiz()"
+          class="check-button bg-gray-600 hover:bg-gray-700 mt-4"
+        >
+          Try Again
+        </button>
+      </div>
+    </div>
+
+    <script>
+      /**
+       * Checks the user's answers for both place and time preposition exercises.
+       * Updates the UI to show correct/incorrect feedback and displays the score.
+       */
+      function checkAnswers() {
+        const placeQuestions = document.querySelectorAll(
+          "#place-exercises .question",
+        );
+        const timeQuestions = document.querySelectorAll(
+          "#time-exercises .question",
+        );
+        let placeCorrect = 0;
+        let timeCorrect = 0;
+
+        // Check Place Exercises
+        placeQuestions.forEach((question, index) => {
+          const correct = question.dataset.answer;
+          // Use `name="place${index + 1}"` because questions are now numbered 1-20
+          const selected = document.querySelector(
+            `input[name="place${index + 1}"]:checked`,
+          );
+
+          question.classList.remove("border-correct", "border-incorrect"); // Reset borders
+
+          if (selected) {
+            if (selected.value === correct) {
+              placeCorrect++;
+              question.classList.add("border-correct");
+            } else {
+              question.classList.add("border-incorrect");
+            }
+          } else {
+            // If no answer selected, mark as incorrect
+            question.classList.add("border-incorrect");
+          }
+        });
+
+        // Check Time Exercises
+        timeQuestions.forEach((question, index) => {
+          const correct = question.dataset.answer;
+          // Use `name="time${index + 1}"` because questions are now numbered 1-20
+          const selected = document.querySelector(
+            `input[name="time${index + 1}"]:checked`,
+          );
+
+          question.classList.remove("border-correct", "border-incorrect"); // Reset borders
+
+          if (selected) {
+            if (selected.value === correct) {
+              timeCorrect++;
+              question.classList.add("border-correct");
+            } else {
+              question.classList.add("border-incorrect");
+            }
+          } else {
+            // If no answer selected, mark as incorrect
+            question.classList.add("border-incorrect");
+          }
+        });
+
+        // Display results
+        document.getElementById("score").textContent =
+          placeCorrect + timeCorrect;
+        document.getElementById("place-score").textContent =
+          `Place Exercises: ${placeCorrect}/20`;
+        document.getElementById("time-score").textContent =
+          `Time Exercises: ${timeCorrect}/20`;
+        document.getElementById("results").classList.remove("hidden"); // Show results div
+      }
+
+      /**
+       * Resets the quiz by clearing selections and hiding results.
+       */
+      function resetQuiz() {
+        const allQuestions = document.querySelectorAll(".question");
+        allQuestions.forEach((question) => {
+          const radios = question.querySelectorAll('input[type="radio"]');
+          radios.forEach((radio) => (radio.checked = false));
+          question.classList.remove("border-correct", "border-incorrect"); // Remove feedback borders
+        });
+        document.getElementById("results").classList.add("hidden"); // Hide results div
+      }
+    </script>
+  </body>
+</html>
