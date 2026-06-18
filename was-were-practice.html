@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Was / Were / Did - Adventure!</title>
+    <style>
+      :root {
+        --primary: #4f46e5;
+        --secondary: #8b5cf6;
+        --success: #10b981;
+        --danger: #ef4444;
+        --background: #f3f4f6;
+        --card: #ffffff;
+        --text: #1f2937;
+        --light-bg: #eef2ff;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--background);
+        color: var(--text);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        overflow: hidden;
+      }
+
+      .main-container {
+        background-color: var(--card);
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        width: 90%;
+        max-width: 650px;
+        display: flex;
+        flex-direction: column;
+        max-height: 90vh;
+      }
+
+      /* --- Tabs Styling Mejorado --- */
+      .tabs {
+        display: flex;
+        border-bottom: 2px solid #e5e7eb;
+        border-radius: 20px 20px 0 0;
+        overflow: hidden;
+        background-color: #f9fafb;
+      }
+
+      .tab-btn {
+        flex: 1;
+        padding: 1.5rem 1rem; /* Más altas */
+        border: none;
+        background-color: transparent;
+        font-size: 1.4rem; /* Letra más grande */
+        font-weight: bold;
+        color: #6b7280;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px; /* Separación entre el icono y el texto */
+      }
+
+      .tab-btn:hover {
+        background-color: var(--light-bg);
+        color: var(--primary);
+      }
+
+      .tab-btn.active-tab {
+        background-color: var(--card);
+        color: var(--primary);
+        border-bottom: 6px solid var(--primary); /* Línea más gruesa y notoria */
+        font-size: 1.5rem; /* Un ligero aumento al estar activa */
+      }
+
+      /* --- Content Areas --- */
+      .tab-content {
+        display: none;
+        padding: 2.5rem;
+        overflow-y: auto;
+      }
+
+      .active-content {
+        display: block;
+      }
+
+      /* --- Guide/Theory Styling --- */
+      .guide-box {
+        background-color: var(--light-bg);
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        border-left: 5px solid var(--primary);
+      }
+
+      .guide-box h3 {
+        margin-top: 0;
+        color: var(--primary);
+        font-size: 1.4rem;
+      }
+
+      .guide-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .guide-table th,
+      .guide-table td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .guide-table th {
+        background-color: var(--primary);
+        color: white;
+        font-size: 1.1rem;
+      }
+      .guide-table td {
+        font-size: 1.1rem;
+      }
+
+      .highlight {
+        color: var(--danger);
+        font-weight: bold;
+      }
+      .success-text {
+        color: var(--success);
+        font-weight: bold;
+      }
+
+      /* --- Game Styling --- */
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        font-weight: bold;
+        font-size: 1.2rem;
+        color: var(--primary);
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 10px;
+        background-color: #e5e7eb;
+        border-radius: 5px;
+        margin-bottom: 2rem;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background-color: var(--success);
+        width: 0%;
+        transition: width 0.3s ease;
+      }
+
+      .question-box {
+        font-size: 2rem; /* Pregunta un poco más grande también */
+        margin-bottom: 2rem;
+        min-height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        text-align: center;
+      }
+
+      .blank {
+        display: inline-block;
+        width: 80px;
+        border-bottom: 4px solid var(--primary);
+        margin: 0 10px;
+        color: var(--primary);
+      }
+
+      .options {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+      }
+
+      .btn {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        font-size: 1.3rem; /* Botones de respuesta más grandes */
+        border-radius: 12px;
+        cursor: pointer;
+        transition:
+          transform 0.1s,
+          background-color 0.2s;
+        font-weight: bold;
+        flex: 1;
+        box-shadow: 0 4px 6px rgba(79, 70, 229, 0.3);
+      }
+
+      .btn:hover {
+        background-color: #4338ca;
+        transform: translateY(-2px);
+      }
+      .btn:active {
+        transform: translateY(2px);
+        box-shadow: none;
+      }
+
+      .correct {
+        background-color: var(--success) !important;
+      }
+      .incorrect {
+        background-color: var(--danger) !important;
+      }
+
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-10px);
+        }
+        75% {
+          transform: translateX(10px);
+        }
+      }
+
+      .shake {
+        animation: shake 0.4s;
+      }
+      .end-screen {
+        display: none;
+        text-align: center;
+      }
+
+      /* Custom Scrollbar for Guide */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main-container">
+      <div class="tabs">
+        <button
+          class="tab-btn active-tab"
+          onclick="switchTab('guide')"
+          id="btn-guide"
+        >
+          <span>📚</span> Grammar Guide
+        </button>
+        <button class="tab-btn" onclick="switchTab('game')" id="btn-game">
+          <span>🎮</span> Play Game
+        </button>
+      </div>
+
+      <div class="tab-content active-content" id="content-guide">
+        <h2
+          style="
+            margin-top: 0;
+            text-align: center;
+            color: var(--text);
+            font-size: 1.8rem;
+          "
+        >
+          The Golden Rule of the Past! ✨
+        </h2>
+
+        <div class="guide-box">
+          <h3>1. DID = Action (Acción) 🏃‍♂️</h3>
+          <p style="font-size: 1.1rem">
+            Usa <b>DID</b> cuando la pregunta tiene un
+            <b>verbo de acción</b> (jugar, comer, correr, ir).
+          </p>
+          <p style="font-size: 1.1rem">
+            <i>Fórmula:</i> Did + Persona + Verbo (normal)
+          </p>
+          <ul style="font-size: 1.1rem">
+            <li>
+              <span class="success-text">Did</span> you <b>play</b> tennis?
+            </li>
+            <li>Where <span class="success-text">did</span> she <b>go</b>?</li>
+            <li>What <span class="success-text">did</span> they <b>eat</b>?</li>
+          </ul>
+        </div>
+
+        <div
+          class="guide-box"
+          style="border-left-color: var(--secondary); background-color: #f5f3ff"
+        >
+          <h3 style="color: var(--secondary)">
+            2. WAS / WERE = State & Location 📍🎭
+          </h3>
+          <p style="font-size: 1.1rem">
+            Usa <b>WAS / WERE</b> para preguntar por emociones, descripciones o
+            lugares. <b>¡No hay otro verbo de acción!</b>
+          </p>
+          <p style="font-size: 1.1rem">
+            <i>Excepción:</i> Si el otro verbo termina en <b>-ing</b> (jugando,
+            comiendo), sí usas Was/Were.
+          </p>
+
+          <table class="guide-table">
+            <tr>
+              <th>WAS (I, He, She, It)</th>
+              <th>WERE (You, We, They)</th>
+            </tr>
+            <tr>
+              <td><span class="highlight">Was</span> he happy? (Emoción)</td>
+              <td><span class="highlight">Were</span> you at home? (Lugar)</td>
+            </tr>
+            <tr>
+              <td>
+                <span class="highlight">Was</span> the movie good? (Descripción)
+              </td>
+              <td><span class="highlight">Were</span> they tired? (Estado)</td>
+            </tr>
+            <tr>
+              <td>Where <span class="highlight">was</span> she? (Lugar)</td>
+              <td>
+                What <span class="highlight">were</span> you <b>doing</b>?
+                (Verbo -ing)
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <div
+          class="guide-box"
+          style="border-left-color: var(--danger); background-color: #fef2f2"
+        >
+          <h3 style="color: var(--danger)">
+            🚨 WHERE vs WERE: La trampa mental 🧠
+          </h3>
+          <p style="font-size: 1.1rem">
+            Suenan muy parecido, ¡pero son cosas totalmente distintas!
+          </p>
+          <ul style="font-size: 1.1rem">
+            <li><b>Where</b> = DÓNDE (Es una pregunta).</li>
+            <li><b>Were</b> = ESTABAS / ESTABAN (Es el verbo).</li>
+          </ul>
+          <p style="font-size: 1.1rem">💡 <i>Ejemplo de contraste:</i></p>
+          <p style="font-size: 1.2rem; text-align: center">
+            <b>Where</b> <span class="highlight">were</span> you? = ¿<b
+              >Dónde</b
+            >
+            <span class="highlight">estabas</span> tú?
+          </p>
+        </div>
+
+        <button
+          class="btn"
+          style="
+            width: 100%;
+            margin-top: 10px;
+            font-size: 1.4rem;
+            padding: 18px;
+          "
+          onclick="switchTab('game')"
+        >
+          Ready? Let's Play! 🎮
+        </button>
+      </div>
+
+      <div class="tab-content" id="content-game">
+        <div id="game-active-area">
+          <div class="header">
+            <span id="score-display">Score: 0</span>
+            <span id="counter-display">1 / 30</span>
+          </div>
+
+          <div class="progress-bar">
+            <div class="progress-fill" id="progress"></div>
+          </div>
+
+          <div class="question-box" id="question-text">Loading...</div>
+
+          <div class="options" id="options-container">
+            <button class="btn" onclick="checkAnswer('was')">Was</button>
+            <button class="btn" onclick="checkAnswer('were')">Were</button>
+            <button class="btn" onclick="checkAnswer('did')">Did</button>
+          </div>
+        </div>
+
+        <div class="end-screen" id="end-screen">
+          <h1 style="font-size: 3.5rem; margin-bottom: 10px">🎮 Excellent!</h1>
+          <h2
+            id="final-score"
+            style="color: var(--primary); margin-bottom: 30px; font-size: 2rem"
+          ></h2>
+          <p style="font-size: 1.5rem; margin-bottom: 30px">
+            You are mastering the past tense!
+          </p>
+          <button
+            class="btn"
+            onclick="restartGame()"
+            style="width: 100%; font-size: 1.5rem; padding: 18px"
+          >
+            Play Again
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Tab Switching Logic
+      function switchTab(tabId) {
+        // Update Buttons
+        document.getElementById("btn-guide").classList.remove("active-tab");
+        document.getElementById("btn-game").classList.remove("active-tab");
+        document.getElementById("btn-" + tabId).classList.add("active-tab");
+
+        // Update Content
+        document
+          .getElementById("content-guide")
+          .classList.remove("active-content");
+        document
+          .getElementById("content-game")
+          .classList.remove("active-content");
+        document
+          .getElementById("content-" + tabId)
+          .classList.add("active-content");
+      }
+
+      // Game Logic
+      const allQuestions = [
+        { text: "Where ___ you yesterday?", answer: "were" },
+        { text: "Where ___ you go yesterday?", answer: "did" },
+        { text: "___ they play soccer after school?", answer: "did" },
+        { text: "___ they at the park?", answer: "were" },
+        { text: "___ he happy with the result?", answer: "was" },
+        { text: "What ___ he say?", answer: "did" },
+        { text: "___ we invited to the party?", answer: "were" },
+        { text: "___ we have homework?", answer: "did" },
+        { text: "Where ___ the keys?", answer: "were" },
+        { text: "Why ___ she crying?", answer: "was" },
+        { text: "___ your friends at home?", answer: "were" },
+        { text: "___ your friends call you?", answer: "did" },
+        { text: "___ the test difficult?", answer: "was" },
+        { text: "___ you finish the test?", answer: "did" },
+        { text: "Who ___ you talking to?", answer: "were" },
+        { text: "Who ___ you call?", answer: "did" },
+        { text: "___ those apples sweet?", answer: "were" },
+        { text: "___ they buy those apples?", answer: "did" },
+        { text: "How ___ your weekend?", answer: "was" },
+        { text: "How ___ you make this cake?", answer: "did" },
+        { text: "___ the children playing outside?", answer: "were" },
+        { text: "___ the children play outside?", answer: "did" },
+        { text: "Where ___ he buy his shoes?", answer: "did" },
+        { text: "Where ___ he yesterday morning?", answer: "was" },
+        { text: "___ the windows open?", answer: "were" },
+        { text: "___ you sleep well?", answer: "did" },
+        { text: "___ the movie good?", answer: "was" },
+        { text: "___ your parents watch TV?", answer: "did" },
+        { text: "___ your parents tired?", answer: "were" },
+        { text: "___ it raining yesterday?", answer: "was" },
+      ];
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+      let questions = [];
+
+      function initGame() {
+        questions = [...allQuestions].sort(() => Math.random() - 0.5);
+        currentQuestionIndex = 0;
+        score = 0;
+        updateUI();
+      }
+
+      function updateUI() {
+        const q = questions[currentQuestionIndex];
+        const qText = q.text.replace("___", "<span class='blank'></span>");
+
+        document.getElementById("question-text").innerHTML = qText;
+        document.getElementById("score-display").innerText = `Score: ${score}`;
+        document.getElementById("counter-display").innerText =
+          `${currentQuestionIndex + 1} / ${questions.length}`;
+
+        const progressPct = (currentQuestionIndex / questions.length) * 100;
+        document.getElementById("progress").style.width = `${progressPct}%`;
+
+        const buttons = document.querySelectorAll("#options-container .btn");
+        buttons.forEach((btn) => {
+          btn.className = "btn";
+          btn.disabled = false;
+        });
+      }
+
+      function checkAnswer(selectedAnswer) {
+        const correctAnswer = questions[currentQuestionIndex].answer;
+        const buttons = document.querySelectorAll("#options-container .btn");
+
+        let selectedBtn;
+        buttons.forEach((btn) => {
+          btn.disabled = true;
+          if (btn.innerText.toLowerCase() === selectedAnswer) selectedBtn = btn;
+        });
+
+        if (selectedAnswer === correctAnswer) {
+          selectedBtn.classList.add("correct");
+          score += 10;
+          setTimeout(nextQuestion, 800);
+        } else {
+          selectedBtn.classList.add("incorrect");
+          document.getElementById("game-active-area").classList.add("shake");
+
+          buttons.forEach((btn) => {
+            if (btn.innerText.toLowerCase() === correctAnswer) {
+              btn.classList.add("correct");
+            }
+          });
+
+          setTimeout(() => {
+            document
+              .getElementById("game-active-area")
+              .classList.remove("shake");
+            nextQuestion();
+          }, 1500);
+        }
+        document.getElementById("score-display").innerText = `Score: ${score}`;
+      }
+
+      function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+          updateUI();
+        } else {
+          showEndScreen();
+        }
+      }
+
+      function showEndScreen() {
+        document.getElementById("game-active-area").style.display = "none";
+        document.getElementById("end-screen").style.display = "block";
+        document.getElementById("progress").style.width = `100%`;
+        document.getElementById("final-score").innerText =
+          `Final Score: ${score} / ${questions.length * 10}`;
+      }
+
+      function restartGame() {
+        document.getElementById("game-active-area").style.display = "block";
+        document.getElementById("end-screen").style.display = "none";
+        initGame();
+      }
+
+      // Start the game logic in the background
+      initGame();
+    </script>
+  </body>
+</html>
