@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Past Continuous Comic Stories</title>
+    <style>
+      /* Estilos generales y fondo dinámico */
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #74ebd5 0%, #9face6 100%);
+        color: #333;
+        margin: 0;
+        padding: 20px;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .main-title {
+        text-align: center;
+        color: #ffffff;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        font-size: 3em;
+        margin-bottom: 30px;
+      }
+
+      /* Estilos de las Pestañas (Tabs) */
+      .tab-container {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+      }
+      .tab-btn {
+        background-color: #ffffff;
+        border: 3px solid #ffffff;
+        border-radius: 15px;
+        padding: 12px 25px;
+        font-size: 1.2em;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Colores individuales para cada pestaña */
+      .tab-btn:nth-child(1) {
+        color: #e74c3c;
+      } /* Rojo */
+      .tab-btn:nth-child(2) {
+        color: #f39c12;
+      } /* Naranja */
+      .tab-btn:nth-child(3) {
+        color: #27ae60;
+      } /* Verde */
+      .tab-btn:nth-child(4) {
+        color: #8e44ad;
+      } /* Morado */
+
+      .tab-btn:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Estado Activo de las pestañas */
+      .tab-btn.active:nth-child(1) {
+        background-color: #e74c3c;
+        color: #fff;
+        border-color: #c0392b;
+      }
+      .tab-btn.active:nth-child(2) {
+        background-color: #f39c12;
+        color: #fff;
+        border-color: #d68910;
+      }
+      .tab-btn.active:nth-child(3) {
+        background-color: #27ae60;
+        color: #fff;
+        border-color: #1e8449;
+      }
+      .tab-btn.active:nth-child(4) {
+        background-color: #8e44ad;
+        color: #fff;
+        border-color: #732d91;
+      }
+
+      /* Contenido de la historia */
+      .tab-content {
+        display: none;
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 40px 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        animation: fadeIn 0.6s ease-in-out;
+      }
+      .tab-content.active {
+        display: block;
+      }
+
+      /* Animación suave al cambiar de pestaña */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(15px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .story-title {
+        margin-top: 0;
+        font-size: 2.2em;
+        text-align: center;
+        border-bottom: 3px dashed #eee;
+        padding-bottom: 15px;
+        margin-bottom: 30px;
+      }
+
+      /* Colores de títulos para que hagan juego con las pestañas */
+      #story1 .story-title {
+        color: #e74c3c;
+      }
+      #story2 .story-title {
+        color: #f39c12;
+      }
+      #story3 .story-title {
+        color: #27ae60;
+      }
+      #story4 .story-title {
+        color: #8e44ad;
+      }
+
+      .image-container {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .image-container img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        border: 5px solid #f8f9fa;
+      }
+      .story-text {
+        font-size: 1.3em;
+        line-height: 1.8;
+        color: #444;
+        text-align: justify;
+      }
+
+      /* Resaltador sutil para los verbos (ayuda visual para el estudiante) */
+      .story-text strong {
+        background-color: #fff3cd;
+        padding: 2px 6px;
+        border-radius: 5px;
+        color: #856404;
+        font-weight: 700;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="main-title">Comic Stories: Past Continuous</h1>
+
+      <div class="tab-container">
+        <button class="tab-btn active" onclick="openStory(event, 'story1')">
+          Story 1
+        </button>
+        <button class="tab-btn" onclick="openStory(event, 'story2')">
+          Story 2
+        </button>
+        <button class="tab-btn" onclick="openStory(event, 'story3')">
+          Story 3
+        </button>
+        <button class="tab-btn" onclick="openStory(event, 'story4')">
+          Story 4
+        </button>
+      </div>
+
+      <div id="story1" class="tab-content active">
+        <h2 class="story-title">The Interrupted Study</h2>
+        <div class="image-container">
+          <img src="1.png" alt="Alex studying in his dorm room" />
+        </div>
+        <div class="story-text">
+          <p>
+            It <strong>was</strong> 11:00 PM last night. Alex
+            <strong>was</strong> in his small dorm room. It
+            <strong>was</strong> raining softly outside. He
+            <strong>was</strong> preparing for a big history exam. He
+            <strong>was</strong> wearing his favorite blue hoodie and
+            headphones. The desk lamp <strong>was</strong> casting a soft light
+            on his notes. He <strong>was</strong> reading about the Industrial
+            Revolution. He didn't hear his phone buzz because he
+            <strong>was</strong> concentrating so hard.
+          </p>
+        </div>
+      </div>
+
+      <div id="story2" class="tab-content">
+        <h2 class="story-title">An Afternoon in the Park</h2>
+        <div class="image-container">
+          <img src="2.png" alt="People in the park" />
+        </div>
+        <div class="story-text">
+          <p>
+            It <strong>was</strong> a warm Saturday afternoon. The city park
+            <strong>was</strong> full of people. Everyone
+            <strong>was</strong> enjoying the good weather. While Sarah
+            <strong>was</strong> painting on her easel near the trees, two
+            children, Leo and Mia, <strong>were</strong> kicking a bright red
+            football nearby. They <strong>were</strong> laughing loudly. A few
+            meters away, an older man named Mr. Thompson
+            <strong>was</strong> sitting on a wooden bench. He
+            <strong>was</strong> reading a newspaper, completely relaxed.
+          </p>
+        </div>
+      </div>
+
+      <div id="story3" class="tab-content">
+        <h2 class="story-title">The Culinary Adventure</h2>
+        <div class="image-container">
+          <img src="3.png" alt="Maria cooking in the kitchen" />
+        </div>
+        <div class="story-text">
+          <p>
+            It <strong>was</strong> Tuesday evening. Maria
+            <strong>was</strong> in her kitchen. The lighting
+            <strong>was</strong> warm and cozy. She <strong>was</strong> cooking
+            a complicated recipe. She <strong>was</strong> whisking pancake
+            batter in a big ceramic bowl. Suddenly, her father entered the room.
+            He said something funny, and Maria <strong>was</strong> laughing
+            when the photo <strong>was</strong> taken. Flour dust
+            <strong>was</strong> floating in the air near her because she
+            <strong>was</strong> mixing so fast.
+          </p>
+        </div>
+      </div>
+
+      <div id="story4" class="tab-content">
+        <h2 class="story-title">The Misunderstanding</h2>
+        <div class="image-container">
+          <img src="4.png" alt="People walking in the rain" />
+        </div>
+        <div class="story-text">
+          <p>
+            It <strong>was</strong> raining hard on Monday afternoon. The park
+            <strong>was</strong> very wet. An older lady, Mrs. Davis,
+            <strong>was</strong> walking her small white dog. She
+            <strong>was</strong> wearing a bright yellow raincoat and holding a
+            big blue umbrella. At the same time, a young man
+            <strong>was</strong> jogging on the path. He wasn't wearing a
+            raincoat; he <strong>was</strong> wearing grey running clothes. They
+            <strong>were</strong> walking in opposite directions when they
+            passed each other on the wet path.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function openStory(evt, storyName) {
+        // Ocultar todos los contenidos de las historias
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
+          tabcontent[i].classList.remove("active");
+        }
+
+        // Quitar la clase "active" de todos los botones
+        tablinks = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].classList.remove("active");
+        }
+
+        // Mostrar la historia actual y añadir la clase "active" al botón clickeado
+        document.getElementById(storyName).style.display = "block";
+        document.getElementById(storyName).classList.add("active");
+        evt.currentTarget.classList.add("active");
+      }
+    </script>
+  </body>
+</html>
