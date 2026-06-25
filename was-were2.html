@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Past Continuous Comic Stories - Part 2</title>
+    <style>
+      /* Estilos generales y fondo dinámico (Tonos atardecer) */
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+        color: #333;
+        margin: 0;
+        padding: 20px;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .main-title {
+        text-align: center;
+        color: #ffffff;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        font-size: 3em;
+        margin-bottom: 30px;
+      }
+
+      /* Estilos de las Pestañas (Tabs) */
+      .tab-container {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+      }
+      .tab-btn {
+        background-color: #ffffff;
+        border: 3px solid #ffffff;
+        border-radius: 15px;
+        padding: 10px 20px;
+        font-size: 1.1em;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Colores individuales para cada pestaña */
+      .tab-btn:nth-child(1) {
+        color: #e74c3c;
+      }
+      .tab-btn:nth-child(2) {
+        color: #d35400;
+      }
+      .tab-btn:nth-child(3) {
+        color: #27ae60;
+      }
+      .tab-btn:nth-child(4) {
+        color: #2980b9;
+      }
+      .tab-btn:nth-child(5) {
+        color: #8e44ad;
+      }
+      .tab-btn:nth-child(6) {
+        color: #c0392b;
+      }
+
+      .tab-btn:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Estado Activo de las pestañas */
+      .tab-btn.active:nth-child(1) {
+        background-color: #e74c3c;
+        color: #fff;
+        border-color: #c0392b;
+      }
+      .tab-btn.active:nth-child(2) {
+        background-color: #d35400;
+        color: #fff;
+        border-color: #a04000;
+      }
+      .tab-btn.active:nth-child(3) {
+        background-color: #27ae60;
+        color: #fff;
+        border-color: #1e8449;
+      }
+      .tab-btn.active:nth-child(4) {
+        background-color: #2980b9;
+        color: #fff;
+        border-color: #1a5276;
+      }
+      .tab-btn.active:nth-child(5) {
+        background-color: #8e44ad;
+        color: #fff;
+        border-color: #732d91;
+      }
+      .tab-btn.active:nth-child(6) {
+        background-color: #c0392b;
+        color: #fff;
+        border-color: #922b21;
+      }
+
+      /* Contenido de la historia */
+      .tab-content {
+        display: none;
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 40px 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        animation: fadeIn 0.6s ease-in-out;
+      }
+      .tab-content.active {
+        display: block;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(15px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .story-title {
+        margin-top: 0;
+        font-size: 2.2em;
+        text-align: center;
+        border-bottom: 3px dashed #eee;
+        padding-bottom: 15px;
+        margin-bottom: 30px;
+      }
+
+      /* Colores de títulos */
+      #story5 .story-title {
+        color: #e74c3c;
+      }
+      #story6 .story-title {
+        color: #d35400;
+      }
+      #story7 .story-title {
+        color: #27ae60;
+      }
+      #story8 .story-title {
+        color: #2980b9;
+      }
+      #story9 .story-title {
+        color: #8e44ad;
+      }
+      #story10 .story-title {
+        color: #c0392b;
+      }
+
+      .image-container {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .image-container img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        border: 5px solid #f8f9fa;
+      }
+      .story-text {
+        font-size: 1.3em;
+        line-height: 1.8;
+        color: #444;
+        text-align: justify;
+      }
+
+      /* Resaltador sutil para los verbos */
+      .story-text strong {
+        background-color: #fff3cd;
+        padding: 2px 6px;
+        border-radius: 5px;
+        color: #856404;
+        font-weight: 700;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="main-title">Comic Stories: Level Up!</h1>
+
+      <!-- Botones de Pestañas -->
+      <div class="tab-container">
+        <button class="tab-btn active" onclick="openStory(event, 'story5')">
+          Story 5
+        </button>
+        <button class="tab-btn" onclick="openStory(event, 'story6')">
+          Story 6
+        </button>
+        <button class="tab-btn" onclick="openStory(event, 'story7')">
+          Story 7
+        </button>
+        <button class="tab-btn" onclick="openStory(event, 'story8')">
+          Story 8
+        </button>
+        <button class="tab-btn" onclick="openStory(event, 'story9')">
+          Story 9
+        </button>
+        <button class="tab-btn" onclick="openStory(event, 'story10')">
+          Story 10
+        </button>
+      </div>
+
+      <!-- HISTORIA 5: Dificultad Baja-Media -->
+      <div id="story5" class="tab-content active">
+        <h2 class="story-title">The Busy Cafe</h2>
+        <div class="image-container">
+          <img src="imagen5.png" alt="A busy coffee shop morning" />
+        </div>
+        <div class="story-text">
+          <p>
+            It <strong>was</strong> a hectic morning at the local café. The
+            barista, Tom, <strong>was</strong> making three cappuccinos at the
+            same time. The espresso machine <strong>was</strong> hissing loudly.
+            Two college students <strong>were</strong> sitting by the window;
+            they <strong>were</strong> typing rapidly on their laptops and
+            ignoring their cold coffees. Outside, a small dog
+            <strong>was</strong> waiting patiently, looking at the glass door.
+          </p>
+        </div>
+      </div>
+
+      <!-- HISTORIA 6: Dificultad Baja-Media (Negaciones y Ambiente) -->
+      <div id="story6" class="tab-content">
+        <h2 class="story-title">The Night Drive</h2>
+        <div class="image-container">
+          <img src="imagen6.png" alt="Car driving in the fog at night" />
+        </div>
+        <div class="story-text">
+          <p>
+            Sarah <strong>was</strong> driving home late last night. The
+            streetlights <strong>were</strong> flickering, and a thick fog
+            <strong>was</strong> rolling in from the ocean. She
+            <strong>wasn't</strong> driving fast because the visibility
+            <strong>was</strong> so poor. The radio <strong>was</strong> playing
+            a soft jazz tune. Suddenly, she saw something strange. A deer
+            <strong>was</strong> standing right in the middle of the road!
+          </p>
+        </div>
+      </div>
+
+      <!-- HISTORIA 7: Dificultad Media (Interrupciones con "While") -->
+      <div id="story7" class="tab-content">
+        <h2 class="story-title">The Surprise Party</h2>
+        <div class="image-container">
+          <img
+            src="imagen7.png"
+            alt="Friends surprising a man in his apartment"
+          />
+        </div>
+        <div class="story-text">
+          <p>
+            At 7:00 PM, Mark <strong>was</strong> opening the door to his
+            apartment. He <strong>was</strong> feeling very tired after a long
+            day at work. He <strong>was</strong> carrying a heavy box of
+            groceries. While he <strong>was</strong> reaching for the light
+            switch, all his friends jumped out from behind the furniture. They
+            <strong>were</strong> holding balloons and shouting "Surprise!"
+          </p>
+        </div>
+      </div>
+
+      <!-- HISTORIA 8: Dificultad Media-Alta (Vocabulario de ciencia e interrupciones) -->
+      <div id="story8" class="tab-content">
+        <h2 class="story-title">The Science Experiment</h2>
+        <div class="image-container">
+          <img
+            src="imagen8.png"
+            alt="Scientists in a lab with bubbling green liquid"
+          />
+        </div>
+        <div class="story-text">
+          <p>
+            In the chemistry lab, Professor Evans and his assistant
+            <strong>were</strong> conducting a dangerous experiment. The green
+            liquid in the flask <strong>was</strong> bubbling furiously and
+            emitting a strange purple smoke. The assistant
+            <strong>wasn't</strong> wearing his safety goggles properly. While
+            the professor <strong>was</strong> adding the final chemical drop,
+            the glass suddenly shattered.
+          </p>
+        </div>
+      </div>
+
+      <!-- HISTORIA 9: Dificultad Alta (Múltiples sujetos, misterio y coartadas) -->
+      <div id="story9" class="tab-content">
+        <h2 class="story-title">The Missing Necklace</h2>
+        <div class="image-container">
+          <img src="imagen9.png" alt="Detective questioning security guards" />
+        </div>
+        <div class="story-text">
+          <p>
+            The detective <strong>was</strong> investigating the museum theft.
+            He <strong>was</strong> interviewing the security guards. At the
+            exact time the diamond necklace disappeared, Guard A
+            <strong>was</strong> patrolling the second floor, but he
+            <strong>was</strong> listening to a podcast. Guard B
+            <strong>wasn't</strong> watching the security cameras; he
+            <strong>was</strong> arguing with his girlfriend on the phone.
+            Meanwhile, the thief <strong>was</strong> escaping through the air
+            vent.
+          </p>
+        </div>
+      </div>
+
+      <!-- HISTORIA 10: Dificultad Alta (Vocabulario avanzado, adjetivos complejos) -->
+      <!-- HISTORIA 10: Dificultad Alta (Past Continuous + Present Perfect) -->
+      <div id="story10" class="tab-content">
+        <h2 class="story-title">The Stormy Flight</h2>
+        <div class="image-container">
+          <img
+            src="imagen10.png"
+            alt="Airplane flying through dark storm clouds"
+          />
+        </div>
+        <div class="story-text">
+          <p>
+            Flight 405 <strong>was cruising</strong> at 30,000 feet. The
+            passengers <strong>were sleeping</strong> peacefully, and the flight
+            attendants <strong>were preparing</strong> the dinner service.
+            Outside, dark storm clouds <strong>were gathering</strong> quickly.
+            The pilot <strong>was trying</strong> to navigate around the worst
+            of the weather when he made an urgent announcement. He said,
+            "Attention passengers, we
+            <span
+              style="
+                background-color: #d1ecf1;
+                color: #0c5460;
+                padding: 2px 6px;
+                border-radius: 5px;
+                font-weight: 700;
+              "
+              >have flown</span
+            >
+            into a strong storm, and I
+            <span
+              style="
+                background-color: #d1ecf1;
+                color: #0c5460;
+                padding: 2px 6px;
+                border-radius: 5px;
+                font-weight: 700;
+              "
+              >have just turned on</span
+            >
+            the seatbelt sign. Please sit down." While the plane
+            <strong>was shaking</strong>, everyone quickly followed his
+            instructions.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- JavaScript para hacer funcionar las pestañas -->
+    <script>
+      function openStory(evt, storyName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
+          tabcontent[i].classList.remove("active");
+        }
+
+        tablinks = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].classList.remove("active");
+        }
+
+        document.getElementById(storyName).style.display = "block";
+        document.getElementById(storyName).classList.add("active");
+        evt.currentTarget.classList.add("active");
+      }
+    </script>
+  </body>
+</html>
