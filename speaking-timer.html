@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fluency Builder Workshop</title>
+    <style>
+      :root {
+        --primary: #4f46e5;
+        --secondary: #10b981;
+        --dark: #1f2937;
+        --light: #f3f4f6;
+        --danger: #ef4444;
+      }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--dark);
+        color: var(--light);
+        margin: 0;
+        padding: 20px;
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 20px;
+        height: 95vh;
+      }
+      .panel {
+        background-color: #374151;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        display: flex;
+        flex-direction: column;
+      }
+      h1,
+      h2,
+      h3 {
+        margin-top: 0;
+      }
+      .text-center {
+        text-align: center;
+      }
+
+      /* Timer Styles */
+      .timer-container {
+        text-align: center;
+        margin: 20px 0;
+        padding: 20px;
+        background: #1f2937;
+        border-radius: 12px;
+        border: 2px solid var(--primary);
+      }
+      .time-display {
+        font-size: 6rem;
+        font-weight: bold;
+        font-variant-numeric: tabular-nums;
+        margin: 10px 0;
+        color: var(--secondary);
+        transition: color 0.3s;
+      }
+      .time-display.urgent {
+        color: var(--danger);
+      }
+
+      button {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 1.1rem;
+        border-radius: 6px;
+        cursor: pointer;
+        margin: 5px;
+        transition:
+          transform 0.1s,
+          opacity 0.2s;
+      }
+      button:hover {
+        opacity: 0.9;
+      }
+      button:active {
+        transform: scale(0.95);
+      }
+      .btn-success {
+        background-color: var(--secondary);
+      }
+      .btn-danger {
+        background-color: var(--danger);
+      }
+
+      /* Prompts */
+      .prompt-box {
+        background: #4b5563;
+        padding: 25px;
+        border-radius: 8px;
+        font-size: 1.8rem;
+        text-align: center;
+        min-height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 15px;
+      }
+
+      /* Chunks Board */
+      .chunks-board {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        overflow-y: auto;
+      }
+      .chunk-card {
+        background: #1f2937;
+        border-left: 5px solid var(--primary);
+        padding: 15px;
+        border-radius: 6px;
+      }
+      .chunk-title {
+        color: var(--secondary);
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 5px;
+      }
+      .chunk-phrases {
+        font-size: 1.2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Main Activity Area -->
+    <div class="panel">
+      <h1>🗣️ Fluency Challenge</h1>
+
+      <!-- Controls -->
+      <div>
+        <button onclick="setMode('warmup')">1. Warm-Up (Name 3)</button>
+        <button onclick="setMode('fluency')">2. 4-3-2 Method</button>
+        <button onclick="setMode('questions')">3. Rapid Fire Questions</button>
+      </div>
+
+      <div class="prompt-box" id="promptDisplay">
+        Click a mode above to start!
+      </div>
+      <div class="text-center">
+        <button onclick="generatePrompt()" class="btn-success">
+          Next Prompt ➔
+        </button>
+      </div>
+
+      <!-- Timer -->
+      <div class="timer-container">
+        <h3>⏱️ Timer</h3>
+        <div class="time-display" id="timeDisplay">00:00</div>
+        <div>
+          <button onclick="setTimer(5)">5 Sec</button>
+          <button onclick="setTimer(120)">2 Min</button>
+          <button onclick="setTimer(180)">3 Min</button>
+          <button onclick="setTimer(240)">4 Min</button>
+          <br /><br />
+          <button onclick="toggleTimer()" id="startBtn" class="btn-success">
+            Start / Pause
+          </button>
+          <button onclick="resetTimer()" class="btn-danger">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Useful Phrases Side Panel -->
+    <div class="panel">
+      <h2>🛠️ Lifesaver Chunks</h2>
+      <p style="font-size: 0.9rem; color: #9ca3af">
+        Use these to buy time instead of translating!
+      </p>
+
+      <div class="chunks-board">
+        <div class="chunk-card">
+          <div class="chunk-title">Buying Time</div>
+          <div class="chunk-phrases">
+            • "Well, to be honest..."<br />
+            • "That's a good question..."<br />
+            • "Let me think about it..."
+          </div>
+        </div>
+        <div class="chunk-card" style="border-left-color: var(--secondary)">
+          <div class="chunk-title">Expressing Opinion</div>
+          <div class="chunk-phrases">
+            • "If you ask me..."<br />
+            • "From my point of view..."<br />
+            • "I've always thought that..."
+          </div>
+        </div>
+        <div class="chunk-card" style="border-left-color: #f59e0b">
+          <div class="chunk-title">When you forget a word</div>
+          <div class="chunk-phrases">
+            • "It's on the tip of my tongue..."<br />
+            • "What I mean is..."<br />
+            • "It's a kind of..."
+          </div>
+        </div>
+        <div class="chunk-card" style="border-left-color: #8b5cf6">
+          <div class="chunk-title">Agree / Disagree</div>
+          <div class="chunk-phrases">
+            • "I couldn't agree more."<br />
+            • "Absolutely!"<br />
+            • "I see your point, but..."
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Content Data
+      const prompts = {
+        warmup: [
+          "Name 3 things in a hospital",
+          "Name 3 action movies",
+          "Name 3 things you take on a trip",
+          "Name 3 unhealthy foods",
+          "Name 3 software programming languages",
+          "Name 3 things you do in the morning",
+          "Name 3 animals that are dangerous",
+        ],
+        fluency: [
+          "Describe your last vacation in detail.",
+          "Explain your daily routine as if I didn't know you.",
+          "Talk about a movie or series you really liked.",
+          "Describe your ideal weekend.",
+          "Talk about a hobby or skill you want to learn and why.",
+          "Explain what you do for a living.",
+        ],
+        questions: [
+          "Would you rather travel to the past or the future? Why?",
+          "What is the best way to relax after a stressful day?",
+          "Do you think technology makes us more isolated? Why?",
+          "If you could live anywhere in the world, where would it be?",
+          "What is a popular opinion that you disagree with?",
+        ],
+      };
+
+      let currentMode = "warmup";
+
+      function setMode(mode) {
+        currentMode = mode;
+        generatePrompt();
+        if (mode === "warmup") setTimer(5);
+        if (mode === "fluency") setTimer(240);
+        if (mode === "questions") setTimer(60);
+      }
+
+      function generatePrompt() {
+        const list = prompts[currentMode];
+        const random = list[Math.floor(Math.random() * list.length)];
+        document.getElementById("promptDisplay").innerText = random;
+      }
+
+      // Timer Logic
+      let timerInterval;
+      let timeRemaining = 0;
+      let isRunning = false;
+      let originalTime = 0;
+
+      const display = document.getElementById("timeDisplay");
+      const startBtn = document.getElementById("startBtn");
+
+      function updateDisplay() {
+        const minutes = Math.floor(timeRemaining / 60);
+        const seconds = timeRemaining % 60;
+        display.innerText = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+
+        if (timeRemaining <= 3 && timeRemaining > 0) {
+          display.classList.add("urgent");
+        } else {
+          display.classList.remove("urgent");
+        }
+      }
+
+      function setTimer(seconds) {
+        clearInterval(timerInterval);
+        isRunning = false;
+        timeRemaining = seconds;
+        originalTime = seconds;
+        updateDisplay();
+        startBtn.innerText = "Start";
+        display.classList.remove("urgent");
+      }
+
+      function toggleTimer() {
+        if (isRunning) {
+          clearInterval(timerInterval);
+          startBtn.innerText = "Resume";
+        } else {
+          if (timeRemaining === 0) return;
+          startBtn.innerText = "Pause";
+          timerInterval = setInterval(() => {
+            timeRemaining--;
+            updateDisplay();
+            if (timeRemaining <= 0) {
+              clearInterval(timerInterval);
+              isRunning = false;
+              startBtn.innerText = "Done!";
+              // Play a simple beep
+              const ctx = new (
+                window.AudioContext || window.webkitAudioContext
+              )();
+              const osc = ctx.createOscillator();
+              osc.connect(ctx.destination);
+              osc.start();
+              setTimeout(() => osc.stop(), 300);
+            }
+          }, 1000);
+        }
+        isRunning = !isRunning;
+      }
+
+      function resetTimer() {
+        setTimer(originalTime);
+      }
+    </script>
+  </body>
+</html>
