@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>English Practice: Everyday Conversations</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap");
+
+      :root {
+        --bg-color: #f0f8ff;
+        --sidebar-bg: #ff6b6b;
+        --sidebar-hover: #ff8787;
+        --main-bg: #ffffff;
+        --text-color: #2d3436;
+        --input-bg: #ffeaa7;
+        --btn-bg: #00cec9;
+        --btn-hover: #00b894;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Fredoka", sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      /* Sidebar Styles */
+      .sidebar {
+        width: 300px;
+        background-color: var(--sidebar-bg);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+        z-index: 10;
+        flex-shrink: 0;
+      }
+
+      .sidebar h2 {
+        padding: 20px;
+        text-align: center;
+        background-color: rgba(0, 0, 0, 0.1);
+        font-size: 1.5rem;
+      }
+
+      .nav-list {
+        list-style: none;
+        overflow-y: auto;
+        flex-grow: 1;
+      }
+
+      .nav-item {
+        padding: 15px 20px;
+        cursor: pointer;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        font-size: 1.1rem;
+        transition: background 0.3s;
+      }
+
+      .nav-item:hover,
+      .nav-item.active {
+        background-color: var(--sidebar-hover);
+        font-weight: 600;
+      }
+
+      .nav-item span {
+        display: block;
+        font-size: 0.8rem;
+        color: #ffeaa7;
+        margin-top: 5px;
+      }
+
+      /* Main Panel Styles */
+      .main-panel {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        background-color: var(--bg-color);
+        overflow-y: auto;
+      }
+
+      .header {
+        padding: 20px 40px;
+        background-color: white;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .header h1 {
+        color: var(--sidebar-bg);
+        margin-bottom: 5px;
+      }
+
+      .content-area {
+        padding: 40px;
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+        display: none; /* Oculto inicialmente */
+      }
+
+      /* Layout de dos columnas */
+      .two-columns {
+        display: flex;
+        gap: 30px;
+        align-items: flex-start;
+      }
+
+      .dialogue-column {
+        flex: 3;
+      }
+
+      .word-bank-column {
+        flex: 1;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        position: sticky;
+        top: 0;
+      }
+
+      .word-bank-column h3 {
+        color: #0984e3;
+        margin-bottom: 15px;
+        text-align: center;
+        border-bottom: 2px dashed #dfe6e9;
+        padding-bottom: 10px;
+      }
+
+      .word-bank-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+      }
+
+      .word-chip {
+        background-color: #74b9ff;
+        color: white;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 1.1rem;
+        font-weight: 500;
+        transition: all 0.3s;
+        box-shadow: 0 4px 6px rgba(116, 185, 255, 0.3);
+      }
+
+      .word-chip.crossed-out {
+        background-color: #dfe6e9;
+        color: #b2bec3;
+        text-decoration: line-through;
+        box-shadow: none;
+        opacity: 0.6;
+      }
+
+      .dialogue-box {
+        background-color: var(--main-bg);
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        line-height: 2.2;
+        font-size: 1.2rem;
+      }
+
+      .speaker {
+        font-weight: 600;
+        color: #0984e3;
+        margin-right: 10px;
+      }
+
+      .dialogue-line {
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 2px dashed #f1f2f6;
+      }
+
+      .dialogue-line:last-child {
+        border-bottom: none;
+      }
+
+      /* Input Styles */
+      input[type="text"] {
+        font-family: "Fredoka", sans-serif;
+        font-size: 1.1rem;
+        padding: 5px 10px;
+        border: 2px solid #dfe6e9;
+        border-radius: 8px;
+        background-color: var(--input-bg);
+        color: #2d3436;
+        width: 100px;
+        text-align: center;
+        outline: none;
+        transition: all 0.3s;
+      }
+
+      input[type="text"]:focus {
+        border-color: #74b9ff;
+        box-shadow: 0 0 10px rgba(116, 185, 255, 0.5);
+        background-color: white;
+      }
+
+      input.correct {
+        background-color: #55efc4;
+        border-color: #00b894;
+        color: #000;
+      }
+
+      input.incorrect {
+        background-color: #fab1a0;
+        border-color: #d63031;
+        color: #000;
+      }
+
+      /* Button Styles */
+      .btn-container {
+        margin-top: 30px;
+        text-align: center;
+      }
+
+      button {
+        font-family: "Fredoka", sans-serif;
+        background-color: var(--btn-bg);
+        color: white;
+        border: none;
+        padding: 15px 40px;
+        font-size: 1.3rem;
+        border-radius: 50px;
+        cursor: pointer;
+        box-shadow: 0 5px 15px rgba(0, 206, 201, 0.4);
+        transition:
+          transform 0.2s,
+          background 0.3s;
+      }
+
+      button:hover {
+        background-color: var(--btn-hover);
+        transform: translateY(-2px);
+      }
+
+      button:active {
+        transform: translateY(2px);
+      }
+
+      #score-display {
+        margin-top: 15px;
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #d63031;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <h2>Topics</h2>
+      <ul class="nav-list" id="nav-list">
+        <!-- Navigation items injected by JS -->
+      </ul>
+    </div>
+
+    <div class="main-panel">
+      <div class="header">
+        <h1 id="topic-title">Select a conversation</h1>
+        <p id="topic-desc">
+          Click on a topic in the sidebar to start practicing.
+        </p>
+      </div>
+
+      <div class="content-area" id="content-area">
+        <div class="two-columns">
+          <!-- Columna Izquierda: Conversación -->
+          <div class="dialogue-column">
+            <div class="dialogue-box" id="dialogue-box">
+              <!-- Dialogue injected by JS -->
+            </div>
+
+            <div class="btn-container">
+              <button onclick="checkAnswers()">Check Answers!</button>
+              <div id="score-display"></div>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Banco de palabras -->
+          <div class="word-bank-column">
+            <h3>Word Bank</h3>
+            <div class="word-bank-list" id="word-bank-list">
+              <!-- Words injected by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const conversations = [
+        {
+          id: 1,
+          title: "1. At the Cafe",
+          grammar: "Pronouns (Subject, Object, Possessive)",
+          dialogue: `
+                    <div class="dialogue-line"><span class="speaker">Alex:</span> Hi, [I] am Alex. What is [your] name?</div>
+                    <div class="dialogue-line"><span class="speaker">Sam:</span> [My] name is Sam. Nice to meet [you]. Is this [your] coffee?</div>
+                    <div class="dialogue-line"><span class="speaker">Alex:</span> No, [it] is not [mine]. [I] think [it] belongs to that lady over there. [She] ordered earlier.</div>
+                    <div class="dialogue-line"><span class="speaker">Sam:</span> Let [me] ask [her]. Excuse [me], is this [yours]?</div>
+                    <div class="dialogue-line"><span class="speaker">Lady:</span> Oh, yes, [it] is [mine]. Thank [you] so much!</div>
+                    <div class="dialogue-line"><span class="speaker">Sam:</span> [You] are welcome. Alex, do [we] have class now?</div>
+                    <div class="dialogue-line"><span class="speaker">Alex:</span> Yes, [our] teacher is waiting for [us]. [He] is very strict.</div>
+                    <div class="dialogue-line"><span class="speaker">Sam:</span> Okay, let's go. Oh, wait, where are [my] keys? Did [you] see [them]?</div>
+                    <div class="dialogue-line"><span class="speaker">Alex:</span> Yes, [they] are on the table next to [your] bag.</div>
+                `,
+        },
+        {
+          id: 2,
+          title: "2. Daily Routine",
+          grammar: "Simple Present",
+          dialogue: `
+                    <div class="dialogue-line"><span class="speaker">Leo:</span> What time [do] you usually wake up?</div>
+                    <div class="dialogue-line"><span class="speaker">Mia:</span> I [wake] up at 7 AM. Then, I [brush] my teeth and [take] a shower.</div>
+                    <div class="dialogue-line"><span class="speaker">Leo:</span> [Does] your brother wake up early too?</div>
+                    <div class="dialogue-line"><span class="speaker">Mia:</span> No, he [doesn't]. He [sleeps] until 9 AM. He [works] the night shift.</div>
+                    <div class="dialogue-line"><span class="speaker">Leo:</span> What [do] you eat for breakfast?</div>
+                    <div class="dialogue-line"><span class="speaker">Mia:</span> I usually [eat] cereal, but sometimes my mom [makes] pancakes.</div>
+                    <div class="dialogue-line"><span class="speaker">Leo:</span> I [don't] like cereal. I [prefer] eggs.</div>
+                    <div class="dialogue-line"><span class="speaker">Mia:</span> My cat [loves] eggs! She always [meows] when I [cook] them.</div>
+                    <div class="dialogue-line"><span class="speaker">Leo:</span> [Do] you walk to work every day?</div>
+                    <div class="dialogue-line"><span class="speaker">Mia:</span> Yes, I [walk] because it [is] close. It [takes] 10 minutes.</div>
+                    <div class="dialogue-line"><span class="speaker">Leo:</span> That [sounds] great. I always [drive] to my office.</div>
+                `,
+        },
+        {
+          id: 3,
+          title: "3. A Busy Office",
+          grammar: "Present Continuous",
+          dialogue: `
+                    <div class="dialogue-line"><span class="speaker">Tom:</span> Hey, what [are] you doing right now?</div>
+                    <div class="dialogue-line"><span class="speaker">Ann:</span> I [am] writing an email to the client. What [are] you working on?</div>
+                    <div class="dialogue-line"><span class="speaker">Tom:</span> I [am] trying to fix this code, but it [is] not working.</div>
+                    <div class="dialogue-line"><span class="speaker">Ann:</span> [Is] the server running properly?</div>
+                    <div class="dialogue-line"><span class="speaker">Tom:</span> Yes, it [is] running, but the database [is] crashing.</div>
+                    <div class="dialogue-line"><span class="speaker">Ann:</span> Look, the manager [is] walking this way.</div>
+                    <div class="dialogue-line"><span class="speaker">Tom:</span> Oh no, [is] he looking angry?</div>
+                    <div class="dialogue-line"><span class="speaker">Ann:</span> Yes, he [is] frowning. Why [are] those phones ringing so much?</div>
+                    <div class="dialogue-line"><span class="speaker">Tom:</span> The customers [are] complaining because the site is down.</div>
+                    <div class="dialogue-line"><span class="speaker">Ann:</span> We [are] having a terrible day.</div>
+                    <div class="dialogue-line"><span class="speaker">Tom:</span> I [am] drinking my coffee and pretending I [am] not panicking.</div>
+                    <div class="dialogue-line"><span class="speaker">Ann:</span> I [am] hoping the IT guy [is] fixing it soon.</div>
+                `,
+        },
+        {
+          id: 4,
+          title: "4. A Bad Weekend",
+          grammar: "Simple Past",
+          dialogue: `
+                    <div class="dialogue-line"><span class="speaker">Dan:</span> How [was] your weekend?</div>
+                    <div class="dialogue-line"><span class="speaker">Sue:</span> It [was] terrible! Everything [went] wrong.</div>
+                    <div class="dialogue-line"><span class="speaker">Dan:</span> What [happened]?</div>
+                    <div class="dialogue-line"><span class="speaker">Sue:</span> Well, I [woke] up late on Saturday. I [missed] my train.</div>
+                    <div class="dialogue-line"><span class="speaker">Dan:</span> Oh no. [Did] you catch the next one?</div>
+                    <div class="dialogue-line"><span class="speaker">Sue:</span> Yes, but I [forgot] my wallet at home. I [had] to go back.</div>
+                    <div class="dialogue-line"><span class="speaker">Dan:</span> That [sucked]! What [did] you do then?</div>
+                    <div class="dialogue-line"><span class="speaker">Sue:</span> I [stayed] home and [ordered] pizza. But the delivery guy [dropped] it!</div>
+                    <div class="dialogue-line"><span class="speaker">Dan:</span> I [didn't] know a weekend could be that bad.</div>
+                    <div class="dialogue-line"><span class="speaker">Sue:</span> I [cried] a little, then I [watched] a movie.</div>
+                    <div class="dialogue-line"><span class="speaker">Dan:</span> [Did] you enjoy the movie at least?</div>
+                    <div class="dialogue-line"><span class="speaker">Sue:</span> No, the power [went] out before it [finished]. I [went] to sleep early.</div>
+                `,
+        },
+        {
+          id: 5,
+          title: "5. The Weird Event",
+          grammar: "Past Continuous",
+          dialogue: `
+                    <div class="dialogue-line"><span class="speaker">Cop:</span> What [were] you doing at 8 PM last night?</div>
+                    <div class="dialogue-line"><span class="speaker">Bob:</span> I [was] watching TV, and my wife [was] reading a book.</div>
+                    <div class="dialogue-line"><span class="speaker">Cop:</span> [Were] you expecting any visitors?</div>
+                    <div class="dialogue-line"><span class="speaker">Bob:</span> No. While we [were] relaxing, the dog [was] barking outside.</div>
+                    <div class="dialogue-line"><span class="speaker">Cop:</span> What [was] the dog barking at?</div>
+                    <div class="dialogue-line"><span class="speaker">Bob:</span> I don't know. The wind [was] blowing very hard.</div>
+                    <div class="dialogue-line"><span class="speaker">Cop:</span> [Was] anyone walking on the street?</div>
+                    <div class="dialogue-line"><span class="speaker">Bob:</span> While I [was] looking out the window, a man [was] running away.</div>
+                    <div class="dialogue-line"><span class="speaker">Cop:</span> What [was] he wearing?</div>
+                    <div class="dialogue-line"><span class="speaker">Bob:</span> He [was] wearing a black jacket. He [was] carrying a bag.</div>
+                    <div class="dialogue-line"><span class="speaker">Cop:</span> While he [was] running, [was] he looking back?</div>
+                    <div class="dialogue-line"><span class="speaker">Bob:</span> Yes, he [was] looking over his shoulder. The streetlights [were] flickering.</div>
+                    <div class="dialogue-line"><span class="speaker">Cop:</span> We [were] patrolling the area, but we missed him.</div>
+                    <div class="dialogue-line"><span class="speaker">Bob:</span> My neighbors [were] having a party, so they didn't hear anything. They [were] playing loud music all night.</div>
+                `,
+        },
+        {
+          id: 6,
+          title: "6. Vacation Plans",
+          grammar: "Future (Will / Going to)",
+          dialogue: `
+                    <div class="dialogue-line"><span class="speaker">Kim:</span> What [are] you [going] to do this summer?</div>
+                    <div class="dialogue-line"><span class="speaker">Jon:</span> I [am] [going] to visit Italy!</div>
+                    <div class="dialogue-line"><span class="speaker">Kim:</span> That's amazing! What cities [will] you see?</div>
+                    <div class="dialogue-line"><span class="speaker">Jon:</span> I think I [will] go to Rome first.</div>
+                    <div class="dialogue-line"><span class="speaker">Kim:</span> It [will] be very hot there.</div>
+                    <div class="dialogue-line"><span class="speaker">Jon:</span> I know. I [am] [going] to pack a lot of shorts.</div>
+                    <div class="dialogue-line"><span class="speaker">Kim:</span> [Will] you eat a lot of pizza?</div>
+                    <div class="dialogue-line"><span class="speaker">Jon:</span> Of course! I [will] probably gain five pounds.</div>
+                    <div class="dialogue-line"><span class="speaker">Kim:</span> Where [are] you [going] to stay?</div>
+                    <div class="dialogue-line"><span class="speaker">Jon:</span> We [are] [going] to rent an Airbnb near the center.</div>
+                    <div class="dialogue-line"><span class="speaker">Kim:</span> I'm sure you [will] have a fantastic time.</div>
+                    <div class="dialogue-line"><span class="speaker">Jon:</span> Thanks! I [will] send you a postcard.</div>
+                    <div class="dialogue-line"><span class="speaker">Kim:</span> I [will] put it on my fridge. I [am] [going] to stay home and work.</div>
+                `,
+        },
+        {
+          id: 7,
+          title: "7. Life Experiences",
+          grammar: "Present Perfect",
+          dialogue: `
+                    <div class="dialogue-line"><span class="speaker">Ray:</span> Hey! I [have] not seen you in ages!</div>
+                    <div class="dialogue-line"><span class="speaker">Zoe:</span> I know! It [has] been so long.</div>
+                    <div class="dialogue-line"><span class="speaker">Ray:</span> [Have] you finished your university degree yet?</div>
+                    <div class="dialogue-line"><span class="speaker">Zoe:</span> Yes, I [have] already graduated.</div>
+                    <div class="dialogue-line"><span class="speaker">Ray:</span> Wow, congratulations! [Have] you found a job?</div>
+                    <div class="dialogue-line"><span class="speaker">Zoe:</span> Not yet. I [have] applied to five places, but nobody [has] called me back.</div>
+                    <div class="dialogue-line"><span class="speaker">Ray:</span> Don't worry, you [have] always been smart. Something will come up.</div>
+                    <div class="dialogue-line"><span class="speaker">Zoe:</span> Thanks. What about you? [Have] you traveled recently?</div>
+                    <div class="dialogue-line"><span class="speaker">Ray:</span> Yes, my wife and I [have] just returned from Japan.</div>
+                    <div class="dialogue-line"><span class="speaker">Zoe:</span> Amazing! I [have] never been to Asia. [Have] you eaten authentic sushi there?</div>
+                    <div class="dialogue-line"><span class="speaker">Ray:</span> Oh yes, we [have] eaten so much fish!</div>
+                    <div class="dialogue-line"><span class="speaker">Zoe:</span> [Has] your wife bought a lot of souvenirs?</div>
+                    <div class="dialogue-line"><span class="speaker">Ray:</span> Too many! She [has] spent all our savings.</div>
+                    <div class="dialogue-line"><span class="speaker">Zoe:</span> Well, you [have] made great memories.</div>
+                    <div class="dialogue-line"><span class="speaker">Ray:</span> True. We [have] taken hundreds of photos.</div>
+                `,
+        },
+      ];
+
+      const navList = document.getElementById("nav-list");
+
+      // Inicializar barra de navegación
+      conversations.forEach((conv, index) => {
+        const li = document.createElement("li");
+        li.className = "nav-item";
+        li.innerHTML = `${conv.title} <span>${conv.grammar}</span>`;
+        li.onclick = () => loadConversation(index, li);
+        navList.appendChild(li);
+      });
+
+      function loadConversation(index, activeElement) {
+        // Actualizar clase activa en el menú
+        document
+          .querySelectorAll(".nav-item")
+          .forEach((el) => el.classList.remove("active"));
+        activeElement.classList.add("active");
+
+        const conv = conversations[index];
+        document.getElementById("topic-title").innerText = conv.title;
+        document.getElementById("topic-desc").innerText =
+          `Focus: ${conv.grammar}`;
+        document.getElementById("score-display").innerText = "";
+
+        document.getElementById("content-area").style.display = "block";
+
+        let words = []; // Array para guardar las palabras del banco
+
+        // Transformar [palabras] en inputs y guardarlas en el array
+        let parsedDialogue = conv.dialogue.replace(
+          /\[(.*?)\]/g,
+          function (match, word) {
+            words.push(word.toLowerCase()); // Guardamos en minúsculas para el banco
+            return `<input type="text" data-answer="${word.toLowerCase()}" autocomplete="off">`;
+          },
+        );
+
+        document.getElementById("dialogue-box").innerHTML = parsedDialogue;
+
+        // Llenar el Word Bank
+        const wordBankList = document.getElementById("word-bank-list");
+        wordBankList.innerHTML = "";
+
+        // Desordenar las palabras aleatoriamente (Fisher-Yates simple)
+        words.sort(() => Math.random() - 0.5);
+
+        words.forEach((w) => {
+          const span = document.createElement("span");
+          span.className = "word-chip";
+          span.innerText = w;
+          wordBankList.appendChild(span);
+        });
+
+        // Añadir el listener en tiempo real a cada input creado
+        const inputs = document.querySelectorAll("#dialogue-box input");
+        inputs.forEach((input) => {
+          input.addEventListener("input", updateWordBank);
+        });
+      }
+
+      function updateWordBank() {
+        // Obtener todas las respuestas actuales escritas por el estudiante
+        const currentAnswers = Array.from(
+          document.querySelectorAll("#dialogue-box input"),
+        )
+          .map((input) => input.value.trim().toLowerCase())
+          .filter((val) => val !== "");
+
+        const chips = document.querySelectorAll(".word-chip");
+
+        // Reiniciamos todas las palabras tachadas
+        chips.forEach((chip) => chip.classList.remove("crossed-out"));
+
+        // Volvemos a tachar según lo que esté escrito (maneja palabras repetidas)
+        chips.forEach((chip) => {
+          const word = chip.innerText.toLowerCase();
+          const index = currentAnswers.indexOf(word);
+
+          // Si la palabra está en las respuestas escritas
+          if (index !== -1) {
+            chip.classList.add("crossed-out");
+            // Removemos esa instancia del array para que si hay palabras repetidas
+            // (ej. dos "it") requiera que el estudiante escriba ambas.
+            currentAnswers.splice(index, 1);
+          }
+        });
+      }
+
+      function checkAnswers() {
+        const inputs = document.querySelectorAll("#dialogue-box input");
+        let correctCount = 0;
+
+        inputs.forEach((input) => {
+          const correctAnswer = input.getAttribute("data-answer");
+          const studentAnswer = input.value.trim().toLowerCase();
+
+          input.classList.remove("correct", "incorrect");
+
+          if (studentAnswer === correctAnswer) {
+            input.classList.add("correct");
+            correctCount++;
+          } else {
+            input.classList.add("incorrect");
+          }
+        });
+
+        const scoreDisplay = document.getElementById("score-display");
+        scoreDisplay.innerText = `You got ${correctCount} out of ${inputs.length} correct!`;
+
+        if (correctCount === inputs.length) {
+          scoreDisplay.style.color = "#00b894";
+          scoreDisplay.innerText += " 🎉 Perfect Score!";
+        } else {
+          scoreDisplay.style.color = "#d63031";
+        }
+      }
+    </script>
+  </body>
+</html>
