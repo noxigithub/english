@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fluency Workshop - Class 1</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f7f6;
+        color: #2c3e50;
+        text-align: center;
+        margin: 0;
+        padding: 20px;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #2980b9;
+        margin-bottom: 5px;
+      }
+      p.subtitle {
+        color: #7f8c8d;
+        font-size: 14px;
+        margin-bottom: 30px;
+      }
+      .section {
+        margin-top: 30px;
+        padding-top: 30px;
+        border-top: 2px dashed #ecf0f1;
+      }
+      .btn {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 6px;
+        cursor: pointer;
+        margin: 10px;
+        transition: background 0.3s;
+      }
+      .btn:hover {
+        background-color: #2980b9;
+      }
+      .btn-danger {
+        background-color: #e74c3c;
+      }
+      .btn-danger:hover {
+        background-color: #c0392b;
+      }
+
+      /* Jam Minute Styles */
+      .timer-display {
+        font-size: 60px;
+        font-weight: bold;
+        color: #e67e22;
+        margin: 20px 0;
+        font-variant-numeric: tabular-nums;
+      }
+      .topic-box {
+        background: #ecf0f1;
+        padding: 20px;
+        border-radius: 8px;
+        font-size: 24px;
+        font-weight: bold;
+        margin: 20px auto;
+        min-height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        max-width: 600px;
+      }
+
+      /* Circumlocution Styles */
+      .card {
+        background: #fff;
+        border: 2px solid #34495e;
+        border-radius: 10px;
+        padding: 20px;
+        max-width: 350px;
+        margin: 20px auto;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      }
+      .target-word {
+        font-size: 32px;
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+      }
+      .taboo-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        border-top: 2px solid #ecf0f1;
+        padding-top: 15px;
+      }
+      .taboo-list li {
+        color: #e74c3c;
+        font-size: 20px;
+        font-weight: bold;
+        margin: 8px 0;
+        text-transform: uppercase;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Fluency Workshop - Class 1</h1>
+      <p class="subtitle">
+        Focus: Uninterrupted speaking & bypassing vocabulary blocks
+      </p>
+
+      <div class="section">
+        <h2>Activity 1: The 60-Second Jam</h2>
+        <p>
+          Speak about the topic for 1 minute without stopping or correcting
+          yourself.
+        </p>
+
+        <div class="topic-box" id="topicDisplay">
+          Click "New Topic" to start
+        </div>
+
+        <button class="btn" onclick="generateTopic()">New Topic</button>
+
+        <div class="timer-display" id="timerDisplay">01:00</div>
+
+        <button
+          class="btn btn-danger"
+          id="startTimerBtn"
+          onclick="startTimer()"
+        >
+          Start Timer
+        </button>
+        <button class="btn" onclick="resetTimer()">Reset Timer</button>
+      </div>
+
+      <div class="section">
+        <h2>Activity 2: Circumlocution (Taboo)</h2>
+        <p>Explain the top word to your teacher WITHOUT using the red words.</p>
+
+        <div class="card" id="tabooCard">
+          <div class="target-word" id="targetWord">???</div>
+          <ul class="taboo-list" id="tabooList">
+            <li>-</li>
+            <li>-</li>
+            <li>-</li>
+            <li>-</li>
+          </ul>
+        </div>
+
+        <button class="btn" onclick="nextTabooCard()">Next Card</button>
+      </div>
+    </div>
+
+    <script>
+      // --- DATA FOR JAM MINUTE ---
+      const topics = [
+        "What is a hobby or skill you would love to learn and why?",
+        "Describe your favorite festival or holiday celebration in your country.",
+        "If you could travel back in time to any era, where would you go?",
+        "Talk about a time when you had to overcome a difficult challenge.",
+        "Do you prefer eating out at restaurants or cooking at home? Explain your choice.",
+        "Describe a typical day at your current job or school.",
+        "What do you think is the most important invention of the 21st century?",
+        "How do you usually handle stress or relax after a busy day?",
+        "Talk about a book that changed your perspective on something.",
+        "If you won the lottery tomorrow, what are the first three things you would do?",
+        "Describe the best gift you have ever received or given.",
+        "What are the pros and cons of using social media every day?",
+        "Explain how you stay healthy and active in your daily life.",
+        "Who is a historical figure you admire, and what would you ask them?",
+        "Describe a memorable dining experience you had at a restaurant.",
+        "What advice would you give to your younger self?",
+        "Do you think technology makes our lives simpler or more complicated?",
+        "Talk about your favorite childhood memory.",
+        "If you could live in any other country for a year, which one would you choose?",
+        "What is your biggest goal for the next five years?",
+      ];
+
+      // --- DATA FOR CIRCUMLOCUTION (TABOO) ---
+      const tabooCards = [
+        {
+          word: "HOSPITAL",
+          taboo: ["Doctor", "Nurse", "Sick", "Bed", "Medicine"],
+        },
+        {
+          word: "RESTAURANT",
+          taboo: ["Food", "Eat", "Waiter", "Menu", "Table"],
+        },
+        {
+          word: "SMARTPHONE",
+          taboo: ["Call", "Screen", "Internet", "Apple", "Phone"],
+        },
+        { word: "BEACH", taboo: ["Sand", "Ocean", "Sun", "Swim", "Water"] },
+        {
+          word: "AIRPORT",
+          taboo: ["Plane", "Fly", "Ticket", "Luggage", "Travel"],
+        },
+        {
+          word: "TEACHER",
+          taboo: ["School", "Student", "Learn", "Class", "Book"],
+        },
+        { word: "DOG", taboo: ["Cat", "Pet", "Bark", "Animal", "Walk"] },
+        { word: "MONEY", taboo: ["Buy", "Pay", "Cash", "Bank", "Coin"] },
+      ];
+
+      // --- LOGIC: JAM MINUTE ---
+      let timerInterval;
+      let timeLeft = 60;
+      let isRunning = false;
+
+      function generateTopic() {
+        const randomIndex = Math.floor(Math.random() * topics.length);
+        document.getElementById("topicDisplay").innerText = topics[randomIndex];
+        resetTimer();
+      }
+
+      function updateTimerDisplay() {
+        let seconds = timeLeft % 60;
+        let formattedSeconds = seconds < 10 ? "0" + seconds : seconds;
+        document.getElementById("timerDisplay").innerText =
+          `00:${formattedSeconds}`;
+      }
+
+      function startTimer() {
+        if (isRunning) return;
+        isRunning = true;
+        document.getElementById("startTimerBtn").innerText = "Running...";
+
+        timerInterval = setInterval(() => {
+          if (timeLeft > 0) {
+            timeLeft--;
+            updateTimerDisplay();
+          } else {
+            clearInterval(timerInterval);
+            isRunning = false;
+            document.getElementById("startTimerBtn").innerText = "Start Timer";
+            document.getElementById("timerDisplay").innerText = "TIME'S UP!";
+          }
+        }, 1000);
+      }
+
+      function resetTimer() {
+        clearInterval(timerInterval);
+        isRunning = false;
+        timeLeft = 60;
+        updateTimerDisplay();
+        document.getElementById("startTimerBtn").innerText = "Start Timer";
+      }
+
+      // --- LOGIC: CIRCUMLOCUTION ---
+      let usedCards = [];
+
+      function nextTabooCard() {
+        if (usedCards.length === tabooCards.length) {
+          usedCards = []; // Reset when all cards are used
+        }
+
+        let availableCards = tabooCards.filter(
+          (card) => !usedCards.includes(card),
+        );
+        let randomIndex = Math.floor(Math.random() * availableCards.length);
+        let selectedCard = availableCards[randomIndex];
+
+        usedCards.push(selectedCard);
+
+        document.getElementById("targetWord").innerText = selectedCard.word;
+
+        const tabooListElement = document.getElementById("tabooList");
+        tabooListElement.innerHTML = ""; // clear current list
+
+        selectedCard.taboo.forEach((word) => {
+          let li = document.createElement("li");
+          li.innerText = word;
+          tabooListElement.appendChild(li);
+        });
+      }
+
+      // Initialize with default states
+      updateTimerDisplay();
+    </script>
+  </body>
+</html>
