@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interactive Conversation Simulator - Extended</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #e5ddd5;
+        color: #333;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+      }
+      .phone-container {
+        width: 100%;
+        max-width: 600px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 90vh;
+      }
+      .header {
+        background-color: #075e54;
+        color: white;
+        padding: 20px;
+        text-align: center;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .header select {
+        padding: 8px;
+        border-radius: 5px;
+        border: none;
+        font-size: 1em;
+        background-color: #128c7e;
+        color: white;
+        cursor: pointer;
+      }
+      .chat-area {
+        flex-grow: 1;
+        padding: 20px;
+        overflow-y: auto;
+        background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png");
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+      .message-row {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+      }
+      .message.received {
+        background-color: white;
+        align-self: flex-start;
+        padding: 12px 18px;
+        border-radius: 0 15px 15px 15px;
+        max-width: 80%;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        font-size: 1.1em;
+      }
+      .hint-box {
+        align-self: flex-end;
+        background-color: #dcf8c6;
+        padding: 15px;
+        border-radius: 15px 0 15px 15px;
+        max-width: 80%;
+        margin-top: 10px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        border-left: 5px solid #25d366;
+      }
+      .hint-title {
+        font-size: 0.85em;
+        color: #075e54;
+        font-weight: bold;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+      }
+      .controls {
+        background-color: #f0f0f0;
+        padding: 15px;
+        text-align: center;
+        border-top: 1px solid #ccc;
+      }
+      button {
+        background-color: #128c7e;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        font-size: 1.1em;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      button:hover {
+        background-color: #075e54;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="phone-container">
+      <div class="header">
+        <span style="font-size: 1.2em; font-weight: bold" id="chat-title"
+          >Chat con...</span
+        >
+        <select id="scenario-selector" onchange="loadScenario()">
+          <option value="wife">Wife (Cotidianidad)</option>
+          <option value="friend">Friend (Social)</option>
+          <option value="business">Client (Negocios)</option>
+        </select>
+      </div>
+
+      <div class="chat-area" id="chat-area">
+        <!-- Los mensajes aparecerán aquí dinámicamente -->
+      </div>
+
+      <div class="controls">
+        <button id="next-btn" onclick="nextMessage()">Siguiente Mensaje</button>
+      </div>
+    </div>
+
+    <script>
+      const scenarios = {
+        wife: [
+          {
+            speaker: "Wife",
+            text: "Hey! How was work today? You look a bit tired.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Past Simple</strong> + <em>'Well, to be honest...'</em>",
+          },
+          {
+            speaker: "Wife",
+            text: "Did anything specific happen at the office?",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Past Simple / Continuous</strong> + <em>'Actually, what I mean is...'</em>",
+          },
+          {
+            speaker: "Wife",
+            text: "Oh, I see. What do you want for dinner? I don't feel like cooking today.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Future Simple</strong> + <em>'Sort out'</em>",
+          },
+          {
+            speaker: "Wife",
+            text: "Pizza sounds good. By the way, are we still going to your parents' house this weekend?",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Present Continuous (Future meaning)</strong> + <em>'Bring up'</em>",
+          },
+          {
+            speaker: "Wife",
+            text: "Okay. I was thinking we should buy them a gift. What do you think?",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Present Simple</strong> + <em>'On top of that...'</em>",
+          },
+          {
+            speaker: "Wife",
+            text: "True. Have you checked the prices for that coffee machine they wanted?",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Present Perfect</strong> + <em>'Follow up'</em>",
+          },
+          {
+            speaker: "Wife",
+            text: "Can you search for it online right now while I order the food?",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Present Continuous</strong> + <em>'Besides...'</em>",
+          },
+          {
+            speaker: "Wife",
+            text: "Perfect. Oh, I forgot to tell you, the plumber called earlier.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Past Simple</strong> + <em>'Deal with'</em>",
+          },
+          {
+            speaker: "Wife",
+            text: "He said he'll come tomorrow morning to fix the sink. Will you be here?",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Future Simple</strong> + <em>'Look forward to'</em> (puedes usarlo con sarcasmo)",
+          },
+          {
+            speaker: "Wife",
+            text: "Alright, the food is ordered. It arrives in 30 minutes.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Present Simple</strong> + <em>'Catch up'</em>",
+          },
+          {
+            speaker: "Wife",
+            text: "Also, remember the dog needs to go to the vet next week for his vaccines.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Future Simple</strong> + <em>'Write down'</em>",
+          },
+          {
+            speaker: "Wife",
+            text: "Thanks, you're the best. I'm going to set the table.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Present Continuous</strong> + Despedida natural",
+          },
+        ],
+        friend: [
+          {
+            speaker: "Old Friend",
+            text: "Hey man! Long time no see. What have you been up to lately?",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Present Perfect</strong> + <em>'Catch up'</em>",
+          },
+          {
+            speaker: "Old Friend",
+            text: "Wow, sounds busy! Are you still playing tennis on weekends?",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Present Simple</strong> + <em>'To be honest...'</em>",
+          },
+          {
+            speaker: "Old Friend",
+            text: "That's a shame. We should definitely play a match soon.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Future Simple</strong> + <em>'Look forward to'</em>",
+          },
+          {
+            speaker: "Old Friend",
+            text: "Do you remember that tournament we went to last year?",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Past Simple</strong> + <em>'Bring up'</em>",
+          },
+          {
+            speaker: "Old Friend",
+            text: "It was crazy when it started raining out of nowhere!",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Past Continuous</strong> + <em>'Actually...'</em>",
+          },
+          {
+            speaker: "Old Friend",
+            text: "By the way, have you talked to Mark recently?",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Present Perfect</strong> + <em>'Follow up'</em>",
+          },
+          {
+            speaker: "Old Friend",
+            text: "He is moving to a new city next month for a new job.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Present Continuous</strong> + <em>'On top of that...'</em>",
+          },
+          {
+            speaker: "Old Friend",
+            text: "We are planning a farewell party for him. Can you make it?",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Future Simple</strong> + <em>'Sort out'</em>",
+          },
+          {
+            speaker: "Old Friend",
+            text: "It will probably be on the 15th. I'll send you the details later.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Future Simple</strong> + <em>'Besides...'</em>",
+          },
+          {
+            speaker: "Old Friend",
+            text: "Did you finally buy that motorcycle you were talking about?",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Past Simple</strong> + <em>'Well, the truth is...'</em>",
+          },
+          {
+            speaker: "Old Friend",
+            text: "Nice! We definitely need to grab a beer this Friday.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Present Simple</strong> + <em>'Hang out'</em>",
+          },
+          {
+            speaker: "Old Friend",
+            text: "Awesome. Send me a message when you finish work.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Present Simple</strong> + Despedida informal",
+          },
+        ],
+        business: [
+          {
+            speaker: "Client",
+            text: "Hello. Can we get an update on the new marketing project?",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Present Perfect</strong> + <em>'Follow up'</em>",
+          },
+          {
+            speaker: "Client",
+            text: "We really need to resolve the budget issue before Friday.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Future Simple</strong> + <em>'Sort out'</em> + <em>'On top of that...'</em>",
+          },
+          {
+            speaker: "Client",
+            text: "Excellent. How does your team usually handle these sudden changes?",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Present Simple</strong> + <em>'Look forward to'</em>",
+          },
+          {
+            speaker: "Client",
+            text: "I see. However, our CEO complained about the initial delay yesterday.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Past Simple</strong> + <em>'Deal with'</em> o <em>'To be honest...'</em>",
+          },
+          {
+            speaker: "Client",
+            text: "What exactly caused the bottleneck in the design phase?",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Past Simple / Continuous</strong> + <em>'Actually, what I mean is...'</em>",
+          },
+          {
+            speaker: "Client",
+            text: "Have we implemented a new strategy to avoid this in the future?",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Present Perfect</strong> + <em>'Bring up'</em>",
+          },
+          {
+            speaker: "Client",
+            text: "Good to hear. Are the developers working on the final version right now?",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Present Continuous</strong> + <em>'Besides...'</em>",
+          },
+          {
+            speaker: "Client",
+            text: "When do you think the final presentation will be 100% ready?",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Future Simple</strong> + <em>'Wrap up'</em>",
+          },
+          {
+            speaker: "Client",
+            text: "Please make sure to send me the draft by tomorrow morning.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Future Simple</strong> + <em>'Point out'</em>",
+          },
+          {
+            speaker: "Client",
+            text: "One last thing, we are considering hiring an external consultant for the review.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Present Continuous</strong> + <em>'Look into'</em>",
+          },
+          {
+            speaker: "Client",
+            text: "I will email you their contact information later today.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Present Simple</strong> + <em>'Reach out'</em>",
+          },
+          {
+            speaker: "Client",
+            text: "Thank you for your hard work and transparency. Let's talk on Monday.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Present Simple</strong> + Despedida formal",
+          },
+        ],
+      };
+
+      let currentScenario = "wife";
+      let currentStep = 0;
+
+      function loadScenario() {
+        const selector = document.getElementById("scenario-selector");
+        currentScenario = selector.value;
+        currentStep = 0;
+
+        const titleElement = document.getElementById("chat-title");
+        if (currentScenario === "wife")
+          titleElement.innerText = "Chat con Esposa";
+        if (currentScenario === "friend")
+          titleElement.innerText = "Chat con Amigo";
+        if (currentScenario === "business")
+          titleElement.innerText = "Chat de Negocios";
+
+        document.getElementById("chat-area").innerHTML = "";
+        document.getElementById("next-btn").innerText = "Empezar Conversación";
+        document.getElementById("next-btn").style.display = "inline-block";
+      }
+
+      function nextMessage() {
+        const chatArea = document.getElementById("chat-area");
+        const data = scenarios[currentScenario];
+
+        if (currentStep < data.length) {
+          const stepData = data[currentStep];
+          document.getElementById("next-btn").innerText = "Siguiente Mensaje";
+
+          const row = document.createElement("div");
+          row.className = "message-row";
+
+          const messageDiv = document.createElement("div");
+          messageDiv.className = "message received";
+          messageDiv.innerHTML = `<strong>${stepData.speaker}:</strong> ${stepData.text}`;
+
+          const hintDiv = document.createElement("div");
+          hintDiv.className = "hint-box";
+          hintDiv.innerHTML = `
+                    <div class="hint-title">${stepData.hintTitle}</div>
+                    <div>${stepData.hint}</div>
+                `;
+
+          row.appendChild(messageDiv);
+          chatArea.appendChild(row);
+
+          hintDiv.style.display = "none";
+          row.appendChild(hintDiv);
+
+          setTimeout(() => {
+            hintDiv.style.display = "block";
+            chatArea.scrollTop = chatArea.scrollHeight;
+          }, 800);
+
+          currentStep++;
+
+          if (currentStep >= data.length) {
+            document.getElementById("next-btn").innerText =
+              "Fin del Chat (Cambia arriba)";
+          }
+        }
+      }
+
+      window.onload = loadScenario;
+    </script>
+  </body>
+</html>
