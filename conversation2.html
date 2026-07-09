@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat Simulator with Audio Notes</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #e5ddd5;
+        color: #333;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+      }
+      .phone-container {
+        width: 100%;
+        max-width: 600px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 90vh;
+      }
+      .header {
+        background-color: #075e54;
+        color: white;
+        padding: 20px;
+        text-align: center;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .header select {
+        padding: 8px;
+        border-radius: 5px;
+        border: none;
+        font-size: 1em;
+        background-color: #128c7e;
+        color: white;
+        cursor: pointer;
+      }
+      .chat-area {
+        flex-grow: 1;
+        padding: 20px;
+        overflow-y: auto;
+        background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png");
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+      .message-row {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+      }
+      .message.received {
+        background-color: white;
+        align-self: flex-start;
+        padding: 12px 18px;
+        border-radius: 0 15px 15px 15px;
+        max-width: 80%;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        font-size: 1.1em;
+      }
+      .message.audio {
+        background-color: #e1f5fe;
+        border-left: 5px solid #0288d1;
+      }
+      .hint-box {
+        align-self: flex-end;
+        background-color: #dcf8c6;
+        padding: 15px;
+        border-radius: 15px 0 15px 15px;
+        max-width: 80%;
+        margin-top: 10px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        border-left: 5px solid #25d366;
+      }
+      .hint-title {
+        font-size: 0.85em;
+        color: #075e54;
+        font-weight: bold;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+      }
+      .controls {
+        background-color: #f0f0f0;
+        padding: 15px;
+        text-align: center;
+        border-top: 1px solid #ccc;
+      }
+      .action-btn {
+        background-color: #128c7e;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        font-size: 1.1em;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        margin: 5px;
+      }
+      .action-btn:hover {
+        background-color: #075e54;
+      }
+      .play-btn {
+        background-color: #0288d1;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 1.2em;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+      }
+      .transcript-btn {
+        background: none;
+        border: none;
+        color: #0288d1;
+        text-decoration: underline;
+        font-size: 0.8em;
+        cursor: pointer;
+        margin-top: 8px;
+        padding: 0;
+      }
+      .transcript {
+        display: none;
+        font-style: italic;
+        color: #555;
+        margin-top: 10px;
+        font-size: 0.9em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="phone-container">
+      <div class="header">
+        <span style="font-size: 1.2em; font-weight: bold" id="chat-title"
+          >Chat con...</span
+        >
+        <select id="scenario-selector" onchange="loadScenario()">
+          <option value="vet">Veterinario (Mascota)</option>
+          <option value="mechanic">Mecánico (Auto)</option>
+          <option value="travel">Anfitrión (Viaje a Francia)</option>
+        </select>
+      </div>
+
+      <div class="chat-area" id="chat-area">
+        <!-- Los mensajes aparecerán aquí -->
+      </div>
+
+      <div class="controls">
+        <button class="action-btn" id="next-btn" onclick="nextMessage()">
+          Siguiente Mensaje
+        </button>
+      </div>
+    </div>
+
+    <script>
+      const scenarios = {
+        vet: [
+          {
+            type: "text",
+            speaker: "Vet Clinic",
+            text: "Hello! We finally got the blood test results for your dog.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Present Perfect</strong> + <em>'Find out'</em>",
+          },
+          {
+            type: "audio",
+            speaker: "Vet Clinic",
+            text: "The good news is that his general health is great, but we really need to talk about his diet. He has been eating too much fat.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Past Simple</strong> + <em>'To be honest...'</em> (Admite qué le diste de comer)",
+          },
+          {
+            type: "text",
+            speaker: "Vet Clinic",
+            text: "Have you been giving him human food recently?",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Present Continuous</strong> + <em>'Actually, what I mean is...'</em>",
+          },
+          {
+            type: "text",
+            speaker: "Vet Clinic",
+            text: "We need to put him on a strict diet starting today.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Future Simple</strong> + <em>'Look after'</em>",
+          },
+          {
+            type: "audio",
+            speaker: "Vet Clinic",
+            text: "I will send the new meal plan to your email in a few minutes. Please check it and let me know if you understand the portions.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Future Simple</strong> + <em>'Go over (revisar)'</em>",
+          },
+          {
+            type: "text",
+            speaker: "Vet Clinic",
+            text: "Do you have any immediate questions about the new kibble?",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Present Simple</strong> + <em>'Bring up'</em>",
+          },
+          {
+            type: "text",
+            speaker: "Vet Clinic",
+            text: "Great. See you next month for his follow-up check.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: Despedida natural + <em>'Look forward to'</em>",
+          },
+        ],
+        mechanic: [
+          {
+            type: "text",
+            speaker: "Mechanic",
+            text: "Good morning! We are inspecting your car right now.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Present Continuous</strong> + <em>'Check out'</em>",
+          },
+          {
+            type: "audio",
+            speaker: "Mechanic",
+            text: "We found the issue with the clutch. It was just a sensor error, but we also noticed the engine coolant is leaking.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Past Simple</strong> + <em>'Figure out'</em>",
+          },
+          {
+            type: "text",
+            speaker: "Mechanic",
+            text: "Have you had problems shifting gears lately while driving?",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Present Perfect</strong> + <em>'Well, to be honest...'</em>",
+          },
+          {
+            type: "text",
+            speaker: "Mechanic",
+            text: "We are replacing the sensor and fixing the leak as we speak.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Present Simple</strong> + <em>'Sort out'</em>",
+          },
+          {
+            type: "audio",
+            speaker: "Mechanic",
+            text: "The repair will take a couple of hours. We will call you when it's completely ready to go.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Future Simple</strong> + <em>'Pick up'</em>",
+          },
+          {
+            type: "text",
+            speaker: "Mechanic",
+            text: "Do you need us to check anything else while it's in the garage?",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Present Simple</strong> + <em>'On top of that...'</em>",
+          },
+          {
+            type: "text",
+            speaker: "Mechanic",
+            text: "Perfect, we will focus on the clutch and coolant. See you this afternoon.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: Despedida y agradecimiento.",
+          },
+        ],
+        travel: [
+          {
+            type: "text",
+            speaker: "Airbnb Host",
+            text: "Bonjour! Thank you for booking the apartment in Paris for your romantic trip.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Present Perfect</strong> + <em>'Look forward to'</em>",
+          },
+          {
+            type: "audio",
+            speaker: "Airbnb Host",
+            text: "I am writing to organize your arrival. Will you be taking a taxi or the train from the airport?",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Future Simple</strong> + <em>'Actually...'</em>",
+          },
+          {
+            type: "text",
+            speaker: "Airbnb Host",
+            text: "Perfect. The apartment will be ready for check-in at 3 PM.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Present Continuous (Futuro)</strong> + <em>'Drop off (dejar)'</em>",
+          },
+          {
+            type: "text",
+            speaker: "Airbnb Host",
+            text: "Are you planning to visit any other cities, like Sens, during your trip?",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Past Simple (Intención)</strong> + <em>'Think about'</em>",
+          },
+          {
+            type: "audio",
+            speaker: "Airbnb Host",
+            text: "Sens is beautiful this time of year and has great architecture. I can send you a list of romantic restaurants if you'd like.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Future Simple</strong> + <em>'Besides...'</em>",
+          },
+          {
+            type: "text",
+            speaker: "Airbnb Host",
+            text: "Let me know if you need help booking museum tickets in advance.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: <strong>Present Simple</strong> + <em>'Sort out'</em>",
+          },
+          {
+            type: "text",
+            speaker: "Airbnb Host",
+            text: "Safe travels! See you soon in France.",
+            hintTitle: "Tu Turno",
+            hint: "Usa: Despedida cálida.",
+          },
+        ],
+      };
+
+      let currentScenario = "vet";
+      let currentStep = 0;
+
+      function loadScenario() {
+        const selector = document.getElementById("scenario-selector");
+        currentScenario = selector.value;
+        currentStep = 0;
+
+        const titleElement = document.getElementById("chat-title");
+        if (currentScenario === "vet")
+          titleElement.innerText = "Clínica Veterinaria";
+        if (currentScenario === "mechanic")
+          titleElement.innerText = "Taller Mecánico";
+        if (currentScenario === "travel")
+          titleElement.innerText = "Anfitrión Airbnb";
+
+        document.getElementById("chat-area").innerHTML = "";
+        document.getElementById("next-btn").innerText = "Empezar Conversación";
+        document.getElementById("next-btn").style.display = "inline-block";
+      }
+
+      function playAudio(text) {
+        if ("speechSynthesis" in window) {
+          // Detener cualquier audio previo
+          window.speechSynthesis.cancel();
+
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = "en-US"; // Acento en inglés
+          utterance.rate = 0.9; // Velocidad un poco más lenta para ESL
+
+          window.speechSynthesis.speak(utterance);
+        } else {
+          alert("Tu navegador no soporta la lectura de texto por voz.");
+        }
+      }
+
+      function toggleTranscript(btnElement) {
+        const transcriptDiv = btnElement.nextElementSibling;
+        if (
+          transcriptDiv.style.display === "none" ||
+          transcriptDiv.style.display === ""
+        ) {
+          transcriptDiv.style.display = "block";
+          btnElement.innerText = "Ocultar Transcripción";
+        } else {
+          transcriptDiv.style.display = "none";
+          btnElement.innerText = "Mostrar Transcripción";
+        }
+      }
+
+      function nextMessage() {
+        const chatArea = document.getElementById("chat-area");
+        const data = scenarios[currentScenario];
+
+        if (currentStep < data.length) {
+          const stepData = data[currentStep];
+          document.getElementById("next-btn").innerText = "Siguiente Mensaje";
+
+          const row = document.createElement("div");
+          row.className = "message-row";
+
+          const messageDiv = document.createElement("div");
+
+          if (stepData.type === "text") {
+            messageDiv.className = "message received";
+            messageDiv.innerHTML = `<strong>${stepData.speaker}:</strong> ${stepData.text}`;
+          } else if (stepData.type === "audio") {
+            messageDiv.className = "message received audio";
+
+            // Escapar comillas para la función JS
+            const safeText = stepData.text.replace(/'/g, "\\'");
+
+            messageDiv.innerHTML = `
+                        <strong>${stepData.speaker}</strong> (Voice Note 🎵)<br>
+                        <div style="display: flex; align-items: center; margin-top: 10px;">
+                            <button class="play-btn" onclick="playAudio('${safeText}')">▶</button>
+                            <div style="flex-grow: 1; height: 4px; background: #b3e5fc; border-radius: 2px;">
+                                <div style="width: 40%; height: 100%; background: #0288d1; border-radius: 2px;"></div>
+                            </div>
+                        </div>
+                        <button class="transcript-btn" onclick="toggleTranscript(this)">Mostrar Transcripción</button>
+                        <div class="transcript">"${stepData.text}"</div>
+                    `;
+          }
+
+          const hintDiv = document.createElement("div");
+          hintDiv.className = "hint-box";
+          hintDiv.innerHTML = `
+                    <div class="hint-title">${stepData.hintTitle}</div>
+                    <div>${stepData.hint}</div>
+                `;
+
+          row.appendChild(messageDiv);
+          chatArea.appendChild(row);
+
+          hintDiv.style.display = "none";
+          row.appendChild(hintDiv);
+
+          setTimeout(() => {
+            hintDiv.style.display = "block";
+            chatArea.scrollTop = chatArea.scrollHeight;
+          }, 800);
+
+          currentStep++;
+
+          if (currentStep >= data.length) {
+            document.getElementById("next-btn").innerText =
+              "Fin del Chat (Cambia arriba)";
+          }
+        }
+      }
+
+      window.onload = loadScenario;
+    </script>
+  </body>
+</html>
