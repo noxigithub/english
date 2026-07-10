@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Zen Flow Studio</title>
+    <style>
+      :root {
+        /* Calming Pastel Palette */
+        --bg-gradient: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+        --card-bg: rgba(255, 255, 255, 0.85);
+        --primary: #a18cd1; /* Soft Lavender */
+        --secondary: #84fab0; /* Soft Mint */
+        --text-main: #4a4a4a;
+        --text-muted: #9ca3af;
+        --button-hover: #fbc2eb; /* Soft Pink */
+      }
+
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: var(--bg-gradient);
+        color: var(--text-main);
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      /* --- STAGE --- */
+      .stage {
+        width: 100%;
+        max-width: 700px;
+        padding: 20px;
+        text-align: center;
+      }
+
+      .header-title {
+        margin-bottom: 30px;
+        animation: float 3s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+        100% {
+          transform: translateY(0px);
+        }
+      }
+
+      .header-title h1 {
+        margin: 0;
+        font-size: 2.5rem;
+        color: #8b7bb0;
+        font-weight: 300;
+        letter-spacing: 2px;
+      }
+
+      .header-title p {
+        margin: 5px 0 0;
+        color: var(--text-muted);
+        font-size: 1.1rem;
+        font-style: italic;
+      }
+
+      /* --- THE ZEN CARD --- */
+      .zen-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(10px);
+        border-radius: 30px;
+        padding: 50px 40px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        min-height: 250px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        transition: 0.5s ease;
+      }
+
+      /* --- CHUNK DISPLAY --- */
+      .chunk-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        width: 100%;
+        margin-bottom: 40px;
+      }
+
+      .chunk-line {
+        font-size: 2rem;
+        font-weight: 600;
+        color: #6b7280;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        display: none; /* Hidden initially */
+      }
+
+      .chunk-line.visible {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* The final combined sentence */
+      .full-sentence {
+        font-size: 2.2rem;
+        font-weight: bold;
+        color: #8b7bb0;
+        opacity: 0;
+        display: none;
+        transition: opacity 1s ease;
+        line-height: 1.4;
+      }
+
+      .full-sentence.visible {
+        display: block;
+        opacity: 1;
+      }
+
+      /* --- CONTROLS --- */
+      .controls {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+      }
+
+      .btn-breathe {
+        background: white;
+        color: #8b7bb0;
+        border: 2px solid #e5e7eb;
+        padding: 15px 40px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: 0.3s;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.03);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .btn-breathe:hover {
+        border-color: #a18cd1;
+        background: #fdfbfb;
+        transform: translateY(-2px);
+      }
+
+      .btn-success {
+        background: var(--secondary);
+        color: #064e3b;
+        border: none;
+        padding: 15px 40px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: 0.3s;
+        box-shadow: 0 10px 20px rgba(132, 250, 176, 0.3);
+        display: none;
+      }
+
+      .btn-success:hover {
+        transform: scale(1.05);
+        filter: brightness(1.05);
+      }
+
+      /* Context hint */
+      .context-hint {
+        color: var(--text-muted);
+        font-size: 1rem;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="stage">
+      <div class="header-title">
+        <h1>The Zen Flow 🌿</h1>
+        <p>No timers. No rush. Just breathe and speak.</p>
+      </div>
+
+      <div class="zen-card" id="zen-card">
+        <div class="context-hint" id="context-hint">
+          📍 Situation: Loading...
+        </div>
+
+        <div class="chunk-container" id="chunk-container">
+          <div class="chunk-line" id="chunk-1"></div>
+          <div class="chunk-line" id="chunk-2"></div>
+          <div class="chunk-line" id="chunk-3"></div>
+        </div>
+
+        <div class="full-sentence" id="full-sentence">
+          <!-- Injected via JS -->
+        </div>
+
+        <div class="controls">
+          <button class="btn-breathe" id="btn-step" onclick="nextStep()">
+            <span>🌸</span> Reveal Part 1
+          </button>
+          <button
+            class="btn-success"
+            id="btn-next"
+            onclick="loadNextSentence()"
+          >
+            🌊 I Flowed! (Next)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // --- DATA (22 Frases) ---
+      const sentences = [
+        // Originales
+        {
+          context: "📍 Polite Request (Host Parents)",
+          chunks: ["I was wondering", "if I could use", "the car on Saturday."],
+        },
+        {
+          context: "📍 Giving Orders (Kids)",
+          chunks: ["Alright guys,", "it's time to put away", "all your toys."],
+        },
+        {
+          context: "📍 Apologizing",
+          chunks: [
+            "I am so sorry,",
+            "I accidentally spilled",
+            "milk on the rug.",
+          ],
+        },
+        {
+          context: "📍 Checking in (Host Mom)",
+          chunks: [
+            "Hi there,",
+            "I just wanted to let you know",
+            "that Tommy is sleeping.",
+          ],
+        },
+        {
+          context: "📍 Coffee Shop",
+          chunks: ["Hi, how are you?", "Could I get", "a large iced coffee?"],
+        },
+        {
+          context: "📍 Gentle Parenting",
+          chunks: [
+            "Emma, listen to me,",
+            "we need to share",
+            "with our friends.",
+          ],
+        },
+        {
+          context: "📍 Supermarket",
+          chunks: ["Excuse me,", "could you tell me", "where the eggs are?"],
+        },
+        {
+          context: "📍 Payday Reminder",
+          chunks: [
+            "Hi, I was wondering",
+            "if you had a chance",
+            "to send the stipend today?",
+          ],
+        },
+        {
+          context: "📍 Texas Heat",
+          chunks: [
+            "It's really hot outside,",
+            "so we are going to play",
+            "inside the house today.",
+          ],
+        },
+        {
+          context: "📍 Dinner Time",
+          chunks: [
+            "The kids are hungry,",
+            "what should I cook",
+            "for dinner tonight?",
+          ],
+        },
+
+        // Nuevas
+        {
+          context: "📍 Doctor's Appointment",
+          chunks: [
+            "Hi, I need to",
+            "schedule an appointment",
+            "for my host child.",
+          ],
+        },
+        {
+          context: "📍 Missing Item",
+          chunks: [
+            "I was looking for",
+            "the blue stroller",
+            "but I can't find it.",
+          ],
+        },
+        {
+          context: "📍 Park Playdate",
+          chunks: [
+            "It's getting late,",
+            "so we need to say goodbye",
+            "to our friends now.",
+          ],
+        },
+        {
+          context: "📍 Drive-Thru",
+          chunks: [
+            "Can I get",
+            "two cheeseburgers",
+            "and a large fries, please?",
+          ],
+        },
+        {
+          context: "📍 Changing Plans",
+          chunks: [
+            "I was wondering",
+            "if we could change",
+            "my schedule for tomorrow.",
+          ],
+        },
+        {
+          context: "📍 Bedtime Routine",
+          chunks: [
+            "First we brush our teeth,",
+            "then we read a book,",
+            "and then we go to sleep.",
+          ],
+        },
+        {
+          context: "📍 Texas Weather Warning",
+          chunks: [
+            "There is a thunderstorm warning,",
+            "so we should stay",
+            "away from the windows.",
+          ],
+        },
+        {
+          context: "📍 Complimenting Host Mom",
+          chunks: [
+            "I just wanted to say",
+            "that the dinner you made",
+            "was absolutely delicious.",
+          ],
+        },
+        {
+          context: "📍 Asking for Help (Store)",
+          chunks: [
+            "Excuse me,",
+            "I'm having some trouble",
+            "finding the baby wipes.",
+          ],
+        },
+        {
+          context: "📍 Weekend Plans",
+          chunks: [
+            "This weekend,",
+            "I am planning to go",
+            "to downtown Austin.",
+          ],
+        },
+        {
+          context: "📍 Setting Boundaries",
+          chunks: [
+            "I know you are angry,",
+            "but we do not hit",
+            "people in this house.",
+          ],
+        },
+        {
+          context: "📍 Reporting an Incident",
+          chunks: [
+            "I wanted to let you know",
+            "that Emma fell down",
+            "and scraped her knee.",
+          ],
+        },
+      ];
+
+      let currentIndex = 0;
+      let step = 0;
+
+      // Shuffle array to make it dynamic every time she opens the app
+      function shuffle(array) {
+        return array.sort(() => Math.random() - 0.5);
+      }
+
+      let activeSentences = shuffle([...sentences]);
+
+      function loadNextSentence() {
+        currentIndex++;
+        if (currentIndex >= activeSentences.length) {
+          currentIndex = 0;
+          activeSentences = shuffle([...sentences]); // Reshuffle when finished
+        }
+        resetCard();
+      }
+
+      function resetCard() {
+        step = 0;
+        const data = activeSentences[currentIndex];
+
+        document.getElementById("context-hint").innerText = data.context;
+
+        document.getElementById("chunk-1").innerText = data.chunks[0];
+        document.getElementById("chunk-2").innerText = data.chunks[1];
+        document.getElementById("chunk-3").innerText = data.chunks[2];
+
+        document.getElementById("full-sentence").innerHTML =
+          `${data.chunks[0]} <span style="color:#d1d5db;">‿</span> ${data.chunks[1]} <span style="color:#d1d5db;">‿</span> ${data.chunks[2]}`;
+
+        document.getElementById("chunk-1").classList.remove("visible");
+        document.getElementById("chunk-2").classList.remove("visible");
+        document.getElementById("chunk-3").classList.remove("visible");
+        document.getElementById("full-sentence").classList.remove("visible");
+
+        document.getElementById("chunk-container").style.display = "flex";
+        document.getElementById("full-sentence").style.display = "none";
+
+        const btnStep = document.getElementById("btn-step");
+        btnStep.style.display = "flex";
+        btnStep.innerHTML = "<span>🌸</span> Reveal Part 1";
+
+        document.getElementById("btn-next").style.display = "none";
+      }
+
+      function nextStep() {
+        const btnStep = document.getElementById("btn-step");
+
+        if (step === 0) {
+          document.getElementById("chunk-1").classList.add("visible");
+          btnStep.innerHTML = "<span>🌸</span> Reveal Part 2";
+          step++;
+        } else if (step === 1) {
+          document.getElementById("chunk-2").classList.add("visible");
+          btnStep.innerHTML = "<span>🌸</span> Reveal Part 3";
+          step++;
+        } else if (step === 2) {
+          document.getElementById("chunk-3").classList.add("visible");
+          btnStep.innerHTML = "<span>✨</span> Flow it all together!";
+          step++;
+        } else if (step === 3) {
+          document.getElementById("chunk-container").style.display = "none";
+
+          const fullEl = document.getElementById("full-sentence");
+          fullEl.style.display = "block";
+          setTimeout(() => fullEl.classList.add("visible"), 50);
+
+          btnStep.style.display = "none";
+          document.getElementById("btn-next").style.display = "block";
+        }
+      }
+
+      // Initialize first card
+      resetCard();
+    </script>
+  </body>
+</html>
