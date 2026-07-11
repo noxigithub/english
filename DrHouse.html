@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnostic Challenge: Medical English</title>
+    <style>
+        :root {
+            --primary-color: #2b2d42;
+            --secondary-color: #8d99ae;
+            --accent-color: #ef233c;
+            --light-bg: #edf2f4;
+            --text-dark: #141414;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #d9dcd6;
+            color: var(--text-dark);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 30px;
+            text-align: center;
+            border-bottom: 5px solid var(--accent-color);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.2rem;
+            letter-spacing: 1px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        /* Grammar Tips Section */
+        .grammar-panel {
+            background: var(--light-bg);
+            border-left: 5px solid var(--secondary-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .grammar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .grammar-box {
+            background: var(--white);
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .grammar-box h4 {
+            color: var(--accent-color);
+            margin-top: 0;
+        }
+
+        /* Case Styling */
+        .case-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            padding: 25px;
+            background-color: #fafafa;
+        }
+
+        .case-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .case-header h3 {
+            margin: 0;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+
+        .patient-stats {
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+
+        .task-box {
+            background-color: #ffe8e8;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-family: inherit;
+            resize: vertical;
+            margin-bottom: 15px;
+        }
+
+        /* Hint Button and Box */
+        .btn-hint {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-hint:hover {
+            background-color: var(--primary-color);
+        }
+
+        .hint-content {
+            display: none;
+            background-color: #e2eafc;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            border: 1px dashed #abc4ff;
+            font-style: italic;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>🦯 Diagnostic Differentials</h1>
+        <p>Analyze the symptoms. Formulate a theory. Save the patient.</p>
+    </header>
+
+    <div class="content">
+        
+        <!-- Grammar Survival Guide -->
+        <div class="grammar-panel">
+            <h2>📋 Department Grammar Protocols</h2>
+            <p>To present your differential diagnosis to the attending physician, you must use precise medical English:</p>
+            <div class="grammar-grid">
+                <div class="grammar-box">
+                    <h4>⏳ Past Simple vs. Present Perfect</h4>
+                    <ul>
+                        <li><strong>Past Simple:</strong> Completed actions in a finished time period. <em>(e.g., "The patient <strong>fainted</strong> yesterday at 3 PM.")</em></li>
+                        <li><strong>Present Perfect:</strong> Actions that started in the past and continue now, or recent actions with present results. <em>(e.g., "The patient <strong>has experienced</strong> chest pain for three days.")</em></li>
+                    </ul>
+                </div>
+                <div class="grammar-box">
+                    <h4>🔮 Future: Will vs. Going To</h4>
+                    <ul>
+                        <li><strong>Will:</strong> Spontaneous decisions or theories without hard evidence yet. <em>(e.g., "I think it's lupus. I <strong>will order</strong> an ANA test.")</em></li>
+                        <li><strong>Going To:</strong> Predictions based on current, visible evidence. <em>(e.g., "Look at that ECG drop. He <strong>is going to</strong> code!")</em></li>
+                    </ul>
+                </div>
+                <div class="grammar-box">
+                    <h4>⚙️ Gerunds vs. Infinitives</h4>
+                    <ul>
+                        <li><strong>Gerunds (-ing):</strong> After verbs like <em>consider, suggest, avoid, deny</em>. <em>(e.g., "I suggest <strong>ordering</strong> a tox screen.")</em></li>
+                        <li><strong>Infinitives (to + verb):</strong> After verbs like <em>decide, need, plan, refuse</em>. <em>(e.g., "We need <strong>to intubate</strong> immediately.")</em></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Case 1 -->
+        <div class="case-card">
+            <div class="case-header">
+                <h3>Case #1: The Sweaty Executive</h3>
+                <span class="patient-stats">Male, 45, CEO</span>
+            </div>
+            <p><strong>Presentation:</strong> The patient arrived at the ER with severe palpitations, profound sweating, and a throbbing headache. His ECG is normal (no ischemia), but his blood pressure is dangerously high (210/110). He thought he was having a heart attack.</p>
+            <div class="task-box">
+                <strong>Your Task:</strong> Write a short report.
+                <ul>
+                    <li>Use <strong>Present Perfect</strong> to describe how long he has felt this way.</li>
+                    <li>Use a <strong>Gerund</strong> to suggest a test (e.g., <em>suggest ordering...</em>).</li>
+                    <li>Use <strong>Going To</strong> to state what will happen if his BP isn't lowered.</li>
+                </ul>
+            </div>
+            <textarea rows="4" placeholder="Dr. Notes: The patient has..."></textarea>
+            <button class="btn-hint" onclick="toggleHint('hint1')">💡 Need a differential hint?</button>
+            <div id="hint1" class="hint-content">
+                <strong>Attending's Hint:</strong> It looks like a cardiac event, but the normal ECG points to an endocrine issue. Have you considered a tumor on the adrenal glands that pumps out adrenaline? (Pheochromocytoma). Check his 24-hour urine metanephrines!
+            </div>
+        </div>
+
+        <!-- Case 2 -->
+        <div class="case-card">
+            <div class="case-header">
+                <h3>Case #2: The Blue Musician</h3>
+                <span class="patient-stats">Male, 25, Trumpet Player</span>
+            </div>
+            <p><strong>Presentation:</strong> The patient's lips and fingers turned completely blue during a jazz gig. His oxygen saturation is reading 85%, but his lungs sound perfectly clear, and his chest X-ray is normal. When the nurse drew blood, it was chocolate brown.</p>
+            <div class="task-box">
+                <strong>Your Task:</strong> Write your theory.
+                <ul>
+                    <li>Use <strong>Past Simple</strong> to ask/state what he did right before the gig.</li>
+                    <li>Use an <strong>Infinitive</strong> to state what you need to do (e.g., <em>need to administer...</em>).</li>
+                    <li>Use <strong>Will</strong> to predict his recovery.</li>
+                </ul>
+            </div>
+            <textarea rows="4" placeholder="Dr. Notes: Before the gig, the patient..."></textarea>
+            <button class="btn-hint" onclick="toggleHint('hint2')">💡 Need a differential hint?</button>
+            <div id="hint2" class="hint-content">
+                <strong>Attending's Hint:</strong> The blood can't carry oxygen properly because the iron is oxidized. Did he use a topical anesthetic spray (like benzocaine) for a toothache before playing his trumpet? This is Methemoglobinemia. You need to give Methylene Blue.
+            </div>
+        </div>
+
+        <!-- Case 3 -->
+        <div class="case-card">
+            <div class="case-header">
+                <h3>Case #3: The Fainting Athlete</h3>
+                <span class="patient-stats">Female, 19, College Runner</span>
+            </div>
+            <p><strong>Presentation:</strong> She collapsed in the middle of a marathon. She has no family history of heart disease, but her heart rate is currently erratic (arrhythmia). Her parents mention she had a "bad flu" two weeks ago but decided to run anyway.</p>
+            <div class="task-box">
+                <strong>Your Task:</strong> Plan the next steps.
+                <ul>
+                    <li>Use <strong>Present Perfect</strong> to describe her recent illness.</li>
+                    <li>Use a <strong>Gerund</strong> to talk about something she should avoid (e.g., <em>avoid running...</em>).</li>
+                    <li>Use <strong>Will</strong> or <strong>Going To</strong> to explain her treatment plan.</li>
+                </ul>
+            </div>
+            <textarea rows="4" placeholder="Dr. Notes: The patient has recently..."></textarea>
+            <button class="btn-hint" onclick="toggleHint('hint3')">💡 Need a differential hint?</button>
+            <div id="hint3" class="hint-content">
+                <strong>Attending's Hint:</strong> Viruses can attack the heart muscle. A healthy athlete suddenly dropping with an arrhythmia after a viral infection? Suspect Viral Myocarditis. Order an echocardiogram and cardiac MRI.
+            </div>
+        </div>
+
+        <!-- Case 4 -->
+        <div class="case-card">
+            <div class="case-header">
+                <h3>Case #4: The Delirious Chef</h3>
+                <span class="patient-stats">Male, 30, Head Chef</span>
+            </div>
+            <p><strong>Presentation:</strong> He came in complaining of severe abdominal pain. Surgery found nothing wrong. Now, he is hallucinating, having seizures, and his heart is racing (tachycardia). A nurse noticed that his urine sample, left near the sunny window, turned dark purple.</p>
+            <div class="task-box">
+                <strong>Your Task:</strong> Document the mystery.
+                <ul>
+                    <li>Use <strong>Past Simple</strong> to state when the symptoms started.</li>
+                    <li>Use an <strong>Infinitive</strong> to express a medical decision (e.g., <em>decided to consult...</em>).</li>
+                    <li>Use <strong>Going To</strong> to predict what will happen if you give the wrong medication.</li>
+                </ul>
+            </div>
+            <textarea rows="4" placeholder="Dr. Notes: The symptoms started when..."></textarea>
+            <button class="btn-hint" onclick="toggleHint('hint4')">💡 Need a differential hint?</button>
+            <div id="hint4" class="hint-content">
+                <strong>Attending's Hint:</strong> Abdominal pain, neuro/psych symptoms, and purple urine in sunlight? It's a classic metabolic disorder: Acute Intermittent Porphyria (AIP). Triggers include fasting (did he skip meals while cooking?) or certain drugs. Give IV Hemin.
+            </div>
+        </div>
+
+        <!-- Case 5 -->
+        <div class="case-card">
+            <div class="case-header">
+                <h3>Case #5: The Tired Traveler</h3>
+                <span class="patient-stats">Female, 50, Archaeologist</span>
+            </div>
+            <p><strong>Presentation:</strong> She recently returned from a long excavation in rural South America. She presents with progressive fatigue, swelling in her legs (edema), and shortness of breath. Her ECG shows a Right Bundle Branch Block (RBBB) and signs of dilated cardiomyopathy.</p>
+            <div class="task-box">
+                <strong>Your Task:</strong> Write the final diagnosis.
+                <ul>
+                    <li>Use <strong>Present Perfect</strong> to state where she has traveled.</li>
+                    <li>Use a <strong>Gerund</strong> to consider a specific parasitic infection (e.g., <em>consider treating...</em>).</li>
+                    <li>Use <strong>Will</strong> to propose a long-term care plan.</li>
+                </ul>
+            </div>
+            <textarea rows="4" placeholder="Dr. Notes: The patient has traveled..."></textarea>
+            <button class="btn-hint" onclick="toggleHint('hint5')">💡 Need a differential hint?</button>
+            <div id="hint5" class="hint-content">
+                <strong>Attending's Hint:</strong> Heart failure + RBBB + travel to rural South America? Think of the Kissing Bug. This is Chagas Disease caused by Trypanosoma cruzi. The parasite has damaged her heart tissue.
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Simple JavaScript to toggle the hint visibility
+    function toggleHint(hintId) {
+        var hintBox = document.getElementById(hintId);
+        if (hintBox.style.display === "none" || hintBox.style.display === "") {
+            hintBox.style.display = "block";
+        } else {
+            hintBox.style.display = "none";
+        }
+    }
+</script>
+
+</body>
+</html>
