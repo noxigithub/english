@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interpreter Skills: Theory & Simulator</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #e5ddd5;
+        color: #333;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+      .app-container {
+        width: 100%;
+        max-width: 800px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 90vh;
+      }
+
+      /* --- Estilos de la Pantalla de Teoría --- */
+      #theory-screen {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background-color: #f8f9fa;
+        overflow-y: auto;
+      }
+      .theory-header {
+        background-color: #2b5278; /* Color azul profesional */
+        color: white;
+        padding: 20px;
+        text-align: center;
+      }
+      .theory-content {
+        padding: 20px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+      }
+      .theory-card {
+        background: white;
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        border-top: 4px solid #3b7bbf;
+      }
+      .theory-card h3 {
+        margin-top: 0;
+        color: #2b5278;
+        font-size: 1.1em;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 5px;
+      }
+      .vocab-item {
+        margin-bottom: 12px;
+      }
+      .vocab-item strong {
+        color: #3b7bbf;
+        display: block;
+      }
+      .vocab-item span {
+        font-size: 0.9em;
+        color: #555;
+      }
+      .start-container {
+        text-align: center;
+        padding: 20px;
+        background-color: white;
+        border-top: 1px solid #eee;
+      }
+
+      /* --- Estilos del Simulador (Teléfono) --- */
+      #simulator-screen {
+        display: none;
+        flex-direction: column;
+        height: 100%;
+      }
+      .header {
+        background-color: #2b5278;
+        color: white;
+        padding: 20px;
+        text-align: center;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .header select {
+        padding: 8px;
+        border-radius: 5px;
+        border: none;
+        font-size: 1em;
+        background-color: #3b7bbf;
+        color: white;
+        cursor: pointer;
+      }
+      .chat-area {
+        flex-grow: 1;
+        padding: 20px;
+        overflow-y: auto;
+        background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png");
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+      .message-row {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 15px;
+      }
+
+      /* --- Mensaje Recibido (Izquierda) --- */
+      .message.received {
+        background-color: white;
+        align-self: flex-start;
+        padding: 12px 18px;
+        border-radius: 0 15px 15px 15px;
+        max-width: 80%;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        font-size: 1.1em;
+      }
+
+      /* --- Mensaje Enviado (Derecha) --- */
+      .message.sent {
+        background-color: #dcf8c6;
+        align-self: flex-end;
+        padding: 12px 18px;
+        border-radius: 15px 15px 0 15px;
+        max-width: 80%;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        font-size: 1.1em;
+        margin-top: 8px;
+        display: none; /* Oculto por defecto */
+        color: #333;
+        font-style: italic;
+      }
+
+      .instruction-box {
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #e0e0e0;
+        font-size: 0.85em;
+        color: #444;
+      }
+
+      /* --- Botón de Pistas (Alineado a la Derecha) --- */
+      .hint-toggle-btn {
+        background-color: transparent;
+        color: #2b5278;
+        border: 1px solid #2b5278;
+        padding: 6px 12px;
+        font-size: 0.85em;
+        border-radius: 15px;
+        cursor: pointer;
+        align-self: flex-end;
+        margin-top: 8px;
+        transition: all 0.2s;
+        font-weight: bold;
+      }
+      .hint-toggle-btn:hover {
+        background-color: #2b5278;
+        color: white;
+      }
+
+      .controls {
+        background-color: #f0f0f0;
+        padding: 15px;
+        text-align: center;
+        border-top: 1px solid #ccc;
+      }
+      button.main-btn {
+        background-color: #3b7bbf;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        font-size: 1.1em;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      button.main-btn:hover {
+        background-color: #2b5278;
+      }
+      .back-btn {
+        background-color: transparent;
+        border: 1px solid white;
+        padding: 6px 12px;
+        font-size: 0.9em;
+        color: white;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+      .back-btn:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- PANTALLA 1: TEORÍA Y REPASO -->
+      <div id="theory-screen">
+        <div class="theory-header">
+          <h2>Interpreter Skills: Briefing Room</h2>
+          <p>
+            Review key expressions for accuracy, de-escalation, and terminology.
+          </p>
+        </div>
+
+        <div class="theory-content">
+          <div class="theory-card">
+            <h3>Checking for Accuracy</h3>
+            <div class="vocab-item">
+              <strong>Double-checking numbers</strong
+              ><span
+                >"Just to be absolutely sure, did you say fifteen (1-5) or fifty
+                (5-0)?"</span
+              >
+            </div>
+            <div class="vocab-item">
+              <strong>Pacing the speaker</strong
+              ><span
+                >"Could you hold on for a second? I need to translate that first
+                part."</span
+              >
+            </div>
+            <div class="vocab-item">
+              <strong>Confirming context</strong
+              ><span
+                >"Before I translate this to the client, are you implying
+                that..."</span
+              >
+            </div>
+          </div>
+
+          <div class="theory-card">
+            <h3>De-escalation & Mediation</h3>
+            <div class="vocab-item">
+              <strong>Neutral Stance</strong
+              ><span
+                >"I am interpreting your exact words to the
+                representative."</span
+              >
+            </div>
+            <div class="vocab-item">
+              <strong>Validating Frustration</strong
+              ><span
+                >"I understand you are upset. Let's see how we can resolve
+                this."</span
+              >
+            </div>
+            <div class="vocab-item">
+              <strong>Guiding to Solutions</strong
+              ><span
+                >"I will ask them to explain the policy clearly for you."</span
+              >
+            </div>
+          </div>
+
+          <div class="theory-card">
+            <h3>Clarifying Terminology</h3>
+            <div class="vocab-item">
+              <strong>Asking for Definitions</strong
+              ><span
+                >"Could you explain what you mean by [term] in this
+                context?"</span
+              >
+            </div>
+            <div class="vocab-item">
+              <strong>Checking Layman's Terms</strong
+              ><span>"In other words, you mean that the system is..."</span>
+            </div>
+            <div class="vocab-item">
+              <strong>No Direct Translation</strong
+              ><span
+                >"I am having trouble finding a direct translation for [word].
+                Can you describe what it does?"</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="start-container">
+          <button class="main-btn" onclick="startSimulator()">
+            Start Interactive Simulator
+          </button>
+        </div>
+      </div>
+
+      <!-- PANTALLA 2: SIMULADOR -->
+      <div id="simulator-screen">
+        <div class="header">
+          <button class="back-btn" onclick="backToTheory()">← Review</button>
+          <span style="font-size: 1.1em; font-weight: bold" id="chat-title"
+            >Chat con...</span
+          >
+          <select id="scenario-selector" onchange="loadScenario()">
+            <option value="accuracy">Business (Exactitud & Cifras)</option>
+            <option value="conflict">Tourist (Manejo de Conflicto)</option>
+            <option value="tech">IT Team (Aclaración de Términos)</option>
+          </select>
+        </div>
+
+        <div class="chat-area" id="chat-area">
+          <!-- Mensajes dinámicos -->
+        </div>
+
+        <div class="controls">
+          <button class="main-btn" id="next-btn" onclick="nextMessage()">
+            Empezar Conversación
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function startSimulator() {
+        document.getElementById("theory-screen").style.display = "none";
+        document.getElementById("simulator-screen").style.display = "flex";
+        loadScenario();
+      }
+
+      function backToTheory() {
+        document.getElementById("simulator-screen").style.display = "none";
+        document.getElementById("theory-screen").style.display = "flex";
+      }
+
+      const scenarios = {
+        accuracy: [
+          {
+            speaker: "Executive",
+            text: "We are willing to offer a 15% discount on the wholesale order if they commit to a two-year exclusivity agreement.",
+            structure:
+              "Usa: <strong>Present Simple</strong> + Confirmar números exactos antes de traducir",
+            hint: "Just to be absolutely sure before I translate, did you say fifteen percent (one-five) or fifty percent (five-zero)?",
+          },
+          {
+            speaker: "Executive",
+            text: "Fifteen. One-five. But that is only if they sign the exclusivity clause today.",
+            structure:
+              "Usa: <strong>Present Continuous</strong> + Pedir que el hablante pause para no perder información",
+            hint: "Could you hold on for a second? I am translating that first part to the client.",
+          },
+          {
+            speaker: "Executive",
+            text: "Sure, take your time. Let me know when they reply.",
+            structure:
+              "Usa: <strong>Present Perfect</strong> + Indicar que la acción se completó y transmitir la duda del cliente",
+            hint: "I have translated the offer. The client is asking what 'exclusivity' entails exactly.",
+          },
+          {
+            speaker: "Executive",
+            text: "It means they cannot buy similar software products from our competitors in Latin America.",
+            structure:
+              "Usa: <strong>Present Simple</strong> + Parafrasear para confirmar contexto",
+            hint: "So, before I translate, you are implying a complete block on competitor software, correct?",
+          },
+          {
+            speaker: "Executive",
+            text: "Correct. No competitors. Tell them it's our final offer.",
+            structure:
+              "Usa: <strong>Future Simple</strong> + Confirmar la transmisión del mensaje final",
+            hint: "Understood. I will let them know this is your final offer.",
+          },
+        ],
+        conflict: [
+          {
+            speaker: "Angry Tourist",
+            text: "This is ridiculous! I already paid for the reservation online, why is the hotel charging me an extra $200 right now?!",
+            structure:
+              "Usa: <strong>Present Continuous</strong> + Validar la frustración y explicar tu rol neutral",
+            hint: "I am interpreting your exact words to the receptionist. I understand you are frustrated, let's see what they say.",
+          },
+          {
+            speaker: "Angry Tourist",
+            text: "Well, tell them I'm not paying a single dime more until someone explains this 'incidental hold' nonsense.",
+            structure:
+              "Usa: <strong>Present Simple</strong> + Parafrasear para asegurar que entiendes la demanda",
+            hint: "So, if I understand correctly, you want them to explain the 'incidental hold' before you authorize any payment?",
+          },
+          {
+            speaker: "Angry Tourist",
+            text: "Exactly! It feels like a scam. They never mentioned this on the website.",
+            structure:
+              "Usa: <strong>Future Simple</strong> + Transmitir calma y orientar a la solución",
+            hint: "I will ask the receptionist to explain the hotel's security deposit policy clearly for you.",
+          },
+          {
+            speaker: "Angry Tourist",
+            text: "Fine. But tell them I want the receipt showing it's just a hold, not a charge.",
+            structure:
+              "Usa: <strong>Present Continuous</strong> + Confirmar la acción en curso",
+            hint: "I am telling them right now that you need printed proof of the transaction.",
+          },
+          {
+            speaker: "Angry Tourist",
+            text: "Thank you. Sorry for yelling, I'm just very tired from the flight.",
+            structure:
+              "Usa: <strong>Present Simple</strong> + Desescalar y mostrar empatía profesional",
+            hint: "No problem at all. Traveling is exhausting. Let's get this sorted out.",
+          },
+        ],
+        tech: [
+          {
+            speaker: "Lead Developer",
+            text: "The current sprint is delayed because we have a huge bottleneck in the backend API routing.",
+            structure:
+              "Usa: <strong>Present Simple</strong> + Pedir la definición de un término para traducirlo bien",
+            hint: "Could you explain what you mean by 'bottleneck' in this context so I can translate it accurately?",
+          },
+          {
+            speaker: "Lead Developer",
+            text: "Oh, sorry. It means there is a blockage. The server gets too many requests at once and slows everything down.",
+            structure:
+              "Usa: <strong>Present Simple</strong> + Reformular en términos sencillos (Layman's terms)",
+            hint: "In other words, you mean that the system is receiving more traffic than it can handle?",
+          },
+          {
+            speaker: "Lead Developer",
+            text: "Yes, precisely. And the load balancer isn't distributing the weight properly.",
+            structure:
+              "Usa: <strong>Present Continuous</strong> + Solicitar descripción por falta de traducción directa",
+            hint: "I am having trouble finding a direct translation for 'load balancer'. Can you describe what it does?",
+          },
+          {
+            speaker: "Lead Developer",
+            text: "It's a tool that takes the incoming web traffic and splits it equally across different servers so one doesn't crash.",
+            structure:
+              "Usa: <strong>Present Perfect</strong> + Agradecer la aclaración y confirmar entendimiento",
+            hint: "Thank you, I have understood the concept clearly now. I will translate that to the client.",
+          },
+          {
+            speaker: "Lead Developer",
+            text: "Great. Ask them if they authorize us to upgrade the server capacity to fix it.",
+            structure:
+              "Usa: <strong>Present Continuous</strong> + Confirmar la interpretación de la pregunta clave",
+            hint: "I am asking them right now if they approve the server upgrade.",
+          },
+        ],
+      };
+
+      let currentScenario = "accuracy";
+      let currentStep = 0;
+
+      function loadScenario() {
+        const selector = document.getElementById("scenario-selector");
+        currentScenario = selector.value;
+        currentStep = 0;
+
+        const titleElement = document.getElementById("chat-title");
+        if (currentScenario === "accuracy")
+          titleElement.innerText = "Executive (Negociación)";
+        if (currentScenario === "conflict")
+          titleElement.innerText = "Tourist (Recepción Hotel)";
+        if (currentScenario === "tech")
+          titleElement.innerText = "Lead Dev (Reunión IT)";
+
+        document.getElementById("chat-area").innerHTML = "";
+        document.getElementById("next-btn").innerText = "Empezar Conversación";
+        document.getElementById("next-btn").style.display = "inline-block";
+      }
+
+      function nextMessage() {
+        const chatArea = document.getElementById("chat-area");
+        const data = scenarios[currentScenario];
+
+        if (currentStep < data.length) {
+          const stepData = data[currentStep];
+          document.getElementById("next-btn").innerText = "Siguiente Mensaje";
+
+          const row = document.createElement("div");
+          row.className = "message-row";
+
+          // 1. Mensaje recibido (Izquierda)
+          const messageDiv = document.createElement("div");
+          messageDiv.className = "message received";
+          messageDiv.innerHTML = `
+            <strong>${stepData.speaker}:</strong> ${stepData.text}
+            <div class="instruction-box">
+              <strong>🎯 Tu Turno:</strong> ${stepData.structure}
+            </div>
+          `;
+          row.appendChild(messageDiv);
+
+          // 2. Botón interactivo (Derecha)
+          const toggleBtn = document.createElement("button");
+          toggleBtn.className = "hint-toggle-btn";
+          toggleBtn.innerText = "💡 Ver ejemplo de respuesta";
+          row.appendChild(toggleBtn);
+
+          // 3. Mensaje ENVIADO (Derecha - Oculto)
+          const sentDiv = document.createElement("div");
+          sentDiv.className = "message sent";
+          sentDiv.innerHTML = `<strong>Tú:</strong> "${stepData.hint}"`;
+          row.appendChild(sentDiv);
+
+          // 4. Lógica de clic
+          toggleBtn.onclick = function () {
+            if (
+              sentDiv.style.display === "none" ||
+              sentDiv.style.display === ""
+            ) {
+              sentDiv.style.display = "block";
+              toggleBtn.innerText = "💡 Ocultar ejemplo";
+            } else {
+              sentDiv.style.display = "none";
+              toggleBtn.innerText = "💡 Ver ejemplo de respuesta";
+            }
+            chatArea.scrollTop = chatArea.scrollHeight;
+          };
+
+          chatArea.appendChild(row);
+
+          setTimeout(() => {
+            chatArea.scrollTop = chatArea.scrollHeight;
+          }, 100);
+
+          currentStep++;
+
+          if (currentStep >= data.length) {
+            document.getElementById("next-btn").innerText =
+              "Fin del Chat (Cambia arriba)";
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
