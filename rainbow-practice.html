@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Grammar Rainbow - Book Lover Edition</title>
+    <style>
+      :root {
+        --bg-color: #f8fafc;
+        --panel-bg: #ffffff;
+
+        /* Grammar Colors */
+        --c-who: #3b82f6; /* Blue: Subject */
+        --c-action: #ec4899; /* Pink: Verb/Aux */
+        --c-detail: #10b981; /* Green: Object/Place */
+        --c-time: #f59e0b; /* Orange: Time */
+
+        --text-main: #334155;
+        --text-muted: #94a3b8;
+        --border: #e2e8f0;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .header h1 {
+        margin: 0;
+        color: #1e293b;
+        font-size: 2.2rem;
+      }
+      .header p {
+        margin: 5px 0 0;
+        color: var(--text-muted);
+        font-size: 1.1rem;
+      }
+
+      /* --- TABS --- */
+      .tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .tab-btn {
+        background: white;
+        border: 2px solid var(--border);
+        padding: 10px 20px;
+        border-radius: 50px;
+        font-weight: bold;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .tab-btn.active {
+        background: #1e293b;
+        color: white;
+        border-color: #1e293b;
+      }
+
+      /* --- STAGE --- */
+      .stage {
+        background: var(--panel-bg);
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        width: 100%;
+        max-width: 900px;
+        padding: 30px;
+        box-sizing: border-box;
+        border: 1px solid var(--border);
+      }
+
+      /* --- UNIFIED PROMPT BOX --- */
+      .unified-prompt-box {
+        background: #f1f5f9;
+        border: 2px dashed #cbd5e1;
+        border-radius: 15px;
+        min-height: 100px;
+        padding: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 30px;
+      }
+
+      .slot {
+        padding: 15px 20px;
+        border-radius: 10px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: white;
+        min-width: 100px;
+        text-align: center;
+        transition: 0.3s;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .slot.empty {
+        background: transparent;
+        color: var(--text-muted);
+        border: 3px dashed;
+        box-shadow: none;
+        font-size: 1.2rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .slot-who.empty {
+        border-color: var(--c-who);
+        color: var(--c-who);
+      }
+      .slot-action.empty {
+        border-color: var(--c-action);
+        color: var(--c-action);
+      }
+      .slot-detail.empty {
+        border-color: var(--c-detail);
+        color: var(--c-detail);
+      }
+      .slot-time.empty {
+        border-color: var(--c-time);
+        color: var(--c-time);
+      }
+
+      .slot-who.filled {
+        background: var(--c-who);
+        border: 3px solid var(--c-who);
+      }
+      .slot-action.filled {
+        background: var(--c-action);
+        border: 3px solid var(--c-action);
+      }
+      .slot-detail.filled {
+        background: var(--c-detail);
+        border: 3px solid var(--c-detail);
+      }
+      .slot-time.filled {
+        background: var(--c-time);
+        border: 3px solid var(--c-time);
+      }
+
+      /* --- OPTIONS BANK --- */
+      .options-title {
+        font-weight: bold;
+        color: var(--text-main);
+        margin-bottom: 15px;
+        text-align: center;
+        font-size: 1.2rem;
+      }
+
+      .options-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        justify-content: center;
+        margin-bottom: 30px;
+      }
+
+      .opt-btn {
+        background: white;
+        border: 3px solid;
+        padding: 12px 25px;
+        border-radius: 50px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.2s;
+        color: var(--text-main);
+      }
+
+      .opt-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+      }
+      .opt-btn.used {
+        opacity: 0.3;
+        pointer-events: none;
+        transform: none;
+      }
+
+      .opt-who {
+        border-color: var(--c-who);
+        color: var(--c-who);
+      }
+      .opt-action {
+        border-color: var(--c-action);
+        color: var(--c-action);
+      }
+      .opt-detail {
+        border-color: var(--c-detail);
+        color: var(--c-detail);
+      }
+      .opt-time {
+        border-color: var(--c-time);
+        color: var(--c-time);
+      }
+
+      /* --- CONTROLS --- */
+      .controls {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+      }
+
+      .btn-action {
+        padding: 15px 30px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        transition: 0.2s;
+        color: white;
+      }
+
+      .btn-reset {
+        background: #94a3b8;
+      }
+      .btn-reset:hover {
+        background: #64748b;
+      }
+
+      .btn-next {
+        background: #1e293b;
+      }
+      .btn-next:hover {
+        background: #0f172a;
+        transform: scale(1.05);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>The Grammar Rainbow 📚☕</h1>
+      <p>Follow the colors to build perfect sentences about daily life.</p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTense('past')">
+        Past Tense
+      </button>
+      <button class="tab-btn" onclick="switchTense('present')">
+        Present Routine
+      </button>
+      <button class="tab-btn" onclick="switchTense('future')">
+        Future Plans
+      </button>
+    </div>
+
+    <div class="stage">
+      <!-- Unified Prompt Box where the sentence is built -->
+      <div class="unified-prompt-box" id="sentence-box">
+        <!-- Slots injected here -->
+      </div>
+
+      <div class="options-title" id="instruction-text">
+        Click the Blue block (WHO) first:
+      </div>
+
+      <div class="options-grid" id="options-bank">
+        <!-- Options injected here -->
+      </div>
+
+      <div class="controls">
+        <button class="btn-action btn-reset" onclick="resetCurrentSentence()">
+          Undo / Reset
+        </button>
+        <button class="btn-action btn-next" onclick="loadRandomSentence()">
+          Next Sentence ➡
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // --- EXPANDED DATA STRUCTURE (Books & Daily Life) ---
+      const database = {
+        past: [
+          {
+            format: ["who", "action", "detail", "time"],
+            who: ["I", "The librarian", "My friend", "We"],
+            action: ["finished", "recommended", "borrowed", "bought"],
+            detail: [
+              "the last chapter",
+              "a great novel",
+              "three books",
+              "some magazines",
+            ],
+            time: [
+              "last night.",
+              "yesterday afternoon.",
+              "two days ago.",
+              "this morning.",
+            ],
+          },
+          {
+            format: ["who", "action", "detail", "time"],
+            who: ["Emma", "I", "The student", "He"],
+            action: ["drank", "sat", "stayed", "fell asleep"],
+            detail: [
+              "a hot tea",
+              "on the comfortable sofa",
+              "at the local library",
+              "next to the bookshelf",
+            ],
+            time: [
+              "all evening.",
+              "yesterday.",
+              "for three hours.",
+              "last Sunday.",
+            ],
+          },
+          {
+            format: ["who", "action", "detail", "time"],
+            who: ["I", "My book club", "They", "We"],
+            action: ["discussed", "found", "read", "organized"],
+            detail: [
+              "the new mystery book",
+              "a beautiful bookstore",
+              "poetry",
+              "the reading room",
+            ],
+            time: [
+              "last weekend.",
+              "yesterday morning.",
+              "last night.",
+              "a week ago.",
+            ],
+          },
+        ],
+        present: [
+          {
+            format: ["who", "action", "detail", "time"],
+            who: ["I", "My sister", "The teacher", "We"],
+            action: ["read", "love", "buy", "enjoy"],
+            detail: [
+              "fantasy novels",
+              "old mystery books",
+              "used books",
+              "long stories",
+            ],
+            time: [
+              "every night.",
+              "on weekends.",
+              "in the morning.",
+              "all the time.",
+            ],
+          },
+          {
+            format: ["who", "action", "detail", "time"],
+            who: ["The cat", "I", "He", "She"],
+            action: ["sleeps", "drinks", "relaxes", "sits"],
+            detail: [
+              "on top of my books",
+              "black coffee",
+              "in the reading chair",
+              "by the big window",
+            ],
+            time: ["every afternoon.", "while reading.", "usually.", "always."],
+          },
+          {
+            format: ["who", "action", "detail"], // Short format
+            who: ["I", "He", "We", "They"],
+            action: ["always carry", "doesn't like", "usually visit", "prefer"],
+            detail: [
+              "a book in my bag.",
+              "digital books.",
+              "the quiet library.",
+              "reading outside.",
+            ],
+          },
+        ],
+        future: [
+          {
+            format: ["who", "action", "detail", "time"],
+            who: ["I", "We", "She", "They"],
+            action: [
+              "am gonna start",
+              "will buy",
+              "are gonna read",
+              "will finish",
+            ],
+            detail: [
+              "a brand new book",
+              "the entire series",
+              "the library book",
+              "some poetry",
+            ],
+            time: ["tomorrow.", "next month.", "this weekend.", "tonight."],
+          },
+          {
+            format: ["who", "action", "detail", "time"],
+            who: ["I", "My book club", "He", "We"],
+            action: [
+              "will meet",
+              "are gonna go",
+              "will discuss",
+              "are gonna visit",
+            ],
+            detail: [
+              "at the coffee shop",
+              "to the bookstore",
+              "the ending of the book",
+              "the local library",
+            ],
+            time: [
+              "on Friday.",
+              "next week.",
+              "tomorrow morning.",
+              "later today.",
+            ],
+          },
+          {
+            format: ["who", "action", "detail", "time"],
+            who: ["I", "She", "We", "The author"],
+            action: [
+              "am gonna drink",
+              "will write",
+              "are gonna order",
+              "will publish",
+            ],
+            detail: [
+              "a large latte",
+              "a review online",
+              "some tea and cookies",
+              "a new story",
+            ],
+            time: [
+              "while I read.",
+              "this afternoon.",
+              "in a few minutes.",
+              "next year.",
+            ],
+          },
+        ],
+      };
+
+      let currentTense = "past";
+      let currentSentenceData = null;
+      let currentExpectedIndex = 0;
+      let slotsConfig = [];
+
+      function switchTense(tense) {
+        document
+          .querySelectorAll(".tab-btn")
+          .forEach((btn) => btn.classList.remove("active"));
+        event.target.classList.add("active");
+        currentTense = tense;
+        loadRandomSentence();
+      }
+
+      function shuffle(array) {
+        return array.sort(() => Math.random() - 0.5);
+      }
+
+      function loadRandomSentence() {
+        const pool = database[currentTense];
+        const randomTemplate = pool[Math.floor(Math.random() * pool.length)];
+
+        // Pick a coherent line (index 0, 1, 2, or 3) across all properties
+        const storyIndex = Math.floor(
+          Math.random() * randomTemplate.who.length,
+        );
+
+        currentSentenceData = {
+          format: randomTemplate.format,
+          pieces: {
+            who: randomTemplate.who[storyIndex],
+            action: randomTemplate.action[storyIndex],
+            detail: randomTemplate.detail[storyIndex],
+            time: randomTemplate.time ? randomTemplate.time[storyIndex] : null,
+          },
+        };
+
+        slotsConfig = randomTemplate.format;
+        currentExpectedIndex = 0;
+        renderBox();
+        renderOptions(randomTemplate);
+      }
+
+      function renderBox() {
+        const box = document.getElementById("sentence-box");
+        box.innerHTML = "";
+
+        slotsConfig.forEach((type, index) => {
+          const slot = document.createElement("div");
+          slot.className = `slot slot-${type} empty`;
+          slot.id = `slot-${index}`;
+          slot.innerText = `[ ${type.toUpperCase()} ]`;
+          box.appendChild(slot);
+        });
+        updateInstruction();
+      }
+
+      function renderOptions(template) {
+        const bank = document.getElementById("options-bank");
+        bank.innerHTML = "";
+
+        let allOptions = [];
+        slotsConfig.forEach((type) => {
+          // Get 3 random distractors + the correct one
+          let pool = [...template[type]];
+          let correct = currentSentenceData.pieces[type];
+          pool = pool.filter((item) => item !== correct); // remove correct
+          pool = shuffle(pool).slice(0, 2); // take 2 random distractors
+          pool.push(correct); // add correct back
+          pool = shuffle(pool); // shuffle to randomize placement
+
+          pool.forEach((text) => {
+            allOptions.push({ type: type, text: text });
+          });
+        });
+
+        // Randomize all buttons together
+        allOptions = shuffle(allOptions);
+
+        // Render buttons
+        allOptions.forEach((opt) => {
+          const btn = document.createElement("button");
+          btn.className = `opt-btn opt-${opt.type}`;
+          btn.innerText = opt.text;
+          btn.onclick = () => handleSelection(btn, opt.type, opt.text);
+          bank.appendChild(btn);
+        });
+      }
+
+      function handleSelection(btn, type, text) {
+        const expectedType = slotsConfig[currentExpectedIndex];
+
+        if (type === expectedType) {
+          // Correct color category
+          const slot = document.getElementById(`slot-${currentExpectedIndex}`);
+          slot.classList.remove("empty");
+          slot.classList.add("filled");
+          slot.innerText = text;
+
+          btn.classList.add("used");
+          currentExpectedIndex++;
+          updateInstruction();
+        } else {
+          // Wrong color - visual shake feedback
+          btn.style.animation = "shake 0.4s";
+          setTimeout(() => (btn.style.animation = "none"), 400);
+        }
+      }
+
+      function updateInstruction() {
+        const inst = document.getElementById("instruction-text");
+        if (currentExpectedIndex < slotsConfig.length) {
+          const nextType = slotsConfig[currentExpectedIndex];
+          const colorMap = {
+            who: "Blue",
+            action: "Pink",
+            detail: "Green",
+            time: "Orange",
+          };
+          inst.innerText = `Now click a ${colorMap[nextType]} block (${nextType.toUpperCase()}):`;
+        } else {
+          inst.innerText = "🎉 Perfect! Read the full sentence out loud.";
+        }
+      }
+
+      function resetCurrentSentence() {
+        currentExpectedIndex = 0;
+        renderBox();
+        document
+          .querySelectorAll(".opt-btn")
+          .forEach((b) => b.classList.remove("used"));
+      }
+
+      // CSS animation dynamically added for shake
+      const style = document.createElement("style");
+      style.innerHTML = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                75% { transform: translateX(5px); }
+            }
+        `;
+      document.head.appendChild(style);
+
+      // Init
+      loadRandomSentence();
+    </script>
+  </body>
+</html>
