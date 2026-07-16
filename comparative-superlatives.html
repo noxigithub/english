@@ -1,0 +1,664 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-width=1.0" />
+    <title>Grammar Chat Pro: Comparatives & Superlatives</title>
+    <style>
+      :root {
+        --wa-teal: #008069;
+        --wa-light-teal: #00a884;
+        --wa-bg: #efeae2;
+        --wa-sidebar: #ffffff;
+        --wa-bubble-bot: #ffffff;
+        --wa-bubble-user: #d9fdd3;
+        --text-main: #111b21;
+        --text-muted: #667781;
+        --card-bg: #ffffff;
+        --card-shadow:
+          0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family:
+          "Segoe UI",
+          Helvetica Neue,
+          Helvetica,
+          Arial,
+          sans-serif;
+      }
+
+      body {
+        background-color: #d1d7db;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .app-container {
+        width: 100%;
+        max-width: 1200px;
+        height: 95vh;
+        background-color: var(--wa-sidebar);
+        display: flex;
+        box-shadow:
+          0 17px 50px 0 rgba(11, 20, 26, 0.19),
+          0 12px 15px 0 rgba(11, 20, 26, 0.24);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      /* --- SIDEBAR --- */
+      .sidebar {
+        width: 30%;
+        border-right: 1px solid #e9edef;
+        display: flex;
+        flex-direction: column;
+        background-color: var(--wa-sidebar);
+      }
+
+      .sidebar-header {
+        background-color: var(--wa-bg);
+        padding: 15px;
+        font-weight: 600;
+        color: var(--text-main);
+        border-bottom: 1px solid #d1d7db;
+        display: flex;
+        align-items: center;
+        height: 60px;
+      }
+
+      .conversation-list {
+        overflow-y: auto;
+        flex-grow: 1;
+      }
+
+      .chat-item {
+        display: flex;
+        padding: 15px;
+        border-bottom: 1px solid #f0f2f5;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .chat-item:hover {
+        background-color: #f5f6f6;
+      }
+      .chat-item.active {
+        background-color: #f0f2f5;
+      }
+
+      .avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background-color: var(--wa-light-teal);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-weight: bold;
+        font-size: 1.2rem;
+        margin-right: 15px;
+        flex-shrink: 0;
+      }
+
+      .chat-info h3 {
+        font-size: 1rem;
+        color: var(--text-main);
+        margin-bottom: 3px;
+      }
+      .chat-info p {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+      }
+
+      /* --- MAIN CHAT AREA --- */
+      .main-chat {
+        width: 70%;
+        display: flex;
+        flex-direction: column;
+        background-color: var(--wa-bg);
+        position: relative;
+      }
+
+      /* Background Pattern Simulation */
+      .main-chat::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: radial-gradient(#cfd6da 1px, transparent 1px);
+        background-size: 20px 20px;
+        opacity: 0.4;
+        z-index: 0;
+      }
+
+      .chat-header {
+        background-color: var(--wa-sidebar);
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        height: 60px;
+        z-index: 1;
+        border-bottom: 1px solid #d1d7db;
+      }
+
+      .chat-messages {
+        flex-grow: 1;
+        padding: 20px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        z-index: 1;
+      }
+
+      .message {
+        max-width: 75%;
+        padding: 10px 14px;
+        border-radius: 7.5px;
+        font-size: 1rem;
+        line-height: 1.5;
+        position: relative;
+        box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
+        animation: fadeIn 0.3s ease-out;
+      }
+
+      .message.bot {
+        background-color: var(--wa-bubble-bot);
+        align-self: flex-start;
+        border-top-left-radius: 0;
+      }
+
+      .message.user {
+        background-color: var(--wa-bubble-user);
+        align-self: flex-end;
+        border-top-right-radius: 0;
+      }
+
+      .blank-space {
+        display: inline-block;
+        min-width: 80px;
+        border-bottom: 2px solid #000;
+        margin: 0 5px;
+        text-align: center;
+        font-weight: bold;
+        color: var(--wa-teal);
+      }
+
+      /* --- CARDS DE JUEGO --- */
+      .game-controls {
+        background-color: #f0f2f5;
+        padding: 20px;
+        z-index: 1;
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        border-top: 1px solid #d1d7db;
+        min-height: 120px;
+      }
+
+      .grammar-card {
+        background-color: var(--card-bg);
+        border: 2px solid var(--wa-light-teal);
+        border-radius: 12px;
+        padding: 15px 25px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--wa-teal);
+        cursor: pointer;
+        box-shadow: var(--card-shadow);
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s,
+          background-color 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 140px;
+      }
+
+      .grammar-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        background-color: var(--wa-light-teal);
+        color: white;
+      }
+
+      /* Animaciones y utilidades */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-5px);
+        }
+        50% {
+          transform: translateX(5px);
+        }
+        75% {
+          transform: translateX(-5px);
+        }
+      }
+
+      .wrong-shake {
+        animation: shake 0.4s ease-in-out;
+        border-color: #e74c3c !important;
+        color: #e74c3c !important;
+      }
+      .hidden {
+        display: none !important;
+      }
+      .completed-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.95);
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.5s ease-out;
+      }
+      .completed-overlay h2 {
+        color: var(--wa-teal);
+        font-size: 2.2rem;
+        margin-bottom: 15px;
+      }
+      .completed-overlay p {
+        font-size: 1.2rem;
+        color: var(--text-main);
+        margin-bottom: 20px;
+      }
+      .completed-overlay button {
+        padding: 12px 24px;
+        font-size: 1.1rem;
+        background-color: var(--wa-teal);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      .completed-overlay button:hover {
+        background-color: var(--wa-light-teal);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <aside class="sidebar">
+        <div class="sidebar-header">Active Chats</div>
+        <div class="conversation-list" id="conversation-list"></div>
+      </aside>
+
+      <main class="main-chat">
+        <div class="chat-header">
+          <div class="avatar" id="current-chat-avatar">#</div>
+          <div class="chat-info">
+            <h3 id="current-chat-title">Selecciona una conversación</h3>
+            <p>En línea</p>
+          </div>
+        </div>
+
+        <div class="chat-messages" id="chat-messages"></div>
+
+        <div class="game-controls hidden" id="game-controls"></div>
+
+        <div id="completed-screen" class="completed-overlay hidden">
+          <h2>¡Chat Completado! 🎉</h2>
+          <p>Excelente comprensión lectora y gramática.</p>
+          <button
+            onclick="
+              document
+                .querySelector('.completed-overlay')
+                .classList.add('hidden')
+            "
+          >
+            Ver el chat completo
+          </button>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      class ChatScenario {
+        constructor(id, title, avatar, initialMessage, dialogueSteps) {
+          this.id = id;
+          this.title = title;
+          this.avatar = avatar;
+          this.initialMessage = initialMessage;
+          this.dialogueSteps = dialogueSteps;
+        }
+      }
+
+      class ChatGameEngine {
+        constructor(scenarios) {
+          this.scenarios = scenarios;
+          this.activeScenario = null;
+          this.currentStepIndex = 0;
+
+          this.elements = {
+            convoList: document.getElementById("conversation-list"),
+            chatMessages: document.getElementById("chat-messages"),
+            gameControls: document.getElementById("game-controls"),
+            chatTitle: document.getElementById("current-chat-title"),
+            chatAvatar: document.getElementById("current-chat-avatar"),
+            completedScreen: document.getElementById("completed-screen"),
+          };
+
+          this.init();
+        }
+
+        init() {
+          this.renderSidebar();
+          if (this.scenarios.length > 0) {
+            this.loadScenario(this.scenarios[0].id);
+          }
+        }
+
+        renderSidebar() {
+          this.elements.convoList.innerHTML = "";
+          this.scenarios.forEach((scenario) => {
+            const item = document.createElement("div");
+            item.className = "chat-item";
+            item.dataset.id = scenario.id;
+            item.innerHTML = `
+                    <div class="avatar">${scenario.avatar}</div>
+                    <div class="chat-info">
+                        <h3>${scenario.title}</h3>
+                        <p>Toca para practicar...</p>
+                    </div>
+                `;
+            item.addEventListener("click", () =>
+              this.loadScenario(scenario.id),
+            );
+            this.elements.convoList.appendChild(item);
+          });
+        }
+
+        loadScenario(id) {
+          this.activeScenario = this.scenarios.find((s) => s.id === id);
+          this.currentStepIndex = 0;
+
+          document
+            .querySelectorAll(".chat-item")
+            .forEach((el) => el.classList.remove("active"));
+          document
+            .querySelector(`.chat-item[data-id="${id}"]`)
+            .classList.add("active");
+
+          this.elements.chatTitle.innerText = this.activeScenario.title;
+          this.elements.chatAvatar.innerText = this.activeScenario.avatar;
+          this.elements.chatMessages.innerHTML = "";
+          this.elements.completedScreen.classList.add("hidden");
+
+          this.addMessage("bot", this.activeScenario.initialMessage);
+          this.playNextTurn();
+        }
+
+        addMessage(sender, text, hasBlank = false) {
+          const msgDiv = document.createElement("div");
+          msgDiv.className = `message ${sender}`;
+
+          if (hasBlank) {
+            msgDiv.innerHTML = text.replace(
+              "___",
+              '<span class="blank-space" id="active-blank"></span>',
+            );
+          } else {
+            msgDiv.innerHTML = text;
+          }
+
+          this.elements.chatMessages.appendChild(msgDiv);
+          this.scrollToBottom();
+        }
+
+        playNextTurn() {
+          if (
+            this.currentStepIndex >= this.activeScenario.dialogueSteps.length
+          ) {
+            this.elements.gameControls.classList.add("hidden");
+            setTimeout(() => {
+              this.elements.completedScreen.classList.remove("hidden");
+            }, 800);
+            return;
+          }
+
+          const currentStep =
+            this.activeScenario.dialogueSteps[this.currentStepIndex];
+          this.addMessage("user", currentStep.userText, true);
+          this.renderCards(currentStep.options, currentStep.correctAnswer);
+        }
+
+        renderCards(options, correctAnswer) {
+          this.elements.gameControls.innerHTML = "";
+          this.elements.gameControls.classList.remove("hidden");
+
+          let shuffled = [...options].sort(() => Math.random() - 0.5);
+
+          shuffled.forEach((option) => {
+            const card = document.createElement("div");
+            card.className = "grammar-card";
+            card.innerText = option;
+
+            card.addEventListener("click", () => {
+              this.handleCardSelection(card, option, correctAnswer);
+            });
+
+            this.elements.gameControls.appendChild(card);
+          });
+        }
+
+        handleCardSelection(cardElement, selectedOption, correctAnswer) {
+          if (selectedOption === correctAnswer) {
+            const blank = document.getElementById("active-blank");
+            blank.innerText = correctAnswer;
+            blank.style.border = "none";
+            blank.style.color = "inherit";
+            blank.removeAttribute("id");
+
+            this.elements.gameControls.classList.add("hidden");
+
+            setTimeout(() => {
+              const currentStep =
+                this.activeScenario.dialogueSteps[this.currentStepIndex];
+              this.addMessage("bot", currentStep.botReply);
+
+              this.currentStepIndex++;
+              setTimeout(() => this.playNextTurn(), 1000);
+            }, 600);
+          } else {
+            cardElement.classList.add("wrong-shake");
+            setTimeout(() => {
+              cardElement.classList.remove("wrong-shake");
+            }, 400);
+          }
+        }
+
+        scrollToBottom() {
+          this.elements.chatMessages.scrollTop =
+            this.elements.chatMessages.scrollHeight;
+        }
+      }
+
+      // --- NUEVA BASE DE DATOS DE ESCENARIOS (ALTA COMPLEJIDAD) ---
+      const appScenarios = [
+        new ChatScenario(
+          "chat1",
+          "Sarah (Work Project)",
+          "📊",
+          "FYI, the deadline for the marketing presentation got moved to Friday. We need to finish those slides ASAP.",
+          [
+            {
+              userText:
+                "Seriously? That's the ___ news I've heard all week. I haven't even started my part yet!",
+              options: ["bad", "worse", "worst", "baddest"],
+              correctAnswer: "worst",
+              botReply:
+                "IK, right? And the boss wants it to be highly detailed. TBH I'm kind of stressing out about the data analysis section.",
+            },
+            {
+              userText:
+                "Don't panic. If we split the research using the new software, it will be much ___ to complete on time.",
+              options: ["easy", "easier", "easiest", "more easy"],
+              correctAnswer: "easier",
+              botReply:
+                "Good idea. Can you take the financial section? It's usually the most complicated part of the report.",
+            },
+            {
+              userText:
+                "Sure thing. LMK when you finish the layout. Your graphic designs are always ___ than mine anyway!",
+              options: [
+                "creative",
+                "more creative",
+                "most creative",
+                "creativer",
+              ],
+              correctAnswer: "more creative",
+              botReply: "Aw, thanks! TTYL, I'm getting back to work!",
+            },
+          ],
+        ),
+        new ChatScenario(
+          "chat2",
+          "Mike (Road Trip to Tunja)",
+          "🚗",
+          "Hey! Are we still on for the road trip to Tunja this weekend? I was checking the GPS and there are two routes we can take from Cartago.",
+          [
+            {
+              userText:
+                "Awesome! Which route is ___? I want to make sure we have time to stop and take some good photos along the way.",
+              options: ["scenic", "more scenic", "most scenic", "scenicker"],
+              correctAnswer: "more scenic",
+              botReply:
+                "The mountain route is gorgeous, but the ETA is about 2 hours longer. The main highway is definitely faster.",
+            },
+            {
+              userText:
+                "TBH, I prefer the mountain road. Driving on a straight highway for hours is the ___ thing ever.",
+              options: ["boring", "more boring", "most boring", "boringest"],
+              correctAnswer: "most boring",
+              botReply:
+                "Fair enough! Just FYI, the weather forecast says it might rain heavily near the higher altitudes.",
+            },
+            {
+              userText:
+                "IDK, maybe we should pack some extra jackets then. It gets much ___ up there near Boyacá.",
+              options: ["cold", "colder", "coldest", "more cold"],
+              correctAnswer: "colder",
+              botReply:
+                "Will do. I'll text you the final itinerary later. BRB!",
+            },
+          ],
+        ),
+        new ChatScenario(
+          "chat3",
+          "Alex (PC Upgrades)",
+          "🖥️",
+          "Hey man, I'm finally upgrading my PC setup! I'm looking at the new Ryzen processors, but IDK if I should get the 5 series or wait for the 7.",
+          [
+            {
+              userText:
+                "TBH, the 7 series is ___ but it might be overkill if you just want it for regular programming and some gaming.",
+              options: [
+                "expensive",
+                "more expensive",
+                "most expensive",
+                "expensiver",
+              ],
+              correctAnswer: "more expensive",
+              botReply:
+                "LOL true. But I want the best performance possible. My current motherboard and CPU are lagging so much lately when compiling code.",
+            },
+            {
+              userText:
+                "If you want the ___ frame rates and speed, you should also upgrade your graphics card ASAP.",
+              options: ["high", "higher", "highest", "most high"],
+              correctAnswer: "highest",
+              botReply:
+                "Yeah, but GPUs are crazy right now. The new RTX line is completely out of my budget.",
+            },
+            {
+              userText:
+                "IMO, getting a solid mid-range card right now is ___ than overspending on a high-end one. You can always upgrade later.",
+              options: ["good", "better", "best", "more good"],
+              correctAnswer: "better",
+              botReply:
+                "That actually makes a lot of sense. I'll check the prices tonight. Thx!",
+            },
+          ],
+        ),
+        new ChatScenario(
+          "chat4",
+          "Emma (Apartment Hunting)",
+          "🏠",
+          "OMG, I just checked out three apartments today. I'm so exhausted! Finding a decent place in this city is a nightmare.",
+          [
+            {
+              userText:
+                "Tell me about it! Which one was the ___ out of the three you saw?",
+              options: [
+                "spacious",
+                "more spacious",
+                "most spacious",
+                "spaciousest",
+              ],
+              correctAnswer: "most spacious",
+              botReply:
+                "The one downtown. It has huge windows and great lighting, but BTW the rent is astronomical!",
+            },
+            {
+              userText:
+                "Yeah, living downtown is always ___ than the suburbs. You're basically paying for the location and convenience.",
+              options: ["pricey", "pricier", "priciest", "more pricey"],
+              correctAnswer: "pricier",
+              botReply:
+                "Exactly. The third one was in the suburbs. It's smaller, but the neighborhood seems really safe and quiet.",
+            },
+            {
+              userText:
+                "IMO, having a quiet and safe place to relax after work is the ___ factor when choosing a home.",
+              options: [
+                "important",
+                "more important",
+                "most important",
+                "importantest",
+              ],
+              correctAnswer: "most important",
+              botReply:
+                "I agree completely. I think I'll apply for the suburban one right now. Wish me luck!",
+            },
+          ],
+        ),
+      ];
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const game = new ChatGameEngine(appScenarios);
+      });
+    </script>
+  </body>
+</html>
