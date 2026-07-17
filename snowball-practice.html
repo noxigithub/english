@@ -1,0 +1,1133 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Cozy Snowball - Tense Selector</title>
+    <style>
+      :root {
+        --bg-gradient: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+        --card-bg: rgba(255, 255, 255, 0.9);
+
+        /* Grammar Colors */
+        --c-base: #3b82f6; /* Blue for base subject */
+        --c-what: #ec4899; /* Pink for What/Action */
+        --c-where: #10b981; /* Green for Where */
+        --c-when: #f59e0b; /* Orange for When */
+        --c-why: #8b5cf6; /* Purple for Why */
+
+        --text-main: #334155;
+        --text-muted: #94a3b8;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: var(--bg-gradient);
+        color: var(--text-main);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .header h1 {
+        margin: 0;
+        font-size: 2.5rem;
+        color: #475569;
+      }
+      .header p {
+        margin: 5px 0 0;
+        color: var(--text-muted);
+        font-size: 1.1rem;
+      }
+
+      /* --- PILL NAVIGATION --- */
+      .pills-container {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .pill-btn {
+        background: white;
+        border: 2px solid #cbd5e1;
+        padding: 10px 20px;
+        border-radius: 50px;
+        font-size: 1rem;
+        font-weight: bold;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+      }
+
+      .pill-btn:hover {
+        border-color: #94a3b8;
+        transform: translateY(-2px);
+      }
+
+      .pill-btn.active {
+        background: #475569;
+        color: white;
+        border-color: #475569;
+        box-shadow: 0 6px 12px rgba(71, 85, 105, 0.2);
+      }
+
+      /* --- MAIN STAGE --- */
+      .stage {
+        background: var(--card-bg);
+        border-radius: 25px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+        width: 100%;
+        max-width: 800px;
+        padding: 40px;
+        text-align: center;
+        border: 1px solid #e2e8f0;
+      }
+
+      /* --- SENTENCE DISPLAY --- */
+      .sentence-box {
+        background: #f8fafc;
+        border: 2px dashed #cbd5e1;
+        border-radius: 15px;
+        min-height: 120px;
+        padding: 25px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 30px;
+        font-size: 1.8rem;
+        font-weight: bold;
+        line-height: 1.5;
+      }
+
+      .chunk {
+        padding: 5px 12px;
+        border-radius: 8px;
+        opacity: 0;
+        transform: scale(0.9);
+        animation: popIn 0.4s forwards;
+        color: white;
+      }
+
+      @keyframes popIn {
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      .c-base {
+        background: var(--c-base);
+      }
+      .c-what {
+        background: var(--c-what);
+      }
+      .c-where {
+        background: var(--c-where);
+      }
+      .c-when {
+        background: var(--c-when);
+      }
+      .c-why {
+        background: var(--c-why);
+      }
+
+      /* --- PROMPT AREA --- */
+      .prompt-area {
+        margin-bottom: 30px;
+        min-height: 150px;
+      }
+
+      .question-label {
+        font-size: 1.4rem;
+        font-weight: bold;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        transition: color 0.3s;
+      }
+
+      .options-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+      }
+
+      .opt-btn {
+        background: white;
+        border: 2px solid #cbd5e1;
+        padding: 15px 25px;
+        border-radius: 50px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-main);
+        cursor: pointer;
+        transition: 0.2s;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+      }
+
+      .opt-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05);
+        border-color: #94a3b8;
+      }
+
+      /* --- CONTROLS --- */
+      .controls {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .btn-main {
+        padding: 15px 35px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        border-radius: 50px;
+        border: none;
+        cursor: pointer;
+        color: white;
+        transition: 0.3s;
+      }
+
+      .btn-flow {
+        background: #10b981;
+        box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        display: none;
+      }
+      .btn-flow:hover {
+        background: #059669;
+        transform: scale(1.05);
+      }
+
+      .btn-next {
+        background: #3b82f6;
+        box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+        display: none;
+      }
+      .btn-next:hover {
+        background: #2563eb;
+        transform: scale(1.05);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>The Cozy Snowball ❄️📚</h1>
+      <p>Start small. Add layers. Watch your English grow.</p>
+    </div>
+
+    <!-- Tense Navigation Pills -->
+    <div class="pills-container">
+      <button class="pill-btn active" onclick="setCategory('present', this)">
+        🟢 Present (10)
+      </button>
+      <button class="pill-btn" onclick="setCategory('past', this)">
+        🛑 Past (10)
+      </button>
+      <button class="pill-btn" onclick="setCategory('future', this)">
+        🔮 Future (10)
+      </button>
+      <button class="pill-btn" onclick="setCategory('mixed', this)">
+        🔀 Mixed Challenge (30)
+      </button>
+    </div>
+
+    <div class="stage">
+      <div class="sentence-box" id="sentence-box">
+        <!-- Chunks appear here -->
+      </div>
+
+      <div class="prompt-area" id="prompt-area">
+        <div class="question-label" id="question-label">Loading...</div>
+        <div class="options-container" id="options-container">
+          <!-- Buttons injected here -->
+        </div>
+      </div>
+
+      <div class="controls">
+        <button
+          class="btn-main btn-flow"
+          id="btn-flow"
+          onclick="flowSentence()"
+        >
+          🌊 Flow the Sentence!
+        </button>
+        <button
+          class="btn-main btn-next"
+          id="btn-next"
+          onclick="loadNextExercise()"
+        >
+          ✨ Next Story
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // --- EXPANDED DATA STRUCTURE (10 per tense) ---
+      const database = {
+        present: [
+          {
+            base: { text: "I drink", type: "c-base" },
+            steps: [
+              {
+                q: "+ WHAT?",
+                type: "c-what",
+                correct: "a hot green tea",
+                distractors: ["at the library", "every afternoon"],
+              },
+              {
+                q: "+ WHERE?",
+                type: "c-where",
+                correct: "at the local library",
+                distractors: ["every afternoon", "a hot green tea"],
+              },
+              {
+                q: "+ WHEN?",
+                type: "c-when",
+                correct: "every afternoon.",
+                distractors: ["a hot green tea", "at the local library"],
+              },
+            ],
+          },
+          {
+            base: { text: "She is reading", type: "c-base" },
+            steps: [
+              {
+                q: "+ WHAT?",
+                type: "c-what",
+                correct: "a fantasy novel",
+                distractors: ["because it is sunny", "on the balcony"],
+              },
+              {
+                q: "+ WHERE?",
+                type: "c-where",
+                correct: "on the balcony",
+                distractors: ["a fantasy novel", "because it is sunny"],
+              },
+              {
+                q: "+ WHY?",
+                type: "c-why",
+                correct: "because it is sunny.",
+                distractors: ["on the balcony", "a fantasy novel"],
+              },
+            ],
+          },
+          {
+            base: { text: "We buy", type: "c-base" },
+            steps: [
+              {
+                q: "+ WHAT?",
+                type: "c-what",
+                correct: "three new books",
+                distractors: ["every weekend", "at the shop"],
+              },
+              {
+                q: "+ WHERE?",
+                type: "c-where",
+                correct: "at the small bookstore",
+                distractors: ["three new books", "every weekend"],
+              },
+              {
+                q: "+ WHEN?",
+                type: "c-when",
+                correct: "every weekend.",
+                distractors: ["at the small bookstore", "three new books"],
+              },
+            ],
+          },
+          {
+            base: { text: "I make", type: "c-base" },
+            steps: [
+              {
+                q: "+ WHAT?",
+                type: "c-what",
+                correct: "a strong coffee",
+                distractors: ["in the kitchen", "every morning"],
+              },
+              {
+                q: "+ WHERE?",
+                type: "c-where",
+                correct: "in the kitchen",
+                distractors: ["every morning", "a strong coffee"],
+              },
+              {
+                q: "+ WHEN?",
+                type: "c-when",
+                correct: "every morning.",
+                distractors: ["in the kitchen", "a strong coffee"],
+              },
+            ],
+          },
+          {
+            base: { text: "He always reads", type: "c-base" },
+            steps: [
+              {
+                q: "+ WHAT?",
+                type: "c-what",
+                correct: "a few pages",
+                distractors: ["in his bed", "before sleeping"],
+              },
+              {
+                q: "+ WHERE?",
+                type: "c-where",
+                correct: "in his bed",
+                distractors: ["a few pages", "before sleeping"],
+              },
+              {
+                q: "+ WHEN?",
+                type: "c-when",
+                correct: "before sleeping.",
+                distractors: ["in his bed", "a few pages"],
+              },
+            ],
+          },
+          {
+            base: { text: "We are organizing", type: "c-base" },
+            steps: [
+              {
+                q: "+ WHAT?",
+                type: "c-what",
+                correct: "the bookshelves",
+                distractors: ["right now", "in the living room"],
+              },
+              {
+                q: "+ WHERE?",
+                type: "c-where",
+                correct: "in the living room",
+                distractors: ["the bookshelves", "right now"],
+              },
+              {
+                q: "+ WHEN?",
+                type: "c-when",
+                correct: "right now.",
+                distractors: ["in the living room", "the bookshelves"],
+              },
+            ],
+          },
+          {
+            base: { text: "The dog sleeps", type: "c-base" },
+            steps: [
+              {
+                q: "+ WHERE?",
+                type: "c-where",
+                correct: "under the reading chair",
+                distractors: ["in the afternoon", "because it is quiet"],
+              },
+              {
+                q: "+ WHEN?",
+                type: "c-when",
+                correct: "in the afternoon",
+                distractors: ["under the reading chair", "because it is quiet"],
+              },
+              {
+                q: "+ WHY?",
+                type: "c-why",
+                correct: "because it is quiet.",
+                distractors: ["in the afternoon", "under the reading chair"],
+              },
+            ],
+          },
+          {
+            base: { text: "I listen to", type: "c-base" },
+            steps: [
+              {
+                q: "+ WHAT?",
+                type: "c-what",
+                correct: "soft music",
+                distractors: ["while I study", "in my bedroom"],
+              },
+              {
+                q: "+ WHERE?",
+                type: "c-where",
+                correct: "in my bedroom",
+                distractors: ["soft music", "while I study"],
+              },
+              {
+                q: "+ WHEN?",
+                type: "c-when",
+                correct: "while I study.",
+                distractors: ["in my bedroom", "soft music"],
+              },
+            ],
+          },
+          {
+            base: { text: "She writes", type: "c-base" },
+            steps: [
+              {
+                q: "+ WHAT?",
+                type: "c-what",
+                correct: "a journal entry",
+                distractors: ["at the coffee shop", "on Sundays"],
+              },
+              {
+                q: "+ WHERE?",
+                type: "c-where",
+                correct: "at the coffee shop",
+                distractors: ["on Sundays", "a journal entry"],
+              },
+              {
+                q: "+ WHEN?",
+                type: "c-when",
+                correct: "on Sundays.",
+                distractors: ["at the coffee shop", "a journal entry"],
+              },
+            ],
+          },
+          {
+            base: { text: "We are making", type: "c-base" },
+            steps: [
+              {
+                q: "+ WHAT?",
+                type: "c-what",
+                correct: "a delicious cake",
+                distractors: ["in the kitchen", "for the kids"],
+              },
+              {
+                q: "+ WHERE?",
+                type: "c-where",
+                correct: "in the kitchen",
+                distractors: ["a delicious cake", "for the kids"],
+              },
+              {
+                q: "+ WHY?",
+                type: "c-why",
+                correct: "for the kids.",
+                distractors: ["in the kitchen", "a delicious cake"],
+              },
+            ],
+          },
+        ],
+        past: [
+          {
+            base: { text: "I finished", type: "c-base" },
+            steps: [
+              {
+                q: "+ WHAT?",
+                type: "c-what",
+                correct: "the whole story",
+                distractors: ["last night", "in my bed"],
+              },
+              {
+                q: "+ WHERE?",
+                type: "c-where",
+                correct: "in my bed",
+                distractors: ["the whole story", "last night"],
+              },
+              {
+                q: "+ WHEN?",
+                type: "c-when",
+                correct: "last night.",
+                distractors: ["in my bed", "the whole story"],
+              },
+            ],
+          },
+          {
+            base: { text: "He was drinking", type: "c-base" },
+            steps: [
+              {
+                q: "+ WHAT?",
+                type: "c-what",
+                correct: "a black coffee",
+                distractors: ["at the corner cafe", "when I arrived"],
+              },
+              {
+                q: "+ WHERE?",
+                type: "c-where",
+                correct: "at the corner cafe",
+                distractors: ["when I arrived", "a black coffee"],
+              },
+              {
+                q: "+ WHEN?",
+                type: "c-when",
+                correct: "when I arrived.",
+                distractors: ["at the corner cafe", "a black coffee"],
+              },
+            ],
+          },
+          {
+            base: { text: "They organized", type: "c-base" },
+            steps: [
+              {
+                q: "+ WHAT?",
+                type: "c-what",
+                correct: "all the bookshelves",
+                distractors: ["in the living room", "because it was messy"],
+              },
+              {
+                q: "+ WHERE?",
+                type: "c-where",
+                correct: "in the living room",
+                distractors: ["all the bookshelves", "because it was messy"],
+              },
+              {
+                q: "+ WHY?",
+                type: "c-why",
+                correct: "because it was very messy.",
+                distractors: ["in the living room", "all the bookshelves"],
+              },
+            ],
+          },
+          {
+            base: { text: "I bought", type: "c-base" },
+            steps: [
+              {
+                q: "+ WHAT?",
+                type: "c-what",
+                correct: "a beautiful notebook",
+                distractors: ["at the stationery store", "yesterday"],
+              },
+              {
+                q: "+ WHERE?",
+                type: "c-where",
+                correct: "at the stationery store",
+                distractors: ["a beautiful notebook", "yesterday"],
+              },
+              {
+                q: "+ WHEN?",
+                type: "c-when",
+                correct: "yesterday.",
+                distractors: [
+                  "at the stationery store",
+                  "a beautiful notebook",
+                ],
+              },
+            ],
+          },
+          {
+            base: { text: "She was reading", type: "c-base" },
+            steps: [
+              {
+                q: "+ WHAT?",
+                type: "c-what",
+                correct: "a mystery novel",
+                distractors: ["on the sofa", "all afternoon"],
+              },
+              {
+                q: "+ WHERE?",
+                type: "c-where",
+                correct: "on the sofa",
+                distractors: ["a mystery novel", "all afternoon"],
+              },
+              {
+                q: "+ WHEN?",
+                type: "c-when",
+                correct: "all afternoon.",
+                distractors: ["on the sofa", "a mystery novel"],
+              },
+            ],
+          },
+          {
+            base: { text: "We baked", type: "c-base" },
+            steps: [
+              {
+                q: "+ WHAT?",
+                type: "c-what",
+                correct: "some chocolate cookies",
+                distractors: ["in the oven", "last weekend"],
+              },
+              {
+                q: "+ WHERE?",
+                type: "c-where",
+                correct: "in the oven",
+                distractors: ["some chocolate cookies", "last weekend"],
+              },
+              {
+                q: "+ WHEN?",
+                type: "c-when",
+                correct: "last weekend.",
+                distractors: ["in the oven", "some chocolate cookies"],
+              },
+            ],
+          },
+          {
+            base: { text: "I forgot", type: "c-base" },
+            steps: [
+              {
+                q: "+ WHAT?",
+                type: "c-what",
+                correct: "my library card",
+                distractors: ["on the kitchen counter", "this morning"],
+              },
+              {
+                q: "+ WHERE?",
+                type: "c-where",
+                correct: "on the kitchen counter",
+                distractors: ["this morning", "my library card"],
+              },
+              {
+                q: "+ WHEN?",
+                type: "c-when",
+                correct: "this morning.",
+                distractors: ["on the kitchen counter", "my library card"],
+              },
+            ],
+          },
+          {
+            base: { text: "They were playing", type: "c-base" },
+            steps: [
+              {
+                q: "+ WHAT?",
+                type: "c-what",
+                correct: "board games",
+                distractors: ["in the living room", "when the storm started"],
+              },
+              {
+                q: "+ WHERE?",
+                type: "c-where",
+                correct: "in the living room",
+                distractors: ["board games", "when the storm started"],
+              },
+              {
+                q: "+ WHEN?",
+                type: "c-when",
+                correct: "when the storm started.",
+                distractors: ["in the living room", "board games"],
+              },
+            ],
+          },
+          {
+            base: { text: "He found", type: "c-base" },
+            steps: [
+              {
+                q: "+ WHAT?",
+                type: "c-what",
+                correct: "his favorite book",
+                distractors: ["under the bed", "two days ago"],
+              },
+              {
+                q: "+ WHERE?",
+                type: "c-where",
+                correct: "under the bed",
+                distractors: ["his favorite book", "two days ago"],
+              },
+              {
+                q: "+ WHEN?",
+                type: "c-when",
+                correct: "two days ago.",
+                distractors: ["under the bed", "his favorite book"],
+              },
+            ],
+          },
+          {
+            base: { text: "I made", type: "c-base" },
+            steps: [
+              {
+                q: "+ WHAT?",
+                type: "c-what",
+                correct: "a big breakfast",
+                distractors: ["for the host family", "on Sunday"],
+              },
+              {
+                q: "+ WHY?",
+                type: "c-why",
+                correct: "for the host family",
+                distractors: ["a big breakfast", "on Sunday"],
+              },
+              {
+                q: "+ WHEN?",
+                type: "c-when",
+                correct: "on Sunday.",
+                distractors: ["for the host family", "a big breakfast"],
+              },
+            ],
+          },
+        ],
+        future: [
+          {
+            base: { text: "I will start", type: "c-base" },
+            steps: [
+              {
+                q: "+ WHAT?",
+                type: "c-what",
+                correct: "the second chapter",
+                distractors: ["tonight", "because I am excited"],
+              },
+              {
+                q: "+ WHEN?",
+                type: "c-when",
+                correct: "tonight",
+                distractors: ["the second chapter", "because I am excited"],
+              },
+              {
+                q: "+ WHY?",
+                type: "c-why",
+                correct: "because I am so excited.",
+                distractors: ["tonight", "the second chapter"],
+              },
+            ],
+          },
+          {
+            base: { text: "We are gonna buy", type: "c-base" },
+            steps: [
+              {
+                q: "+ WHAT?",
+                type: "c-what",
+                correct: "some fresh pastries",
+                distractors: ["tomorrow morning", "at the bakery"],
+              },
+              {
+                q: "+ WHERE?",
+                type: "c-where",
+                correct: "at the bakery",
+                distractors: ["some fresh pastries", "tomorrow morning"],
+              },
+              {
+                q: "+ WHEN?",
+                type: "c-when",
+                correct: "tomorrow morning.",
+                distractors: ["at the bakery", "some fresh pastries"],
+              },
+            ],
+          },
+          {
+            base: { text: "She will write", type: "c-base" },
+            steps: [
+              {
+                q: "+ WHAT?",
+                type: "c-what",
+                correct: "a beautiful book review",
+                distractors: ["next Sunday", "on her blog"],
+              },
+              {
+                q: "+ WHERE?",
+                type: "c-where",
+                correct: "on her blog",
+                distractors: ["a beautiful book review", "next Sunday"],
+              },
+              {
+                q: "+ WHEN?",
+                type: "c-when",
+                correct: "next Sunday.",
+                distractors: ["on her blog", "a beautiful book review"],
+              },
+            ],
+          },
+          {
+            base: { text: "I am gonna visit", type: "c-base" },
+            steps: [
+              {
+                q: "+ WHERE?",
+                type: "c-where",
+                correct: "the new library",
+                distractors: ["in downtown Austin", "next week"],
+              },
+              {
+                q: "+ WHERE?",
+                type: "c-where",
+                correct: "in downtown Austin",
+                distractors: ["the new library", "next week"],
+              }, // double where
+              {
+                q: "+ WHEN?",
+                type: "c-when",
+                correct: "next week.",
+                distractors: ["the new library", "in downtown Austin"],
+              },
+            ],
+          },
+          {
+            base: { text: "They will clean", type: "c-base" },
+            steps: [
+              {
+                q: "+ WHAT?",
+                type: "c-what",
+                correct: "the entire playroom",
+                distractors: ["this afternoon", "because it is a mess"],
+              },
+              {
+                q: "+ WHEN?",
+                type: "c-when",
+                correct: "this afternoon",
+                distractors: ["the entire playroom", "because it is a mess"],
+              },
+              {
+                q: "+ WHY?",
+                type: "c-why",
+                correct: "because it is a mess.",
+                distractors: ["this afternoon", "the entire playroom"],
+              },
+            ],
+          },
+          {
+            base: { text: "We are gonna make", type: "c-base" },
+            steps: [
+              {
+                q: "+ WHAT?",
+                type: "c-what",
+                correct: "a big dinner",
+                distractors: ["for the host parents", "on Friday"],
+              },
+              {
+                q: "+ WHY?",
+                type: "c-why",
+                correct: "for the host parents",
+                distractors: ["a big dinner", "on Friday"],
+              },
+              {
+                q: "+ WHEN?",
+                type: "c-when",
+                correct: "on Friday.",
+                distractors: ["for the host parents", "a big dinner"],
+              },
+            ],
+          },
+          {
+            base: { text: "I will order", type: "c-base" },
+            steps: [
+              {
+                q: "+ WHAT?",
+                type: "c-what",
+                correct: "a cold iced coffee",
+                distractors: ["at the drive-thru", "in five minutes"],
+              },
+              {
+                q: "+ WHERE?",
+                type: "c-where",
+                correct: "at the drive-thru",
+                distractors: ["a cold iced coffee", "in five minutes"],
+              },
+              {
+                q: "+ WHEN?",
+                type: "c-when",
+                correct: "in five minutes.",
+                distractors: ["at the drive-thru", "a cold iced coffee"],
+              },
+            ],
+          },
+          {
+            base: { text: "He is gonna read", type: "c-base" },
+            steps: [
+              {
+                q: "+ WHAT?",
+                type: "c-what",
+                correct: "a bedtime story",
+                distractors: ["to the toddlers", "tonight"],
+              },
+              {
+                q: "+ WHY?",
+                type: "c-why",
+                correct: "to the toddlers",
+                distractors: ["a bedtime story", "tonight"],
+              },
+              {
+                q: "+ WHEN?",
+                type: "c-when",
+                correct: "tonight.",
+                distractors: ["to the toddlers", "a bedtime story"],
+              },
+            ],
+          },
+          {
+            base: { text: "We will take", type: "c-base" },
+            steps: [
+              {
+                q: "+ WHAT?",
+                type: "c-what",
+                correct: "a long walk",
+                distractors: ["at the park", "when the sun goes down"],
+              },
+              {
+                q: "+ WHERE?",
+                type: "c-where",
+                correct: "at the park",
+                distractors: ["a long walk", "when the sun goes down"],
+              },
+              {
+                q: "+ WHEN?",
+                type: "c-when",
+                correct: "when the sun goes down.",
+                distractors: ["at the park", "a long walk"],
+              },
+            ],
+          },
+          {
+            base: { text: "I am gonna organize", type: "c-base" },
+            steps: [
+              {
+                q: "+ WHAT?",
+                type: "c-what",
+                correct: "my study desk",
+                distractors: ["tomorrow", "so I can focus better"],
+              },
+              {
+                q: "+ WHEN?",
+                type: "c-when",
+                correct: "tomorrow",
+                distractors: ["my study desk", "so I can focus better"],
+              },
+              {
+                q: "+ WHY?",
+                type: "c-why",
+                correct: "so I can focus better.",
+                distractors: ["tomorrow", "my study desk"],
+              },
+            ],
+          },
+        ],
+      };
+
+      // Create the Mixed category dynamically (10 + 10 + 10 = 30)
+      database.mixed = [
+        ...database.present,
+        ...database.past,
+        ...database.future,
+      ];
+
+      let currentCategory = "present";
+      let activeExercises = [];
+      let currentExIndex = 0;
+      let currentStepIndex = 0;
+
+      function shuffle(array) {
+        return array.sort(() => Math.random() - 0.5);
+      }
+
+      function setCategory(category, btnElement) {
+        // Update Active Pill
+        document
+          .querySelectorAll(".pill-btn")
+          .forEach((btn) => btn.classList.remove("active"));
+        btnElement.classList.add("active");
+
+        // Setup Data
+        currentCategory = category;
+        activeExercises = shuffle([...database[currentCategory]]);
+        currentExIndex = 0;
+
+        loadNextExercise();
+      }
+
+      function loadNextExercise() {
+        // Reset UI
+        document.getElementById("sentence-box").innerHTML = "";
+        document.getElementById("btn-next").style.display = "none";
+        document.getElementById("btn-flow").style.display = "none";
+        document.getElementById("prompt-area").style.display = "block";
+
+        currentStepIndex = 0;
+
+        if (currentExIndex >= activeExercises.length) {
+          // Reshuffle if we reached the end
+          activeExercises = shuffle([...database[currentCategory]]);
+          currentExIndex = 0;
+        }
+
+        const ex = activeExercises[currentExIndex];
+
+        // Add base chunk
+        addChunk(ex.base.text, ex.base.type);
+
+        // Load first step
+        loadStep();
+      }
+
+      function addChunk(text, typeClass) {
+        const box = document.getElementById("sentence-box");
+        const span = document.createElement("span");
+        span.className = `chunk ${typeClass}`;
+        span.innerText = text;
+        box.appendChild(span);
+      }
+
+      function loadStep() {
+        const ex = activeExercises[currentExIndex];
+
+        if (currentStepIndex >= ex.steps.length) {
+          // Exercise complete
+          document.getElementById("prompt-area").style.display = "none";
+          document.getElementById("btn-flow").style.display = "block";
+          return;
+        }
+
+        const step = ex.steps[currentStepIndex];
+
+        // Set Question Label and Color
+        const qLabel = document.getElementById("question-label");
+        qLabel.innerText = step.q;
+        qLabel.style.color = `var(--${step.type})`;
+
+        // Generate Buttons
+        const container = document.getElementById("options-container");
+        container.innerHTML = "";
+
+        let options = [step.correct, ...step.distractors];
+        options = shuffle(options);
+
+        options.forEach((optText) => {
+          const btn = document.createElement("button");
+          btn.className = "opt-btn";
+          btn.innerText = optText;
+          btn.onclick = () =>
+            handleSelection(btn, optText, step.correct, step.type);
+          container.appendChild(btn);
+        });
+      }
+
+      function handleSelection(btn, selectedText, correctText, typeClass) {
+        if (selectedText === correctText) {
+          // Correct!
+          addChunk(correctText, typeClass);
+          currentStepIndex++;
+          loadStep();
+        } else {
+          // Wrong - visual shake
+          btn.style.animation = "shake 0.4s";
+          btn.style.borderColor = "#ef4444";
+          btn.style.color = "#ef4444";
+          setTimeout(() => {
+            btn.style.animation = "none";
+            btn.style.borderColor = "#cbd5e1";
+            btn.style.color = "var(--text-main)";
+          }, 400);
+        }
+      }
+
+      function flowSentence() {
+        // Remove colored backgrounds to make it look like a natural sentence
+        const chunks = document.querySelectorAll(".chunk");
+        chunks.forEach((chunk) => {
+          chunk.style.background = "transparent";
+          chunk.style.color = "var(--text-main)";
+          chunk.style.padding = "0 5px";
+        });
+
+        document.getElementById("btn-flow").style.display = "none";
+        document.getElementById("btn-next").style.display = "block";
+
+        // Move to next exercise index for the next click
+        currentExIndex++;
+      }
+
+      // CSS animation dynamically added for shake
+      const style = document.createElement("style");
+      style.innerHTML = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                75% { transform: translateX(5px); }
+            }
+        `;
+      document.head.appendChild(style);
+
+      // Init App
+      activeExercises = shuffle([...database["present"]]);
+      loadNextExercise();
+    </script>
+  </body>
+</html>
