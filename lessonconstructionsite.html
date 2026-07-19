@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Construction English: Theory & Simulator</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #e5ddd5;
+        color: #333;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+      .app-container {
+        width: 100%;
+        max-width: 800px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 90vh;
+      }
+
+      /* --- Estilos de la Pantalla de Teoría --- */
+      #theory-screen {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background-color: #f8f9fa;
+        overflow-y: auto;
+      }
+      .theory-header {
+        background-color: #075e54;
+        color: white;
+        padding: 20px;
+        text-align: center;
+      }
+      .theory-content {
+        padding: 20px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+      }
+      .theory-card {
+        background: white;
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        border-top: 4px solid #128c7e;
+      }
+      .theory-card h3 {
+        margin-top: 0;
+        color: #075e54;
+        font-size: 1.1em;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 5px;
+      }
+      .vocab-item {
+        margin-bottom: 12px;
+      }
+      .vocab-item strong {
+        color: #25d366;
+        display: block;
+      }
+      .vocab-item span {
+        font-size: 0.9em;
+        color: #555;
+      }
+      .start-container {
+        text-align: center;
+        padding: 20px;
+        background-color: white;
+        border-top: 1px solid #eee;
+      }
+
+      /* --- Estilos del Simulador (Teléfono) --- */
+      #simulator-screen {
+        display: none;
+        flex-direction: column;
+        height: 100%;
+      }
+      .header {
+        background-color: #075e54;
+        color: white;
+        padding: 20px;
+        text-align: center;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .header select {
+        padding: 8px;
+        border-radius: 5px;
+        border: none;
+        font-size: 1em;
+        background-color: #128c7e;
+        color: white;
+        cursor: pointer;
+      }
+      .chat-area {
+        flex-grow: 1;
+        padding: 20px;
+        overflow-y: auto;
+        background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png");
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+      .message-row {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 15px;
+      }
+
+      /* --- Mensaje Recibido (Izquierda) --- */
+      .message.received {
+        background-color: white;
+        align-self: flex-start;
+        padding: 12px 18px;
+        border-radius: 0 15px 15px 15px;
+        max-width: 80%;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        font-size: 1.1em;
+      }
+
+      /* --- Mensaje Enviado (Derecha) --- */
+      .message.sent {
+        background-color: #dcf8c6;
+        align-self: flex-end;
+        padding: 12px 18px;
+        border-radius: 15px 15px 0 15px;
+        max-width: 80%;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        font-size: 1.1em;
+        margin-top: 8px;
+        display: none; /* Oculto por defecto */
+        color: #333;
+        font-style: italic;
+      }
+
+      .instruction-box {
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #e0e0e0;
+        font-size: 0.85em;
+        color: #444;
+      }
+
+      /* --- Botón de Pistas (Alineado a la Derecha) --- */
+      .hint-toggle-btn {
+        background-color: transparent;
+        color: #075e54;
+        border: 1px solid #075e54;
+        padding: 6px 12px;
+        font-size: 0.85em;
+        border-radius: 15px;
+        cursor: pointer;
+        align-self: flex-end; /* Lo mueve al lado del estudiante */
+        margin-top: 8px;
+        transition: all 0.2s;
+        font-weight: bold;
+      }
+      .hint-toggle-btn:hover {
+        background-color: #075e54;
+        color: white;
+      }
+
+      .controls {
+        background-color: #f0f0f0;
+        padding: 15px;
+        text-align: center;
+        border-top: 1px solid #ccc;
+      }
+      button.main-btn {
+        background-color: #128c7e;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        font-size: 1.1em;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      button.main-btn:hover {
+        background-color: #075e54;
+      }
+      .back-btn {
+        background-color: transparent;
+        border: 1px solid white;
+        padding: 6px 12px;
+        font-size: 0.9em;
+        color: white;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+      .back-btn:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- PANTALLA 1: TEORÍA Y REPASO -->
+      <div id="theory-screen">
+        <div class="theory-header">
+          <h2>Construction English: Briefing Room</h2>
+          <p>Review the vocabulary before starting your shift.</p>
+        </div>
+
+        <div class="theory-content">
+          <div class="theory-card">
+            <h3>Phrasal Verbs</h3>
+            <div class="vocab-item">
+              <strong>Sort out</strong
+              ><span
+                >Resolver un problema o situación. <br /><em
+                  >"We need to sort out the delivery."</em
+                ></span
+              >
+            </div>
+            <div class="vocab-item">
+              <strong>Look into</strong
+              ><span
+                >Investigar a fondo. <br /><em
+                  >"I'll look into the missing tiles."</em
+                ></span
+              >
+            </div>
+            <div class="vocab-item">
+              <strong>Deal with</strong
+              ><span
+                >Lidiar con o encargarse de. <br /><em
+                  >"I can deal with the delayed inspection."</em
+                ></span
+              >
+            </div>
+            <div class="vocab-item">
+              <strong>Bring up</strong
+              ><span
+                >Mencionar un tema. <br /><em
+                  >"I should bring up the safety code."</em
+                ></span
+              >
+            </div>
+            <div class="vocab-item">
+              <strong>Reach out</strong
+              ><span
+                >Contactar a alguien. <br /><em
+                  >"Reach out to the electrician."</em
+                ></span
+              >
+            </div>
+          </div>
+
+          <div class="theory-card">
+            <h3>Interpreter / Mediation Skills</h3>
+            <div class="vocab-item">
+              <strong>Clarification (Aclarar)</strong
+              ><span
+                >"Are you saying that...?"<br />"Could you clarify what you mean
+                by...?"</span
+              >
+            </div>
+            <div class="vocab-item">
+              <strong>Paraphrasing (Parafrasear)</strong
+              ><span
+                >"So, your main concern is..."<br />"If I understand
+                correctly..."</span
+              >
+            </div>
+            <div class="vocab-item">
+              <strong>De-escalation (Calmar)</strong
+              ><span
+                >"Let me look into what we have installed so far..."<br />"I
+                completely understand your frustration."</span
+              >
+            </div>
+          </div>
+
+          <div class="theory-card">
+            <h3>Connectors & Tech Vocab</h3>
+            <div class="vocab-item">
+              <strong>On top of that</strong
+              ><span>Además de eso (añade urgencia).</span>
+            </div>
+            <div class="vocab-item">
+              <strong>In the meantime</strong><span>Mientras tanto.</span>
+            </div>
+            <div class="vocab-item">
+              <strong>Due to</strong><span>Debido a.</span>
+            </div>
+            <div class="vocab-item">
+              <strong>Site Manager</strong
+              ><span>Maestro de obra / Residente.</span>
+            </div>
+            <div class="vocab-item">
+              <strong>Drywall / Framing</strong
+              ><span>Panel de yeso / Estructura.</span>
+            </div>
+            <div class="vocab-item">
+              <strong>Load-bearing strength</strong
+              ><span>Capacidad de carga estructural.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="start-container">
+          <button class="main-btn" onclick="startSimulator()">
+            Start Interactive Simulator
+          </button>
+        </div>
+      </div>
+
+      <!-- PANTALLA 2: SIMULADOR -->
+      <div id="simulator-screen">
+        <div class="header">
+          <button class="back-btn" onclick="backToTheory()">← Review</button>
+          <span style="font-size: 1.1em; font-weight: bold" id="chat-title"
+            >Chat con...</span
+          >
+          <select id="scenario-selector" onchange="loadScenario()">
+            <option value="clarification">Site Manager (Clarificación)</option>
+            <option value="mediation">Client (Mediación en Obra)</option>
+            <option value="vocabulary">Supplier (Materiales)</option>
+          </select>
+        </div>
+
+        <div class="chat-area" id="chat-area">
+          <!-- Mensajes dinámicos -->
+        </div>
+
+        <div class="controls">
+          <button class="main-btn" id="next-btn" onclick="nextMessage()">
+            Empezar Conversación
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function startSimulator() {
+        document.getElementById("theory-screen").style.display = "none";
+        document.getElementById("simulator-screen").style.display = "flex";
+        loadScenario();
+      }
+
+      function backToTheory() {
+        document.getElementById("simulator-screen").style.display = "none";
+        document.getElementById("theory-screen").style.display = "flex";
+      }
+
+      const scenarios = {
+        clarification: [
+          {
+            speaker: "Site Manager",
+            text: "We have a problem. The blueprints say the drywall needs to be 5/8 inch thick, but the delivery has half-inch. We can't use this.",
+            structure:
+              "Usa: <strong>Present Continuous</strong> + pedir aclaración / reformular",
+            hint: "If I understand correctly, we need...",
+          },
+          {
+            speaker: "Site Manager",
+            text: "Exactly. If we use half-inch, it won't meet the fire safety code for this commercial building.",
+            structure:
+              "Usa: <strong>Future Simple</strong> + prometer resolver el problema con <em>'Sort out'</em>",
+            hint: "I will sort this out with the supplier by...",
+          },
+          {
+            speaker: "Site Manager",
+            text: "Make sure you do. Also, what did the architect mean when he said the framing inspection was delayed?",
+            structure:
+              "Usa: <strong>Past Simple</strong> + parafrasear la idea",
+            hint: "What he meant was that the inspection...",
+          },
+          {
+            speaker: "Site Manager",
+            text: "Alright. I'll tell the crew to focus on the electrical wiring in the meantime.",
+            structure:
+              "Usa: <strong>Present Perfect</strong> + advertir o señalar un riesgo con <em>'Point out'</em>",
+            hint: "I should point out that we haven't...",
+          },
+          {
+            speaker: "Site Manager",
+            text: "Good catch. We definitely need the electrician's sign-off before closing the walls.",
+            structure:
+              "Usa: <strong>Future Simple</strong> + prometer un seguimiento con <em>'Follow up'</em>",
+            hint: "I will follow up with the electrician to...",
+          },
+          {
+            speaker: "Site Manager",
+            text: "Thanks. Please let me know as soon as you have an update on the drywall delivery.",
+            structure:
+              "Usa: <strong>Present Simple</strong> + Cierre y despedida profesional",
+            hint: "Thank you, I will make sure to let you know when...",
+          },
+        ],
+        mediation: [
+          {
+            speaker: "Client",
+            text: "I walked into the kitchen and the tiles are completely wrong! I specifically asked for a matte finish, not glossy!",
+            structure:
+              "Usa: <strong>Present Perfect</strong> + calmar la situación e investigar usando <em>'Look into'</em>",
+            hint: "I understand. Let me look into what has been installed...",
+          },
+          {
+            speaker: "Client",
+            text: "I don't want you to look into it, I want it fixed! It looks terrible with the new cabinets.",
+            structure:
+              "Usa: <strong>Present Simple</strong> + aplicar escucha activa y parafrasear su preocupación",
+            hint: "So, your main concern is that the finish is...",
+          },
+          {
+            speaker: "Client",
+            text: "Yes! And on top of that, the contractor left all his tools blocking the hallway. It's a safety hazard.",
+            structure:
+              "Usa: <strong>Future Simple</strong> + tomar acción inmediata sobre la queja usando <em>'Deal with'</em>",
+            hint: "I apologize for that. I will deal with the tools immediately so...",
+          },
+          {
+            speaker: "Client",
+            text: "I appreciate that. I'm just stressed because we have guests arriving next week.",
+            structure:
+              "Usa: <strong>Present Continuous</strong> + mostrar empatía y explicar progreso con <em>'Work on'</em>",
+            hint: "I know it's stressful. We are working on getting the kitchen ready before...",
+          },
+          {
+            speaker: "Client",
+            text: "When do you think the correct matte tiles will be delivered?",
+            structure:
+              "Usa: <strong>Future Simple</strong> + contactar al proveedor usando <em>'Reach out'</em>",
+            hint: "I will reach out to the supplier right now to...",
+          },
+          {
+            speaker: "Client",
+            text: "Okay, I will wait for your call this afternoon.",
+            structure:
+              "Usa: <strong>Present Simple</strong> + concluir el acuerdo con <em>'Wrap up'</em> y agradecer",
+            hint: "Thank you for your patience. Let's wrap this up by...",
+          },
+        ],
+        vocabulary: [
+          {
+            speaker: "Supplier",
+            text: "We are currently out of the Portland cement you requested. Can we substitute it with masonry cement?",
+            structure:
+              "Usa: <strong>Present Simple</strong> + pedir aclaración técnica sobre la diferencia",
+            hint: "Could you clarify what exactly masonry cement consists of?",
+          },
+          {
+            speaker: "Supplier",
+            text: "It has more lime, so it's easier to spread, but it doesn't have the exact same load-bearing strength.",
+            structure:
+              "Usa: <strong>Conditional (Should/Would)</strong> + alertar sobre los requerimientos con <em>'Bring up'</em>",
+            hint: "I should bring up that we need high load-bearing strength because...",
+          },
+          {
+            speaker: "Supplier",
+            text: "Oh, got it. In that case, I'll need to backorder the Portland. It might take two weeks.",
+            structure:
+              "Usa: <strong>Present Continuous</strong> + expresar la urgencia con <em>'Wrap up'</em>",
+            hint: "We are currently wrapping up the framing, so we really need...",
+          },
+          {
+            speaker: "Supplier",
+            text: "Let me check with our other warehouse. They might have a few pallets left.",
+            structure:
+              "Usa: <strong>Future Simple</strong> + expresar optimismo con <em>'Look forward to'</em>",
+            hint: "Great, I look forward to hearing if you have...",
+          },
+          {
+            speaker: "Supplier",
+            text: "I found some! But the shipping cost will be slightly higher due to the distance.",
+            structure:
+              "Usa: <strong>Past Simple</strong> + aceptar/negociar el costo de envío con <em>'Deal with'</em>",
+            hint: "I can deal with the extra cost if...",
+          },
+          {
+            speaker: "Supplier",
+            text: "I will send over the updated invoice right now for your approval.",
+            structure:
+              "Usa: <strong>Present Simple</strong> + confirmación final y agradecimiento",
+            hint: "Perfect. I approve the updated invoice. Thank you.",
+          },
+        ],
+      };
+
+      let currentScenario = "clarification";
+      let currentStep = 0;
+
+      function loadScenario() {
+        const selector = document.getElementById("scenario-selector");
+        currentScenario = selector.value;
+        currentStep = 0;
+
+        const titleElement = document.getElementById("chat-title");
+        if (currentScenario === "clarification")
+          titleElement.innerText = "Maestro de Obra";
+        if (currentScenario === "mediation")
+          titleElement.innerText = "Cliente (Queja)";
+        if (currentScenario === "vocabulary")
+          titleElement.innerText = "Proveedor (Dudas)";
+
+        document.getElementById("chat-area").innerHTML = "";
+        document.getElementById("next-btn").innerText = "Empezar Conversación";
+        document.getElementById("next-btn").style.display = "inline-block";
+      }
+
+      function nextMessage() {
+        const chatArea = document.getElementById("chat-area");
+        const data = scenarios[currentScenario];
+
+        if (currentStep < data.length) {
+          const stepData = data[currentStep];
+          document.getElementById("next-btn").innerText = "Siguiente Mensaje";
+
+          const row = document.createElement("div");
+          row.className = "message-row";
+
+          // 1. Crear el mensaje recibido con la estructura visible (Izquierda)
+          const messageDiv = document.createElement("div");
+          messageDiv.className = "message received";
+          messageDiv.innerHTML = `
+            <strong>${stepData.speaker}:</strong> ${stepData.text}
+            <div class="instruction-box">
+              <strong>🎯 Tu Turno:</strong> ${stepData.structure}
+            </div>
+          `;
+          row.appendChild(messageDiv);
+
+          // 2. Crear el botón interactivo (Alineado a la Derecha)
+          const toggleBtn = document.createElement("button");
+          toggleBtn.className = "hint-toggle-btn";
+          toggleBtn.innerText = "💡 Ver ejemplo de respuesta";
+          row.appendChild(toggleBtn);
+
+          // 3. Crear el mensaje ENVIADO simulando la respuesta (Derecha)
+          const sentDiv = document.createElement("div");
+          sentDiv.className = "message sent";
+          sentDiv.innerHTML = `<strong>Tú:</strong> "${stepData.hint}"`;
+          row.appendChild(sentDiv);
+
+          // 4. Lógica de clic para mostrar/ocultar
+          toggleBtn.onclick = function () {
+            if (
+              sentDiv.style.display === "none" ||
+              sentDiv.style.display === ""
+            ) {
+              sentDiv.style.display = "block";
+              toggleBtn.innerText = "💡 Ocultar ejemplo";
+            } else {
+              sentDiv.style.display = "none";
+              toggleBtn.innerText = "💡 Ver ejemplo de respuesta";
+            }
+            chatArea.scrollTop = chatArea.scrollHeight;
+          };
+
+          chatArea.appendChild(row);
+
+          setTimeout(() => {
+            chatArea.scrollTop = chatArea.scrollHeight;
+          }, 100);
+
+          currentStep++;
+
+          if (currentStep >= data.length) {
+            document.getElementById("next-btn").innerText =
+              "Fin del Chat (Cambia arriba)";
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
