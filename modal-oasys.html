@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Modal Oasis</title>
+    <style>
+      :root {
+        /* Oasis Palette: Soft Greens, Sand, and Sky Blue */
+        --bg-gradient: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%);
+        --card-bg: rgba(255, 255, 255, 0.95);
+
+        --c-intent: #8b5cf6; /* Purple for Modal/Intention */
+        --c-action: #ec4899; /* Pink for Action/Verb */
+        --c-detail: #0ea5e9; /* Blue for Detail */
+
+        --text-main: #334155;
+        --text-muted: #94a3b8;
+        --success: #10b981;
+        --error: #ef4444;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: var(--bg-gradient);
+        color: var(--text-main);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .header h1 {
+        margin: 0;
+        font-size: 2.5rem;
+        color: #0f766e;
+        letter-spacing: 1px;
+      }
+      .header p {
+        margin: 8px 0 0;
+        color: #475569;
+        font-size: 1.1rem;
+      }
+
+      /* --- MAIN STAGE --- */
+      .stage {
+        background: var(--card-bg);
+        border-radius: 25px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+        width: 100%;
+        max-width: 800px;
+        padding: 40px;
+        text-align: center;
+        border: 1px solid #f1f5f9;
+      }
+
+      /* --- SITUATION BANNER --- */
+      .situation-banner {
+        background: #f8fafc;
+        border-left: 5px solid #0ea5e9;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+        font-size: 1.2rem;
+        color: #334155;
+        text-align: left;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.02);
+      }
+
+      .situation-icon {
+        font-size: 2rem;
+      }
+
+      /* --- SENTENCE DISPLAY --- */
+      .sentence-box {
+        background: white;
+        border: 2px dashed #cbd5e1;
+        border-radius: 15px;
+        min-height: 100px;
+        padding: 25px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 30px;
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #1e293b;
+      }
+
+      .chunk {
+        padding: 8px 15px;
+        border-radius: 10px;
+        opacity: 0;
+        transform: scale(0.9);
+        animation: popIn 0.4s forwards;
+        color: white;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      @keyframes popIn {
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      .c-intent {
+        background: var(--c-intent);
+      }
+      .c-action {
+        background: var(--c-action);
+      }
+      .c-detail {
+        background: var(--c-detail);
+      }
+
+      /* --- PROMPT AREA --- */
+      .prompt-area {
+        min-height: 160px;
+      }
+
+      .question-label {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-main);
+      }
+
+      .options-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+      }
+
+      .opt-btn {
+        background: white;
+        border: 2px solid #cbd5e1;
+        padding: 15px 30px;
+        border-radius: 12px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-main);
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .opt-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+        border-color: #94a3b8;
+      }
+
+      /* --- CONTROLS --- */
+      .controls {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .btn-main {
+        padding: 16px 40px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        border-radius: 50px;
+        border: none;
+        cursor: pointer;
+        color: white;
+        transition: 0.3s;
+        display: none;
+      }
+
+      .btn-flow {
+        background: var(--success);
+        box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+      }
+      .btn-flow:hover {
+        background: #059669;
+        transform: scale(1.05);
+      }
+
+      .btn-next {
+        background: #0ea5e9;
+        box-shadow: 0 5px 15px rgba(14, 165, 233, 0.3);
+      }
+      .btn-next:hover {
+        background: #0284c7;
+        transform: scale(1.05);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>The Modal Oasis 🌴</h1>
+      <p>Match the intention. Choose the bare verb. No grammar panic.</p>
+    </div>
+
+    <div class="stage">
+      <div class="situation-banner" id="situation-banner">
+        <div class="situation-icon" id="situation-icon">☕</div>
+        <div>
+          <strong>Situation:</strong>
+          <span id="situation-text">Loading...</span>
+        </div>
+      </div>
+
+      <div class="sentence-box" id="sentence-box">
+        <!-- Chunks appear here -->
+      </div>
+
+      <div class="prompt-area" id="prompt-area">
+        <div class="question-label" id="question-label">Loading...</div>
+        <div class="options-container" id="options-container">
+          <!-- Buttons injected here -->
+        </div>
+      </div>
+
+      <div class="controls">
+        <button
+          class="btn-main btn-flow"
+          id="btn-flow"
+          onclick="flowSentence()"
+        >
+          🌊 Smooth it out!
+        </button>
+        <button
+          class="btn-main btn-next"
+          id="btn-next"
+          onclick="loadNextExercise()"
+        >
+          ✨ Next Scenario
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // --- DATA STRUCTURE (Scenarios focused on Modals & Bare Infinitives) ---
+      const exercises = [
+        {
+          icon: "☕",
+          situation:
+            "You are at a local coffee shop and want to order politely.",
+          steps: [
+            {
+              q: "1. The Polite Request",
+              type: "c-intent",
+              correct: "Could I",
+              distractors: ["I must", "I should"],
+            },
+            {
+              q: "2. The Bare Verb (No 'To', No 'S')",
+              type: "c-action",
+              correct: "get",
+              distractors: ["to get", "getting"],
+            },
+            {
+              q: "3. The Detail",
+              type: "c-detail",
+              correct: "a large iced latte, please?",
+              distractors: ["tomorrow morning?", "the library?"],
+            },
+          ],
+        },
+        {
+          icon: "☀️",
+          situation: "It's 100 degrees outside. Give the kids a good advice.",
+          steps: [
+            {
+              q: "1. The Advice",
+              type: "c-intent",
+              correct: "You should",
+              distractors: ["You would", "You might"],
+            },
+            {
+              q: "2. The Bare Verb (No 'To', No 'S')",
+              type: "c-action",
+              correct: "wear",
+              distractors: ["to wear", "wears"],
+            },
+            {
+              q: "3. The Detail",
+              type: "c-detail",
+              correct: "sunscreen today.",
+              distractors: ["a winter coat.", "last night."],
+            },
+          ],
+        },
+        {
+          icon: "🧸",
+          situation:
+            "The playroom is a complete mess. It's a house rule to clean it.",
+          steps: [
+            {
+              q: "1. The Obligation",
+              type: "c-intent",
+              correct: "We must",
+              distractors: ["We could", "We might"],
+            },
+            {
+              q: "2. The Bare Verb (No 'To', No 'S')",
+              type: "c-action",
+              correct: "clean up",
+              distractors: ["to clean up", "cleaning up"],
+            },
+            {
+              q: "3. The Detail",
+              type: "c-detail",
+              correct: "all these toys right now.",
+              distractors: ["the grocery store.", "yesterday."],
+            },
+          ],
+        },
+        {
+          icon: "☁️",
+          situation: "The sky looks very dark. Express a possibility.",
+          steps: [
+            {
+              q: "1. The Possibility",
+              type: "c-intent",
+              correct: "It might",
+              distractors: ["It should", "It would"],
+            },
+            {
+              q: "2. The Bare Verb (No 'To', No 'S')",
+              type: "c-action",
+              correct: "rain",
+              distractors: ["rains", "to rain"],
+            },
+            {
+              q: "3. The Detail",
+              type: "c-detail",
+              correct: "later this afternoon.",
+              distractors: ["inside the house.", "a large coffee."],
+            },
+          ],
+        },
+        {
+          icon: "📅",
+          situation:
+            "You want to ask the Host Mom for a favor regarding your schedule.",
+          steps: [
+            {
+              q: "1. The Polite Question",
+              type: "c-intent",
+              correct: "Would you",
+              distractors: ["Must you", "Might you"],
+            },
+            {
+              q: "2. The Bare Verb (No 'To', No 'S')",
+              type: "c-action",
+              correct: "help",
+              distractors: ["helping", "to help"],
+            },
+            {
+              q: "3. The Detail",
+              type: "c-detail",
+              correct: "me with the schedule?",
+              distractors: ["a fantasy novel?", "in the kitchen?"],
+            },
+          ],
+        },
+        {
+          icon: "🍳",
+          situation:
+            "The Host Family asks if you know how to prepare food from your country.",
+          steps: [
+            {
+              q: "1. The Ability",
+              type: "c-intent",
+              correct: "I can",
+              distractors: ["I must", "I would"],
+            },
+            {
+              q: "2. The Bare Verb (No 'To', No 'S')",
+              type: "c-action",
+              correct: "cook",
+              distractors: ["cooks", "to cook"],
+            },
+            {
+              q: "3. The Detail",
+              type: "c-detail",
+              correct: "traditional Colombian food.",
+              distractors: ["the library.", "tomorrow morning."],
+            },
+          ],
+        },
+        {
+          icon: "📚",
+          situation:
+            "You just finished an amazing book and want to recommend it to a friend.",
+          steps: [
+            {
+              q: "1. The Strong Advice",
+              type: "c-intent",
+              correct: "You must",
+              distractors: ["You might", "You would"],
+            },
+            {
+              q: "2. The Bare Verb (No 'To', No 'S')",
+              type: "c-action",
+              correct: "read",
+              distractors: ["to read", "reading"],
+            },
+            {
+              q: "3. The Detail",
+              type: "c-detail",
+              correct: "this mystery novel.",
+              distractors: ["a black coffee.", "on the balcony."],
+            },
+          ],
+        },
+        {
+          icon: "🚗",
+          situation:
+            "The Host Dad is explaining the rules for driving the truck in the rain.",
+          steps: [
+            {
+              q: "1. The Obligation",
+              type: "c-intent",
+              correct: "You should",
+              distractors: ["You might", "You could"],
+            },
+            {
+              q: "2. The Bare Verb (No 'To', No 'S')",
+              type: "c-action",
+              correct: "drive",
+              distractors: ["drives", "to drive"],
+            },
+            {
+              q: "3. The Detail",
+              type: "c-detail",
+              correct: "very carefully on the highway.",
+              distractors: ["a hot tea.", "a new book."],
+            },
+          ],
+        },
+        {
+          icon: "🎸",
+          situation:
+            "You are talking about future plans for the weekend in Austin.",
+          steps: [
+            {
+              q: "1. The Possibility",
+              type: "c-intent",
+              correct: "We might",
+              distractors: ["We must", "We would"],
+            },
+            {
+              q: "2. The Bare Verb (No 'To', No 'S')",
+              type: "c-action",
+              correct: "go",
+              distractors: ["going", "to go"],
+            },
+            {
+              q: "3. The Detail",
+              type: "c-detail",
+              correct: "to a live music concert.",
+              distractors: ["yesterday.", "the playroom."],
+            },
+          ],
+        },
+        {
+          icon: "🛒",
+          situation: "You see the Host Mom struggling with heavy grocery bags.",
+          steps: [
+            {
+              q: "1. The Polite Offer",
+              type: "c-intent",
+              correct: "Can I",
+              distractors: ["Must I", "Might I"],
+            },
+            {
+              q: "2. The Bare Verb (No 'To', No 'S')",
+              type: "c-action",
+              correct: "carry",
+              distractors: ["carries", "to carry"],
+            },
+            {
+              q: "3. The Detail",
+              type: "c-detail",
+              correct: "those bags for you?",
+              distractors: ["the weather?", "a latte?"],
+            },
+          ],
+        },
+      ];
+
+      let activeExercises = [];
+      let currentExIndex = 0;
+      let currentStepIndex = 0;
+
+      function shuffle(array) {
+        return array.sort(() => Math.random() - 0.5);
+      }
+
+      function loadNextExercise() {
+        // Reset UI Elements
+        document.getElementById("sentence-box").innerHTML = "";
+        document.getElementById("btn-next").style.display = "none";
+        document.getElementById("btn-flow").style.display = "none";
+        document.getElementById("prompt-area").style.display = "block";
+
+        currentStepIndex = 0;
+
+        if (currentExIndex >= activeExercises.length) {
+          activeExercises = shuffle([...exercises]); // Reshuffle when finished
+          currentExIndex = 0;
+        }
+
+        const ex = activeExercises[currentExIndex];
+
+        // Set Situation
+        document.getElementById("situation-icon").innerText = ex.icon;
+        document.getElementById("situation-text").innerText = ex.situation;
+
+        loadStep();
+      }
+
+      function addChunk(text, typeClass) {
+        const box = document.getElementById("sentence-box");
+        const span = document.createElement("span");
+        span.className = `chunk ${typeClass}`;
+        span.innerText = text;
+        box.appendChild(span);
+      }
+
+      function loadStep() {
+        const ex = activeExercises[currentExIndex];
+
+        if (currentStepIndex >= ex.steps.length) {
+          // Exercise complete
+          document.getElementById("prompt-area").style.display = "none";
+          document.getElementById("btn-flow").style.display = "block";
+          return;
+        }
+
+        const step = ex.steps[currentStepIndex];
+
+        // Set Question Label and Color
+        const qLabel = document.getElementById("question-label");
+        qLabel.innerText = step.q;
+        qLabel.style.color = `var(--${step.type})`;
+
+        // Generate Buttons
+        const container = document.getElementById("options-container");
+        container.innerHTML = "";
+
+        let options = [step.correct, ...step.distractors];
+        options = shuffle(options);
+
+        options.forEach((optText) => {
+          const btn = document.createElement("button");
+          btn.className = "opt-btn";
+          btn.innerText = optText;
+          btn.onclick = () =>
+            handleSelection(btn, optText, step.correct, step.type);
+          container.appendChild(btn);
+        });
+      }
+
+      function handleSelection(btn, selectedText, correctText, typeClass) {
+        if (selectedText === correctText) {
+          // Correct!
+          addChunk(correctText, typeClass);
+          currentStepIndex++;
+          loadStep();
+        } else {
+          // Wrong - visual shake
+          btn.style.animation = "shake 0.4s";
+          btn.style.borderColor = "var(--error)";
+          btn.style.color = "var(--error)";
+          setTimeout(() => {
+            btn.style.animation = "none";
+            btn.style.borderColor = "#cbd5e1";
+            btn.style.color = "var(--text-main)";
+          }, 400);
+        }
+      }
+
+      function flowSentence() {
+        // Remove colored backgrounds to make it look like a natural sentence
+        const chunks = document.querySelectorAll(".chunk");
+        chunks.forEach((chunk) => {
+          chunk.style.background = "transparent";
+          chunk.style.color = "var(--text-main)";
+          chunk.style.padding = "0 5px";
+          chunk.style.boxShadow = "none";
+        });
+
+        document.getElementById("btn-flow").style.display = "none";
+        document.getElementById("btn-next").style.display = "block";
+
+        currentExIndex++;
+      }
+
+      // CSS animation dynamically added for shake
+      const style = document.createElement("style");
+      style.innerHTML = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                75% { transform: translateX(5px); }
+            }
+        `;
+      document.head.appendChild(style);
+
+      // Init App
+      activeExercises = shuffle([...exercises]);
+      loadNextExercise();
+    </script>
+  </body>
+</html>
