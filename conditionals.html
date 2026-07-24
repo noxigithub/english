@@ -1,0 +1,1141 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Conditionals Masterclass - Pro Edition</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=Poppins:wght@500;700&display=swap");
+
+      :root {
+        --primary: #6366f1;
+        --primary-hover: #4f46e5;
+        --secondary: #ec4899;
+        --bg: #f3f4f6;
+        --card-bg: #ffffff;
+        --text-main: #1f2937;
+        --text-muted: #6b7280;
+        --if-color: #10b981;
+        --result-color: #f59e0b;
+        --border-color: #e5e7eb;
+      }
+
+      body {
+        font-family: "Nunito", sans-serif;
+        background: linear-gradient(135deg, #eef2ff 0%, #fdf4ff 100%);
+        color: var(--text-main);
+        margin: 0;
+        padding: 3rem 1rem;
+        display: flex;
+        justify-content: center;
+        font-size: 1.15rem;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1000px;
+        width: 100%;
+        background: var(--card-bg);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        display: flex;
+        flex-direction: column;
+        max-height: 90vh;
+      }
+
+      /* Tabs Header */
+      .tab-header {
+        display: flex;
+        flex-wrap: wrap;
+        background-color: #f8fafc;
+        border-bottom: 2px solid var(--border-color);
+        flex-shrink: 0;
+      }
+
+      .tab-btn {
+        flex: 1;
+        min-width: 130px;
+        padding: 1.2rem 0.5rem;
+        border: none;
+        background: none;
+        font-family: "Poppins", sans-serif;
+        font-size: 1.05rem;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+      }
+
+      .tab-btn:hover {
+        background-color: #f1f5f9;
+        color: var(--primary);
+      }
+      .tab-btn.active {
+        color: var(--primary);
+        background: var(--card-bg);
+        font-weight: 700;
+      }
+      .tab-btn.active::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary), var(--secondary));
+        border-radius: 4px 4px 0 0;
+      }
+
+      /* Tab Content */
+      .tab-content {
+        display: none;
+        padding: 2.5rem;
+        animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        overflow-y: auto;
+        flex-grow: 1;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(15px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Typography */
+      h2 {
+        font-family: "Poppins", sans-serif;
+        font-size: 2.2rem;
+        margin-top: 0;
+        background: linear-gradient(90deg, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        padding-bottom: 0.5rem;
+      }
+      h3 {
+        font-family: "Poppins", sans-serif;
+        font-size: 1.5rem;
+        color: #374151;
+        margin-top: 2rem;
+      }
+      p {
+        line-height: 1.7;
+      }
+
+      .formula {
+        background: #eef2ff;
+        padding: 1.2rem;
+        border-radius: 12px;
+        font-family: monospace;
+        font-size: 1.3rem;
+        margin-bottom: 1.5rem;
+        border-left: 6px solid var(--primary);
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+      .example-box {
+        background: #f9fafb;
+        padding: 1.5rem;
+        border-radius: 12px;
+        border: 2px dashed #cbd5e1;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+      }
+      .if-clause {
+        color: var(--if-color);
+        font-weight: 800;
+      }
+      .result-clause {
+        color: var(--result-color);
+        font-weight: 800;
+      }
+
+      /* Practice Section Grid */
+      .practice-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+      }
+      .quiz-item {
+        background: #ffffff;
+        padding: 1.5rem;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s;
+      }
+      .quiz-item:hover {
+        transform: translateY(-3px);
+      }
+      .quiz-item p {
+        margin-top: 0;
+        font-weight: 600;
+        margin-bottom: 1rem;
+      }
+      select {
+        width: 100%;
+        padding: 0.8rem;
+        border-radius: 8px;
+        border: 2px solid #e2e8f0;
+        font-size: 1.1rem;
+        font-family: "Nunito", sans-serif;
+        cursor: pointer;
+        outline: none;
+        transition: border-color 0.3s;
+      }
+      select:focus {
+        border-color: var(--primary);
+      }
+
+      /* Reading Section CSS */
+      .reading-box {
+        background: #fff;
+        padding: 2rem;
+        border-radius: 16px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        margin-bottom: 2.5rem;
+      }
+      .reading-text {
+        font-size: 1.2rem;
+        line-height: 1.8;
+        color: #374151;
+        padding: 1.5rem;
+        background: #f8fafc;
+        border-radius: 12px;
+        border-left: 4px solid var(--secondary);
+        font-style: italic;
+      }
+      .questions-list {
+        margin-top: 1.5rem;
+        list-style: none;
+        padding-left: 0;
+      }
+      .questions-list li {
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+      }
+      .answer-hint {
+        display: none;
+        color: #4338ca;
+        font-size: 1.05rem;
+        margin-top: 0.8rem;
+        padding: 1rem;
+        background: #eef2ff;
+        border-radius: 8px;
+        font-weight: 600;
+      }
+
+      /* Puzzle Game Section */
+      .puzzle-intro {
+        text-align: center;
+        margin-bottom: 1rem;
+      }
+      .puzzle-scroll-area {
+        max-height: 400px;
+        overflow-y: auto;
+        padding: 10px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        background: #f8fafc;
+        margin-bottom: 1rem;
+      }
+      .puzzle-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .puzzle-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background: white;
+        padding: 1rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+      .puzzle-clause {
+        flex: 1;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-main);
+      }
+      .drop-zone {
+        flex: 1;
+        min-height: 45px;
+        border: 2px dashed var(--primary);
+        border-radius: 8px;
+        background: #eef2ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #94a3b8;
+        transition: all 0.3s;
+        padding: 0.5rem;
+        text-align: center;
+        font-size: 1rem;
+      }
+      .drop-zone.over {
+        background: #e0e7ff;
+        border-style: solid;
+        transform: scale(1.02);
+      }
+
+      /* Sticky Bank */
+      .draggable-bank-container {
+        position: sticky;
+        bottom: -2.5rem;
+        background: #ffffff;
+        padding: 1.5rem;
+        border-top: 2px solid #e2e8f0;
+        box-shadow: 0 -10px 20px rgba(0, 0, 0, 0.05);
+        z-index: 10;
+        border-radius: 0 0 20px 20px;
+      }
+      .draggable-bank {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+        max-height: 180px;
+        overflow-y: auto;
+        padding: 0.5rem;
+      }
+      .drag-piece {
+        background: linear-gradient(
+          135deg,
+          var(--primary),
+          var(--primary-hover)
+        );
+        color: white;
+        padding: 0.6rem 1rem;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: grab;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        user-select: none;
+        text-align: center;
+      }
+      .drag-piece:active {
+        cursor: grabbing;
+        transform: scale(0.95);
+      }
+
+      /* Buttons & Extras */
+      .btn {
+        background: linear-gradient(90deg, var(--primary), var(--secondary));
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1.2rem;
+        font-family: "Poppins", sans-serif;
+        font-weight: 700;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        margin-top: 1rem;
+        width: 100%;
+      }
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+      }
+      .btn-outline {
+        background: transparent;
+        color: var(--primary);
+        border: 2px solid var(--primary);
+        padding: 8px 16px;
+        font-size: 1rem;
+        font-weight: 700;
+        margin-top: 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .btn-outline:hover {
+        background: var(--primary);
+        color: white;
+      }
+      #score-display,
+      #puzzle-success {
+        font-size: 1.4rem;
+        font-weight: 800;
+        margin-top: 1.5rem;
+        padding: 1.5rem;
+        border-radius: 12px;
+        text-align: center;
+        display: none;
+        animation: slideUp 0.3s;
+      }
+
+      /* Scrollbars */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Tabs Header -->
+      <div class="tab-header">
+        <button class="tab-btn active" onclick="openTab(event, 'stack')">
+          🧠 Overview
+        </button>
+        <button class="tab-btn" onclick="openTab(event, 'practice')">
+          📝 Quiz (20)
+        </button>
+        <button class="tab-btn" onclick="openTab(event, 'reading')">
+          🗽 Scenarios
+        </button>
+        <button class="tab-btn" onclick="openTab(event, 'puzzle')">
+          🧩 Puzzle (20)
+        </button>
+      </div>
+
+      <!-- Content: Overview -->
+      <div id="stack" class="tab-content active">
+        <h2>The Conditionals Stack</h2>
+        <p>
+          Welcome to the ultimate conditional review. Think of these as logical
+          programming functions: <strong>IF</strong> a condition is met,
+          <strong>THEN</strong> there is a result.
+        </p>
+        <ul>
+          <li>
+            <strong>Zero Conditional (0):</strong> 100% Real. Facts, routines,
+            server rules, universal truths. <br /><em
+              >(If + Present, Present)</em
+            >
+          </li>
+          <li>
+            <strong>First Conditional (1):</strong> 50%-90% Real. Highly
+            possible outcomes for future business plans. <br /><em
+              >(If + Present, Will + Base Verb)</em
+            >
+          </li>
+          <li>
+            <strong>Second Conditional (2):</strong> 1%-10% Real. Hypothetical,
+            imaginary, or "dream" scenarios. <br /><em
+              >(If + Past, Would + Base Verb)</em
+            >
+          </li>
+        </ul>
+        <div class="example-box">
+          <p>
+            🔹 <strong>[0]</strong>
+            <span class="if-clause">If a customer clicks the ad</span>,
+            <span class="result-clause">the tracking pixel fires</span>.
+          </p>
+          <p>
+            🔹 <strong>[1]</strong>
+            <span class="if-clause">If the CEO approves the budget</span>,
+            <span class="result-clause">we will hire more developers</span>.
+          </p>
+          <p>
+            🔹 <strong>[2]</strong>
+            <span class="if-clause">If I had a million dollars</span>,
+            <span class="result-clause">I would start my own tech agency</span>.
+          </p>
+        </div>
+      </div>
+
+      <!-- Content: Practice Section (20 Questions) -->
+      <div id="practice" class="tab-content">
+        <h2>Corporate & Tech Quiz</h2>
+        <p>Select the correct verb forms to complete the 20 sentences.</p>
+        <div class="practice-grid">
+          <!-- Zero -->
+          <div class="quiz-item">
+            <p>1. (0) If a server crashes, the website _____ offline.</p>
+            <select id="q1" data-answer="goes">
+              <option value="">Select...</option>
+              <option value="goes">goes</option>
+              <option value="will go">will go</option>
+              <option value="would go">would go</option>
+            </select>
+          </div>
+          <!-- First -->
+          <div class="quiz-item">
+            <p>2. (1) If we launch the app today, we _____ results tomorrow.</p>
+            <select id="q2" data-answer="will see">
+              <option value="">Select...</option>
+              <option value="see">see</option>
+              <option value="will see">will see</option>
+              <option value="would see">would see</option>
+            </select>
+          </div>
+          <!-- Second -->
+          <div class="quiz-item">
+            <p>
+              3. (2) If she _____ the marketing director, she would rebrand the
+              company.
+            </p>
+            <select id="q3" data-answer="were">
+              <option value="">Select...</option>
+              <option value="is">is</option>
+              <option value="were">were</option>
+              <option value="will be">will be</option>
+            </select>
+          </div>
+          <!-- Zero -->
+          <div class="quiz-item">
+            <p>4. (0) If you target the wrong demographic, ad costs _____.</p>
+            <select id="q4" data-answer="increase">
+              <option value="">Select...</option>
+              <option value="increase">increase</option>
+              <option value="will increase">will increase</option>
+              <option value="would increase">would increase</option>
+            </select>
+          </div>
+          <!-- First -->
+          <div class="quiz-item">
+            <p>
+              5. (1) If sales drop this quarter, the board _____ the strategy.
+            </p>
+            <select id="q5" data-answer="will change">
+              <option value="">Select...</option>
+              <option value="change">change</option>
+              <option value="will change">will change</option>
+              <option value="would change">would change</option>
+            </select>
+          </div>
+          <!-- Second -->
+          <div class="quiz-item">
+            <p>
+              6. (2) What would you do if you _____ the client's main database?
+            </p>
+            <select id="q6" data-answer="lost">
+              <option value="">Select...</option>
+              <option value="lose">lose</option>
+              <option value="lost">lost</option>
+              <option value="will lose">will lose</option>
+            </select>
+          </div>
+          <!-- Zero -->
+          <div class="quiz-item">
+            <p>
+              7. (0) If an employee works overtime, the company _____ extra.
+            </p>
+            <select id="q7" data-answer="pays">
+              <option value="">Select...</option>
+              <option value="pays">pays</option>
+              <option value="will pay">will pay</option>
+              <option value="would pay">would pay</option>
+            </select>
+          </div>
+          <!-- First -->
+          <div class="quiz-item">
+            <p>
+              8. (1) If they finish the pitch deck on time, they _____ to New
+              York.
+            </p>
+            <select id="q8" data-answer="will fly">
+              <option value="">Select...</option>
+              <option value="fly">fly</option>
+              <option value="will fly">will fly</option>
+              <option value="would fly">would fly</option>
+            </select>
+          </div>
+          <!-- Second -->
+          <div class="quiz-item">
+            <p>
+              9. (2) If I _____ how to code in React Native, I would build my
+              own app.
+            </p>
+            <select id="q9" data-answer="knew">
+              <option value="">Select...</option>
+              <option value="know">know</option>
+              <option value="knew">knew</option>
+              <option value="had known">had known</option>
+            </select>
+          </div>
+          <!-- Zero -->
+          <div class="quiz-item">
+            <p>10. (0) If prices go up, demand usually _____ down.</p>
+            <select id="q10" data-answer="goes">
+              <option value="">Select...</option>
+              <option value="goes">goes</option>
+              <option value="will go">will go</option>
+              <option value="would go">would go</option>
+            </select>
+          </div>
+          <!-- First -->
+          <div class="quiz-item">
+            <p>
+              11. (1) If the software has bugs, the users _____ immediately.
+            </p>
+            <select id="q11" data-answer="will complain">
+              <option value="">Select...</option>
+              <option value="complain">complain</option>
+              <option value="will complain">will complain</option>
+              <option value="would complain">would complain</option>
+            </select>
+          </div>
+          <!-- Second -->
+          <div class="quiz-item">
+            <p>
+              12. (2) If we lived in Silicon Valley, we _____ more investors.
+            </p>
+            <select id="q12" data-answer="would meet">
+              <option value="">Select...</option>
+              <option value="meet">meet</option>
+              <option value="will meet">will meet</option>
+              <option value="would meet">would meet</option>
+            </select>
+          </div>
+          <!-- Zero -->
+          <div class="quiz-item">
+            <p>
+              13. (0) If a user forgets their password, the system _____ a reset
+              link.
+            </p>
+            <select id="q13" data-answer="sends">
+              <option value="">Select...</option>
+              <option value="sends">sends</option>
+              <option value="will send">will send</option>
+              <option value="would send">would send</option>
+            </select>
+          </div>
+          <!-- First -->
+          <div class="quiz-item">
+            <p>
+              14. (1) If we offer a 20% discount, more people _____ the product.
+            </p>
+            <select id="q14" data-answer="will buy">
+              <option value="">Select...</option>
+              <option value="buy">buy</option>
+              <option value="will buy">will buy</option>
+              <option value="would buy">would buy</option>
+            </select>
+          </div>
+          <!-- Second -->
+          <div class="quiz-item">
+            <p>
+              15. (2) If he _____ fluent Mandarin, he would manage the Asian
+              market.
+            </p>
+            <select id="q15" data-answer="spoke">
+              <option value="">Select...</option>
+              <option value="speaks">speaks</option>
+              <option value="spoke">spoke</option>
+              <option value="will speak">will speak</option>
+            </select>
+          </div>
+          <!-- Zero -->
+          <div class="quiz-item">
+            <p>
+              16. (0) If you mix good design with great copy, conversions _____.
+            </p>
+            <select id="q16" data-answer="rise">
+              <option value="">Select...</option>
+              <option value="rise">rise</option>
+              <option value="will rise">will rise</option>
+              <option value="would rise">would rise</option>
+            </select>
+          </div>
+          <!-- First -->
+          <div class="quiz-item">
+            <p>
+              17. (1) If the meeting runs late, I _____ my flight to Los
+              Angeles.
+            </p>
+            <select id="q17" data-answer="will miss">
+              <option value="">Select...</option>
+              <option value="miss">miss</option>
+              <option value="will miss">will miss</option>
+              <option value="would miss">would miss</option>
+            </select>
+          </div>
+          <!-- Second -->
+          <div class="quiz-item">
+            <p>
+              18. (2) What _____ the CEO say if she saw this terrible report?
+            </p>
+            <select id="q18" data-answer="would">
+              <option value="">Select...</option>
+              <option value="does">does</option>
+              <option value="will">will</option>
+              <option value="would">would</option>
+            </select>
+          </div>
+          <!-- Zero -->
+          <div class="quiz-item">
+            <p>
+              19. (0) If a client signs the contract, the legal team _____ a
+              copy.
+            </p>
+            <select id="q19" data-answer="files">
+              <option value="">Select...</option>
+              <option value="files">files</option>
+              <option value="will file">will file</option>
+              <option value="would file">would file</option>
+            </select>
+          </div>
+          <!-- First -->
+          <div class="quiz-item">
+            <p>
+              20. (1) We _____ the deadline if the external API doesn't work.
+            </p>
+            <select id="q20" data-answer="will fail">
+              <option value="">Select...</option>
+              <option value="fail">fail</option>
+              <option value="will fail">will fail</option>
+              <option value="would fail">would fail</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn" onclick="checkAnswers()">Evaluate Answers</button>
+        <div id="score-display"></div>
+      </div>
+
+      <!-- Content: USA/Marketing Scenarios -->
+      <div id="reading" class="tab-content">
+        <h2>Corporate Scenarios</h2>
+        <p>
+          Read the texts and answer aloud using the correct conditional
+          structure.
+        </p>
+
+        <!-- Scenario 1: New York Agency -->
+        <div class="reading-box">
+          <h3>Scenario 1: The New York Ad Agency</h3>
+          <div class="reading-text">
+            Sarah works at a top marketing agency in Manhattan, New York. Her
+            team follows strict routines. For example, if they launch a campaign
+            on Monday, they analyze the metrics on Friday. Right now, they are
+            nervous about a new sneaker commercial. The rule is simple: if the
+            commercial gets 100,000 views in 24 hours, the client will double
+            their budget. Sarah dreams big. She often tells her team, "If we had
+            Taylor Swift in our commercial, the sneakers would sell out in ten
+            minutes!"
+          </div>
+          <ul class="questions-list">
+            <li>
+              1. What do they do if they launch a campaign on Monday? (Routine)
+              <div class="answer-hint hint-1">
+                Teacher:
+                <em
+                  >If they launch a campaign on Monday, they analyze the metrics
+                  on Friday.</em
+                >
+                (Zero)
+              </div>
+            </li>
+            <li>
+              2. What will happen if the commercial gets 100k views? (Future)
+              <div class="answer-hint hint-1">
+                Teacher:
+                <em
+                  >If it gets 100k views, the client will double their
+                  budget.</em
+                >
+                (First)
+              </div>
+            </li>
+            <li>
+              3. What would happen if they had Taylor Swift in the commercial?
+              (Imaginary)
+              <div class="answer-hint hint-1">
+                Teacher:
+                <em
+                  >If they had Taylor Swift, the sneakers would sell out in ten
+                  minutes.</em
+                >
+                (Second)
+              </div>
+            </li>
+          </ul>
+          <button class="btn-outline" onclick="toggleHints('hint-1')">
+            Show/Hide Answers
+          </button>
+        </div>
+
+        <!-- Scenario 2: Silicon Valley Startup -->
+        <div class="reading-box">
+          <h3>Scenario 2: The Los Angeles Social Media Manager</h3>
+          <div class="reading-text">
+            David manages social media for a tech startup in Los Angeles. He
+            monitors engagement closely. If the engagement drops, he immediately
+            changes the hashtags to reach new people. Currently, he is preparing
+            a pitch for the board. If he finishes the content calendar tonight,
+            he will present it tomorrow morning. However, David strongly
+            disagrees with the company's name. He thinks to himself, "If I were
+            the CEO, I would rebrand the whole company immediately to make it
+            look more modern."
+          </div>
+          <ul class="questions-list">
+            <li>
+              1. What does David do if engagement drops?
+              <div class="answer-hint hint-2">
+                Teacher:
+                <em>If engagement drops, he changes the hashtags.</em> (Zero)
+              </div>
+            </li>
+            <li>
+              2. What will David do if he finishes the calendar tonight?
+              <div class="answer-hint hint-2">
+                Teacher:
+                <em>If he finishes it, he will present it tomorrow morning.</em>
+                (First)
+              </div>
+            </li>
+            <li>
+              3. What would David do if he were the CEO?
+              <div class="answer-hint hint-2">
+                Teacher:
+                <em>If he were the CEO, he would rebrand the whole company.</em>
+                (Second)
+              </div>
+            </li>
+          </ul>
+          <button class="btn-outline" onclick="toggleHints('hint-2')">
+            Show/Hide Answers
+          </button>
+        </div>
+      </div>
+
+      <!-- Content: Puzzle Game (20 Items) -->
+      <div id="puzzle" class="tab-content" style="padding-bottom: 0">
+        <div class="puzzle-intro">
+          <h2>Ultimate Puzzle Builder 🧩</h2>
+          <p>
+            Drag the 20 results from the sticky bank below to match their
+            <strong>IF clauses</strong>.
+          </p>
+        </div>
+
+        <div class="puzzle-scroll-area">
+          <div class="puzzle-container">
+            <div class="puzzle-row">
+              <div class="puzzle-clause">1. (0) If you press enter,</div>
+              <div class="drop-zone" data-match="p1">Drop here</div>
+            </div>
+            <div class="puzzle-row">
+              <div class="puzzle-clause">2. (1) If we run Facebook Ads,</div>
+              <div class="drop-zone" data-match="p2">Drop here</div>
+            </div>
+            <div class="puzzle-row">
+              <div class="puzzle-clause">3. (2) If I owned Google,</div>
+              <div class="drop-zone" data-match="p3">Drop here</div>
+            </div>
+            <div class="puzzle-row">
+              <div class="puzzle-clause">4. (0) If demand increases,</div>
+              <div class="drop-zone" data-match="p4">Drop here</div>
+            </div>
+            <div class="puzzle-row">
+              <div class="puzzle-clause">5. (1) If they sign the contract,</div>
+              <div class="drop-zone" data-match="p5">Drop here</div>
+            </div>
+            <div class="puzzle-row">
+              <div class="puzzle-clause">6. (2) If he worked in New York,</div>
+              <div class="drop-zone" data-match="p6">Drop here</div>
+            </div>
+            <div class="puzzle-row">
+              <div class="puzzle-clause">7. (0) If a link is broken,</div>
+              <div class="drop-zone" data-match="p7">Drop here</div>
+            </div>
+            <div class="puzzle-row">
+              <div class="puzzle-clause">8. (1) If the team works hard,</div>
+              <div class="drop-zone" data-match="p8">Drop here</div>
+            </div>
+            <div class="puzzle-row">
+              <div class="puzzle-clause">9. (2) If she had more time,</div>
+              <div class="drop-zone" data-match="p9">Drop here</div>
+            </div>
+            <div class="puzzle-row">
+              <div class="puzzle-clause">10. (0) If you post at 3 AM,</div>
+              <div class="drop-zone" data-match="p10">Drop here</div>
+            </div>
+            <div class="puzzle-row">
+              <div class="puzzle-clause">11. (1) If the video goes viral,</div>
+              <div class="drop-zone" data-match="p11">Drop here</div>
+            </div>
+            <div class="puzzle-row">
+              <div class="puzzle-clause">12. (2) If we hired a celebrity,</div>
+              <div class="drop-zone" data-match="p12">Drop here</div>
+            </div>
+            <div class="puzzle-row">
+              <div class="puzzle-clause">13. (0) If inflation rises,</div>
+              <div class="drop-zone" data-match="p13">Drop here</div>
+            </div>
+            <div class="puzzle-row">
+              <div class="puzzle-clause">14. (1) If the sponsor pulls out,</div>
+              <div class="drop-zone" data-match="p14">Drop here</div>
+            </div>
+            <div class="puzzle-row">
+              <div class="puzzle-clause">15. (2) If I were the boss,</div>
+              <div class="drop-zone" data-match="p15">Drop here</div>
+            </div>
+            <div class="puzzle-row">
+              <div class="puzzle-clause">16. (0) If a user unsubscribes,</div>
+              <div class="drop-zone" data-match="p16">Drop here</div>
+            </div>
+            <div class="puzzle-row">
+              <div class="puzzle-clause">
+                17. (1) If it rains on the launch day,
+              </div>
+              <div class="drop-zone" data-match="p17">Drop here</div>
+            </div>
+            <div class="puzzle-row">
+              <div class="puzzle-clause">
+                18. (2) If we had better software,
+              </div>
+              <div class="drop-zone" data-match="p18">Drop here</div>
+            </div>
+            <div class="puzzle-row">
+              <div class="puzzle-clause">19. (0) If you use bright colors,</div>
+              <div class="drop-zone" data-match="p19">Drop here</div>
+            </div>
+            <div class="puzzle-row">
+              <div class="puzzle-clause">
+                20. (1) If she doesn't reply today,
+              </div>
+              <div class="drop-zone" data-match="p20">Drop here</div>
+            </div>
+          </div>
+          <button class="btn" onclick="checkPuzzle()">Check Puzzle</button>
+          <div id="puzzle-success"></div>
+          <br /><br />
+        </div>
+
+        <div class="draggable-bank-container">
+          <div
+            style="
+              font-size: 0.9rem;
+              color: #6b7280;
+              margin-bottom: 5px;
+              font-weight: bold;
+            "
+          >
+            Piece Bank (Scroll inside to see all 20) 👇
+          </div>
+          <div class="draggable-bank" id="drag-bank">
+            <div class="drag-piece" draggable="true" data-id="p11" id="d11">
+              we will gain followers.
+            </div>
+            <div class="drag-piece" draggable="true" data-id="p4" id="d4">
+              prices usually rise.
+            </div>
+            <div class="drag-piece" draggable="true" data-id="p18" id="d18">
+              rendering would finish faster.
+            </div>
+            <div class="drag-piece" draggable="true" data-id="p7" id="d7">
+              users see a 404 error.
+            </div>
+            <div class="drag-piece" draggable="true" data-id="p1" id="d1">
+              the form submits.
+            </div>
+            <div class="drag-piece" draggable="true" data-id="p15" id="d15">
+              I would allow remote work.
+            </div>
+            <div class="drag-piece" draggable="true" data-id="p8" id="d8">
+              we will meet the deadline.
+            </div>
+            <div class="drag-piece" draggable="true" data-id="p12" id="d12">
+              sales would skyrocket.
+            </div>
+            <div class="drag-piece" draggable="true" data-id="p2" id="d2">
+              traffic will increase.
+            </div>
+            <div class="drag-piece" draggable="true" data-id="p19" id="d19">
+              the ad attracts attention.
+            </div>
+            <div class="drag-piece" draggable="true" data-id="p5" id="d5">
+              we will celebrate tonight.
+            </div>
+            <div class="drag-piece" draggable="true" data-id="p9" id="d9">
+              she would learn React.
+            </div>
+            <div class="drag-piece" draggable="true" data-id="p16" id="d16">
+              the system removes their email.
+            </div>
+            <div class="drag-piece" draggable="true" data-id="p3" id="d3">
+              I would give free Wi-Fi.
+            </div>
+            <div class="drag-piece" draggable="true" data-id="p14" id="d14">
+              we will cancel the event.
+            </div>
+            <div class="drag-piece" draggable="true" data-id="p6" id="d6">
+              he would take the subway.
+            </div>
+            <div class="drag-piece" draggable="true" data-id="p20" id="d20">
+              I will call her directly.
+            </div>
+            <div class="drag-piece" draggable="true" data-id="p10" id="d10">
+              nobody sees the tweet.
+            </div>
+            <div class="drag-piece" draggable="true" data-id="p17" id="d17">
+              we will move indoors.
+            </div>
+            <div class="drag-piece" draggable="true" data-id="p13" id="d13">
+              purchasing power drops.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // --- Tab Logic ---
+      function openTab(evt, tabName) {
+        document
+          .querySelectorAll(".tab-content")
+          .forEach((tab) => tab.classList.remove("active"));
+        document
+          .querySelectorAll(".tab-btn")
+          .forEach((btn) => btn.classList.remove("active"));
+        document.getElementById(tabName).classList.add("active");
+        evt.currentTarget.classList.add("active");
+      }
+
+      // --- Quiz Logic ---
+      function checkAnswers() {
+        let score = 0;
+        const totalQuestions = 20;
+        for (let i = 1; i <= totalQuestions; i++) {
+          const selectElement = document.getElementById(`q${i}`);
+          const userAnswer = selectElement.value;
+          const correctAnswer = selectElement.getAttribute("data-answer");
+          selectElement.style.borderColor = "#E2E8F0";
+          if (userAnswer === correctAnswer) {
+            score++;
+            selectElement.style.borderColor = "#10B981";
+            selectElement.style.backgroundColor = "#D1FAE5";
+          } else if (userAnswer !== "") {
+            selectElement.style.borderColor = "#EF4444";
+            selectElement.style.backgroundColor = "#FEE2E2";
+          }
+        }
+        const scoreDisplay = document.getElementById("score-display");
+        scoreDisplay.style.display = "block";
+        if (score === totalQuestions) {
+          scoreDisplay.style.backgroundColor = "#D1FAE5";
+          scoreDisplay.style.color = "#065F46";
+          scoreDisplay.innerHTML = `Perfect Score! 20/20 🎯 Excellent job!`;
+        } else if (score >= 14) {
+          scoreDisplay.style.backgroundColor = "#FEF3C7";
+          scoreDisplay.style.color = "#92400E";
+          scoreDisplay.innerHTML = `Great work! You got ${score}/20. Just a few mistakes. 💡`;
+        } else {
+          scoreDisplay.style.backgroundColor = "#FEE2E2";
+          scoreDisplay.style.color = "#991B1B";
+          scoreDisplay.innerHTML = `You got ${score}/20. Let's review the rules and try again! 📚`;
+        }
+      }
+
+      // --- Reading Hints Logic ---
+      function toggleHints(hintClass) {
+        const hints = document.getElementsByClassName(hintClass);
+        for (let i = 0; i < hints.length; i++) {
+          hints[i].style.display =
+            hints[i].style.display === "block" ? "none" : "block";
+        }
+      }
+
+      // --- Drag and Drop Logic ---
+      const dragPieces = document.querySelectorAll(".drag-piece");
+      const dropZones = document.querySelectorAll(".drop-zone");
+      const dragBank = document.getElementById("drag-bank");
+
+      dragPieces.forEach((piece) => {
+        piece.addEventListener("dragstart", (e) => {
+          piece.classList.add("dragging");
+          e.dataTransfer.setData("text/plain", piece.id);
+        });
+        piece.addEventListener("dragend", () => {
+          piece.classList.remove("dragging");
+        });
+      });
+
+      dropZones.forEach((zone) => {
+        zone.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          zone.classList.add("over");
+        });
+        zone.addEventListener("dragleave", () => {
+          zone.classList.remove("over");
+        });
+        zone.addEventListener("drop", (e) => {
+          e.preventDefault();
+          zone.classList.remove("over");
+          const pieceId = e.dataTransfer.getData("text/plain");
+          if (!pieceId) return;
+          const draggedPiece = document.getElementById(pieceId);
+          if (zone.children.length > 0) {
+            dragBank.appendChild(zone.children[0]);
+          }
+          zone.innerHTML = "";
+          zone.appendChild(draggedPiece);
+        });
+      });
+
+      dragBank.addEventListener("dragover", (e) => {
+        e.preventDefault();
+      });
+      dragBank.addEventListener("drop", (e) => {
+        e.preventDefault();
+        const pieceId = e.dataTransfer.getData("text/plain");
+        if (pieceId) {
+          dragBank.appendChild(document.getElementById(pieceId));
+        }
+      });
+
+      function checkPuzzle() {
+        let correct = 0;
+        const totalPuzzle = 20;
+        dropZones.forEach((zone) => {
+          const requiredMatch = zone.getAttribute("data-match");
+          const pieceInside = zone.firstElementChild;
+          zone.style.borderColor = "var(--primary)";
+          zone.style.backgroundColor = "#EEF2FF";
+          if (pieceInside) {
+            const actualMatch = pieceInside.getAttribute("data-id");
+            if (requiredMatch === actualMatch) {
+              correct++;
+              zone.style.borderColor = "#10B981";
+              zone.style.backgroundColor = "#D1FAE5";
+            } else {
+              zone.style.borderColor = "#EF4444";
+              zone.style.backgroundColor = "#FEE2E2";
+            }
+          }
+        });
+        const successMsg = document.getElementById("puzzle-success");
+        successMsg.style.display = "block";
+        if (correct === totalPuzzle) {
+          successMsg.style.backgroundColor = "#D1FAE5";
+          successMsg.style.color = "#065F46";
+          successMsg.innerHTML = `Puzzle Completed! 20/20 ✨`;
+        } else {
+          successMsg.style.backgroundColor = "#FEE2E2";
+          successMsg.style.color = "#991B1B";
+          successMsg.innerHTML = `You got ${correct}/${totalPuzzle}. Check the red boxes and rearrange them!`;
+        }
+      }
+    </script>
+  </body>
+</html>
