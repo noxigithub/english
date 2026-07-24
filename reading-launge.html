@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Reading Lounge - Texas Life</title>
+    <style>
+      :root {
+        --bg-gradient: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+        --card-bg: #ffffff;
+
+        --text-main: #334155;
+        --text-muted: #64748b;
+        --accent: #3b82f6;
+        --success: #10b981;
+        --error: #ef4444;
+        --story-bg: #f8fafc;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: var(--bg-gradient);
+        color: var(--text-main);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 30px 20px;
+        box-sizing: border-box;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .header h1 {
+        margin: 0;
+        font-size: 2.5rem;
+        color: #1e293b;
+      }
+      .header p {
+        margin: 8px 0 0;
+        color: var(--text-muted);
+        font-size: 1.1rem;
+      }
+
+      /* --- TABS --- */
+      .tabs {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .tab-btn {
+        background: white;
+        border: 2px solid #cbd5e1;
+        padding: 12px 25px;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .tab-btn:hover {
+        border-color: #94a3b8;
+        transform: translateY(-2px);
+      }
+      .tab-btn.active {
+        background: var(--accent);
+        color: white;
+        border-color: var(--accent);
+        box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+      }
+
+      /* --- MAIN CONTAINER --- */
+      .container {
+        background: var(--card-bg);
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+        width: 100%;
+        max-width: 900px;
+        padding: 40px;
+        box-sizing: border-box;
+        border: 1px solid #f1f5f9;
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+      }
+
+      /* --- STORY AREA --- */
+      .story-area {
+        background: var(--story-bg);
+        padding: 30px;
+        border-radius: 15px;
+        border-left: 5px solid var(--accent);
+        font-size: 1.25rem;
+        line-height: 1.8;
+        color: #1e293b;
+      }
+
+      .story-title {
+        font-size: 1.6rem;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: var(--accent);
+      }
+
+      /* --- QUESTIONS AREA --- */
+      .quiz-area {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+      }
+
+      .question-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+      }
+
+      .q-text {
+        font-size: 1.15rem;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #334155;
+      }
+
+      .options {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .opt-btn {
+        background: #f8fafc;
+        border: 2px solid #e2e8f0;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 1.05rem;
+        text-align: left;
+        cursor: pointer;
+        transition: 0.2s;
+        color: #475569;
+      }
+
+      .opt-btn:hover:not(.disabled) {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+      }
+
+      .opt-btn.correct {
+        background: #ecfdf5;
+        border-color: var(--success);
+        color: #065f46;
+        font-weight: bold;
+      }
+
+      .opt-btn.disabled {
+        pointer-events: none;
+        opacity: 0.7;
+      }
+
+      /* Animation */
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-5px);
+        }
+        75% {
+          transform: translateX(5px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>The Reading Lounge 📖☕</h1>
+      <p>Read the story, visualize the situation, and answer the questions.</p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="loadStory(0, this)">
+        🛒 Story 1: The Grocery Run
+      </button>
+      <button class="tab-btn" onclick="loadStory(1, this)">
+        🌳 Story 2: Afternoon at the Park
+      </button>
+    </div>
+
+    <div class="container">
+      <div class="story-area" id="story-content">
+        <!-- Story injected here -->
+      </div>
+
+      <div class="quiz-area" id="quiz-content">
+        <!-- Questions injected here -->
+      </div>
+    </div>
+
+    <script>
+      const database = [
+        {
+          title: "The Morning Grocery Run 🛒🚗",
+          text: "It was a busy Tuesday morning. The house was very quiet because the older kids were already at school. I walked into the kitchen to make some breakfast, but I realized we ran out of milk and eggs. I grabbed my keys, picked up my wallet, and drove to the local H-E-B.<br><br>The supermarket was pretty empty, which was nice. First, I went to the produce section to pick up some fresh fruit: apples, bananas, and a big watermelon for the afternoon. Then, I walked over to aisle four to find the pancake mix. It took me a few minutes, but I finally found it on the bottom shelf. After that, I grabbed two cartons of milk and headed to the checkout line.<br><br>On my way back home, I decided to treat myself. I pulled up to the drive-thru at my favorite coffee shop. I ordered a large iced latte with oat milk and a warm blueberry muffin. The person at the window was very friendly. I paid, took my order, and drove back carefully. Once I arrived, I put all the groceries away in the fridge and finally sat down to enjoy my coffee before the baby woke up.",
+          questions: [
+            {
+              q: "1. Why did she need to go to H-E-B in the morning?",
+              options: [
+                "A) She ran out of milk and eggs.",
+                "B) She wanted to buy a new book.",
+                "C) The baby was crying.",
+              ],
+              answer: 0,
+            },
+            {
+              q: "2. What does the phrasal verb 'ran out of' mean in this story?",
+              options: [
+                "A) To run outside the house quickly.",
+                "B) To have no more of something.",
+                "C) To drop something on the floor.",
+              ],
+              answer: 1,
+            },
+            {
+              q: "3. What did she find in aisle four?",
+              options: [
+                "A) Fresh fruit.",
+                "B) A large iced latte.",
+                "C) Pancake mix.",
+              ],
+              answer: 2,
+            },
+            {
+              q: "4. Why was the house 'very quiet' at the beginning?",
+              options: [
+                "A) The TV was broken.",
+                "B) The older kids were already at school.",
+                "C) It was late at night.",
+              ],
+              answer: 1,
+            },
+          ],
+        },
+        {
+          title: "A Texas Afternoon at the Park 🌳☀️",
+          text: "By three o'clock in the afternoon, the weather was absolutely beautiful. It wasn't too hot, and there was a nice cool breeze. The baby was feeling energetic, so we decided to hang out at the neighborhood park for a while. I packed the diaper bag, put some snacks in a small container, and pushed the stroller down the sidewalk.<br><br>When we got to the park, the playground was full of life. There were a few other toddlers running around the splash pad and playing on the swings. I found a nice spot under a big oak tree and laid down a picnic blanket. We sat there for about an hour. The baby played with a soft red ball on the grass while I relaxed and read a few pages of my new mystery novel.<br><br>Eventually, the sun started to set, and the sky turned a beautiful shade of orange and pink. The temperature began to drop, so I figured it was time to head back. I packed up our things, cleaned up the empty snack containers, and put the baby back into the stroller. We took a slow, quiet walk back to the house, feeling completely ready for dinner and a good night's sleep.",
+          questions: [
+            {
+              q: "1. What did she do before leaving the house?",
+              options: [
+                "A) Cleaned the whole kitchen.",
+                "B) Packed the diaper bag and snacks.",
+                "C) Took a nap on the sofa.",
+              ],
+              answer: 1,
+            },
+            {
+              q: "2. She mentions they decided to 'hang out' at the park. What does this mean?",
+              options: [
+                "A) To hang wet clothes outside.",
+                "B) To run very fast.",
+                "C) To spend time relaxing in a place.",
+              ],
+              answer: 2,
+            },
+            {
+              q: "3. What did she do while the baby played with the red ball?",
+              options: [
+                "A) She read a mystery novel.",
+                "B) She drank a hot coffee.",
+                "C) She talked on the phone.",
+              ],
+              answer: 0,
+            },
+            {
+              q: "4. How do we know they stayed at the park until late in the afternoon?",
+              options: [
+                "A) The park closed the gates.",
+                "B) It started raining heavily.",
+                "C) The sun started to set and the sky turned orange.",
+              ],
+              answer: 2,
+            },
+          ],
+        },
+      ];
+
+      function loadStory(index, btnElement) {
+        // Update Active Tab
+        document
+          .querySelectorAll(".tab-btn")
+          .forEach((btn) => btn.classList.remove("active"));
+        if (btnElement) btnElement.classList.add("active");
+
+        const data = database[index];
+
+        // Render Story
+        const storyArea = document.getElementById("story-content");
+        storyArea.innerHTML = `<div class="story-title">${data.title}</div><div>${data.text}</div>`;
+
+        // Render Questions
+        const quizArea = document.getElementById("quiz-content");
+        quizArea.innerHTML = ""; // Clear previous
+
+        data.questions.forEach((item, qIndex) => {
+          const qCard = document.createElement("div");
+          qCard.className = "question-card";
+
+          const qText = document.createElement("div");
+          qText.className = "q-text";
+          qText.innerText = item.q;
+          qCard.appendChild(qText);
+
+          const optsContainer = document.createElement("div");
+          optsContainer.className = "options";
+
+          item.options.forEach((optText, optIndex) => {
+            const btn = document.createElement("button");
+            btn.className = "opt-btn";
+            btn.innerText = optText;
+            btn.onclick = () =>
+              checkAnswer(btn, optIndex, item.answer, optsContainer);
+            optsContainer.appendChild(btn);
+          });
+
+          qCard.appendChild(optsContainer);
+          quizArea.appendChild(qCard);
+        });
+      }
+
+      function checkAnswer(btn, selectedIndex, correctIndex, container) {
+        if (selectedIndex === correctIndex) {
+          // Correct
+          btn.classList.add("correct");
+          // Disable all options in this question
+          const allOpts = container.querySelectorAll(".opt-btn");
+          allOpts.forEach((b) => b.classList.add("disabled"));
+        } else {
+          // Wrong
+          btn.style.animation = "shake 0.4s";
+          btn.style.color = "var(--error)";
+          btn.style.borderColor = "var(--error)";
+          setTimeout(() => {
+            btn.style.animation = "none";
+            btn.style.color = "#475569";
+            btn.style.borderColor = "#e2e8f0";
+          }, 400);
+        }
+      }
+
+      // Init first story
+      loadStory(0);
+    </script>
+  </body>
+</html>
