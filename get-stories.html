@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Advanced GET & USED TO Stories</title>
+    <style>
+      :root {
+        --primary: #4834d4;
+        --secondary: #686de0;
+        --accent: #f0932b;
+        --bg-color: #f1f2f6;
+        --card-bg: #ffffff;
+        --text-dark: #2d3436;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-dark);
+        margin: 0;
+        padding: 20px;
+        font-size: 26px; /* Optimized for screen sharing */
+        line-height: 1.6;
+      }
+
+      h1 {
+        text-align: center;
+        color: var(--primary);
+        font-size: 3rem;
+        margin-bottom: 30px;
+      }
+
+      /* Tabs Navigation */
+      .tabs {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      .tab-btn {
+        background-color: var(--secondary);
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        font-size: 1.2rem;
+        border-radius: 10px 10px 0 0;
+        cursor: pointer;
+        transition:
+          background-color 0.3s,
+          transform 0.2s;
+        font-weight: bold;
+      }
+
+      .tab-btn:hover {
+        background-color: var(--primary);
+        transform: translateY(-3px);
+      }
+
+      .tab-btn.active {
+        background-color: var(--primary);
+        border-bottom: 4px solid var(--accent);
+      }
+
+      /* Story Cards */
+      .story-content {
+        display: none; /* Hidden by default */
+        background: var(--card-bg);
+        padding: 40px;
+        border-radius: 0 0 15px 15px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        max-width: 1200px;
+        margin: 0 auto;
+        border-top: 4px solid var(--primary);
+        animation: fadeIn 0.5s;
+      }
+
+      .story-content.active {
+        display: block; /* Show active tab */
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .story-title {
+        color: var(--accent);
+        font-size: 2.2rem;
+        border-bottom: 2px dashed #dfe6e9;
+        padding-bottom: 10px;
+        margin-top: 0;
+      }
+
+      /* Highlight classes */
+      .hl-get {
+        background-color: #ffeaa7;
+        color: #d63031;
+        padding: 2px 8px;
+        border-radius: 5px;
+        font-weight: bold;
+      }
+
+      .hl-used {
+        background-color: #81ecec;
+        color: #0984e3;
+        padding: 2px 8px;
+        border-radius: 5px;
+        font-weight: bold;
+      }
+
+      /* Questions Section */
+      .questions-section {
+        margin-top: 40px;
+        background-color: #f8f9fa;
+        padding: 25px;
+        border-radius: 12px;
+        border-left: 6px solid var(--accent);
+      }
+
+      .questions-section h3 {
+        margin-top: 0;
+        color: var(--primary);
+      }
+
+      .question-block {
+        margin-bottom: 20px;
+      }
+
+      .q-type {
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #7f8fa6;
+        font-weight: bold;
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      /* Accordion for answers / extra notes */
+      details {
+        margin-top: 15px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        border: 1px solid #dfe4ea;
+      }
+
+      summary {
+        font-size: 1.2rem;
+        font-weight: bold;
+        cursor: pointer;
+        color: var(--text-dark);
+        background-color: #eccc68;
+        padding: 15px;
+        list-style: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 8px;
+      }
+
+      summary::-webkit-details-marker {
+        display: none;
+      }
+
+      /* Transition for both opening and closing states */
+      summary::after {
+        content: "▼";
+        font-size: 1.2rem;
+        transition: transform 0.4s ease;
+      }
+
+      details[open] summary::after {
+        transform: rotate(180deg);
+      }
+
+      .answer-content {
+        padding: 20px;
+        font-size: 1.1rem;
+        color: #2f3640;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🚀 Advanced Challenge: GET & USED TO</h1>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="openTab(event, 'story1')">
+        1. The Expat
+      </button>
+      <button class="tab-btn" onclick="openTab(event, 'story2')">
+        2. The Bootcamp
+      </button>
+      <button class="tab-btn" onclick="openTab(event, 'story3')">
+        3. The Marathon
+      </button>
+      <button class="tab-btn" onclick="openTab(event, 'story4')">
+        4. The Farm
+      </button>
+      <button class="tab-btn" onclick="openTab(event, 'story5')">
+        5. The New Language
+      </button>
+    </div>
+
+    <!-- STORY 1 -->
+    <div id="story1" class="story-content active">
+      <h2 class="story-title">Story 1: The Expat Life</h2>
+      <p>
+        Arthur <span class="hl-used">used to live</span> in a quiet, sunny
+        village in Spain. Last month, he relocated to London for a new job.
+        During his first week, the transition was incredibly difficult. He
+        <span class="hl-get">got lost</span> (get) almost every single day in
+        the underground subway. The weather was another problem; it
+        <span class="hl-get">was getting colder</span> (to be + get) rapidly,
+        and Arthur <span class="hl-used">wasn't used to</span> the freezing
+        rain.
+      </p>
+      <p>
+        However, time passed. Arthur
+        <span class="hl-used">is getting used to</span> carrying an umbrella
+        everywhere he goes. He <span class="hl-get">gets</span> (get - receive)
+        a lot of support from his new colleagues, which helps immensely. While
+        he still misses his hometown, he
+        <span class="hl-used">is used to</span> the fast-paced city life now,
+        and he finally
+        <span class="hl-get">got his apartment decorated</span> (get causative).
+      </p>
+
+      <div class="questions-section">
+        <h3>Brain Check</h3>
+
+        <div class="question-block">
+          <span class="q-type">Comprehension 1</span>
+          Where did Arthur live before moving to London?
+        </div>
+        <div class="question-block">
+          <span class="q-type">Comprehension 2</span>
+          Why was his first week so difficult in terms of transportation?
+        </div>
+        <div class="question-block">
+          <span class="q-type">Comprehension 3</span>
+          What item does Arthur now carry with him all the time?
+        </div>
+        <div class="question-block">
+          <span class="q-type">Reflection 1</span>
+          Have you ever moved to a new city or country? What was the hardest
+          thing to get used to?
+        </div>
+        <div class="question-block">
+          <span class="q-type">Reflection 2</span>
+          Why do you think the support from colleagues is important when someone
+          is getting used to a new environment?
+        </div>
+
+        <details>
+          <summary>Teacher's Vocabulary Notes</summary>
+          <div class="answer-content">
+            <ul>
+              <li><strong>Used to live:</strong> Past habit (Solía vivir).</li>
+              <li>
+                <strong>Got lost:</strong> Become/Change of state (Se perdió).
+              </li>
+              <li>
+                <strong>Was getting colder:</strong> Continuous process of
+                change (Se estaba poniendo más frío).
+              </li>
+              <li>
+                <strong>Wasn't used to:</strong> State of not being accustomed
+                (No estaba acostumbrado a).
+              </li>
+              <li>
+                <strong>Is getting used to:</strong> The process of becoming
+                accustomed (Se está acostumbrando a).
+              </li>
+            </ul>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <!-- STORY 2 -->
+    <div id="story2" class="story-content">
+      <h2 class="story-title">Story 2: The Tech Bootcamp</h2>
+      <p>
+        Leo <span class="hl-used">used to work</span> as a traditional graphic
+        designer, but he wanted a career change. He enrolled in an intensive
+        12-week coding bootcamp. In the beginning, the programming logic
+        <span class="hl-get">got really complicated</span> (get). He
+        <span class="hl-get">was getting frustrated</span> (to be + get) every
+        time his code threw an error, and he even thought he might
+        <span class="hl-get">get kicked out</span> (passive get) of the program.
+      </p>
+      <p>
+        Leo <span class="hl-used">didn't use to</span> spend so many hours
+        staring at a terminal screen. But slowly, things started to click. Now,
+        he <span class="hl-used">is getting used to</span> debugging complex
+        software problems. The pressure is high, but he
+        <span class="hl-used">is entirely used to</span> the stress of tight
+        deadlines. Yesterday, he finally <span class="hl-get">got</span> (get -
+        obtain) his first job offer as a junior developer!
+      </p>
+
+      <div class="questions-section">
+        <h3>Brain Check</h3>
+
+        <div class="question-block">
+          <span class="q-type">Comprehension 1</span>
+          What was Leo's profession before the coding bootcamp?
+        </div>
+        <div class="question-block">
+          <span class="q-type">Comprehension 2</span>
+          How did Leo feel when his code threw an error?
+        </div>
+        <div class="question-block">
+          <span class="q-type">Comprehension 3</span>
+          What did Leo finally achieve at the end of the story?
+        </div>
+        <div class="question-block">
+          <span class="q-type">Reflection 1</span>
+          If you were to change careers suddenly, what do you think you would
+          struggle to get used to?
+        </div>
+        <div class="question-block">
+          <span class="q-type">Reflection 2</span>
+          Do you think frustration is a necessary part of the learning process
+          when getting used to a new skill?
+        </div>
+
+        <details>
+          <summary>Teacher's Vocabulary Notes</summary>
+          <div class="answer-content">
+            <ul>
+              <li>
+                <strong>Used to work:</strong> Past habit (Solía trabajar).
+              </li>
+              <li>
+                <strong>Was getting frustrated:</strong> Process of becoming (Se
+                estaba frustrando).
+              </li>
+              <li>
+                <strong>Get kicked out:</strong> Passive voice with Get (Ser
+                expulsado).
+              </li>
+              <li>
+                <strong>Didn't use to:</strong> Negative past habit (No solía).
+              </li>
+              <li>
+                <strong>Is getting used to:</strong> Adapting to something new
+                (Se está acostumbrando).
+              </li>
+            </ul>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <!-- STORY 3 -->
+    <div id="story3" class="story-content">
+      <h2 class="story-title">Story 3: The Marathon Runner</h2>
+      <p>
+        Sarah <span class="hl-used">never used to</span> exercise. In fact, she
+        <span class="hl-used">used to avoid</span> any physical activity at all
+        costs. But after turning 30, she decided to train for a marathon. The
+        first few weeks were brutal. She
+        <span class="hl-get">got injured</span> (passive get) during her second
+        run because she didn't stretch properly. Her muscles
+        <span class="hl-get">were getting sore</span> (to be + get) every single
+        day.
+      </p>
+      <p>
+        Despite the pain, she didn't quit. She
+        <span class="hl-get">got</span> (get - buy/obtain) better running shoes
+        and hired a coach. Fast forward three months: Sarah
+        <span class="hl-used">is getting used to</span> waking up at 5:00 AM for
+        her morning runs. She <span class="hl-used">is fully used to</span> the
+        physical exhaustion. Next month, she hopes to
+        <span class="hl-get">get to</span> (get - arrive) the finish line.
+      </p>
+
+      <div class="questions-section">
+        <h3>Brain Check</h3>
+
+        <div class="question-block">
+          <span class="q-type">Comprehension 1</span>
+          What was Sarah's attitude towards exercise before she turned 30?
+        </div>
+        <div class="question-block">
+          <span class="q-type">Comprehension 2</span>
+          Why did Sarah get injured during her second run?
+        </div>
+        <div class="question-block">
+          <span class="q-type">Comprehension 3</span>
+          What two things did she do to improve her training situation?
+        </div>
+        <div class="question-block">
+          <span class="q-type">Reflection 1</span>
+          Have you ever tried to establish a difficult physical routine? How did
+          you get used to it?
+        </div>
+        <div class="question-block">
+          <span class="q-type">Reflection 2</span>
+          Why is it so hard to break habits we are already used to (like
+          avoiding exercise)?
+        </div>
+
+        <details>
+          <summary>Teacher's Vocabulary Notes</summary>
+          <div class="answer-content">
+            <ul>
+              <li>
+                <strong>Never used to:</strong> Emphasized negative past habit
+                (Nunca solía).
+              </li>
+              <li>
+                <strong>Got injured:</strong> Passive action (Se lesionó).
+              </li>
+              <li>
+                <strong>Were getting sore:</strong> Progressive change (Se
+                estaban poniendo doloridos).
+              </li>
+              <li>
+                <strong>Is fully used to:</strong> Completely accustomed (Está
+                completamente acostumbrada).
+              </li>
+              <li>
+                <strong>Get to:</strong> Arrive at a destination (Llegar a).
+              </li>
+            </ul>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <!-- STORY 4 -->
+    <div id="story4" class="story-content">
+      <h2 class="story-title">Story 4: The Rural Escape</h2>
+      <p>
+        David and Elena <span class="hl-used">used to live</span> in a noisy
+        apartment in the center of New York. They
+        <span class="hl-used">were used to</span> hearing police sirens and
+        traffic all night. Seeking peace, they bought a small farm in the
+        countryside. Instantly, they realized farm life is tough. On the very
+        first day, their truck <span class="hl-get">got stuck</span> (passive
+        get) in the mud.
+      </p>
+      <p>
+        Out there, it <span class="hl-get">gets dark</span> (get - become) very
+        early, and the silence was deafening. Elena
+        <span class="hl-get">was getting anxious</span> (to be + get) without
+        the city lights. However, as the seasons change, they
+        <span class="hl-used">are getting used to</span> the rhythm of nature.
+        Now, they <span class="hl-get">get</span> (get - receive) fresh eggs
+        every morning, and they realize they wouldn't trade this life for
+        anything.
+      </p>
+
+      <div class="questions-section">
+        <h3>Brain Check</h3>
+
+        <div class="question-block">
+          <span class="q-type">Comprehension 1</span>
+          What kind of noises were David and Elena used to hearing at night?
+        </div>
+        <div class="question-block">
+          <span class="q-type">Comprehension 2</span>
+          What happened to their truck on the first day?
+        </div>
+        <div class="question-block">
+          <span class="q-type">Comprehension 3</span>
+          Why was Elena getting anxious in the countryside initially?
+        </div>
+        <div class="question-block">
+          <span class="q-type">Reflection 1</span>
+          Could you get used to living in complete silence in the countryside?
+          Why or why not?
+        </div>
+        <div class="question-block">
+          <span class="q-type">Reflection 2</span>
+          Do you think humans are getting too used to the noise and chaos of
+          modern cities?
+        </div>
+
+        <details>
+          <summary>Teacher's Vocabulary Notes</summary>
+          <div class="answer-content">
+            <ul>
+              <li>
+                <strong>Were used to:</strong> Past state of being accustomed
+                (Estaban acostumbrados a).
+              </li>
+              <li>
+                <strong>Got stuck:</strong> Passive situation/Accident (Se quedó
+                atascado).
+              </li>
+              <li>
+                <strong>Gets dark:</strong> Change of state/environment (Se
+                oscurece).
+              </li>
+              <li>
+                <strong>Was getting anxious:</strong> Developing a feeling (Se
+                estaba poniendo ansiosa).
+              </li>
+              <li>
+                <strong>Are getting used to:</strong> Adapting to the
+                environment (Se están acostumbrando a).
+              </li>
+            </ul>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <!-- STORY 5 -->
+    <div id="story5" class="story-content">
+      <h2 class="story-title">Story 5: The Language Learner</h2>
+      <p>
+        When Kenji first started learning English, he
+        <span class="hl-used">used to struggle</span> a lot with pronunciation.
+        He <span class="hl-used">wasn't used to</span> making the "th" sound,
+        and it <span class="hl-get">got</span> (get - become) very frustrating
+        for him. Whenever he tried to speak in class, he
+        <span class="hl-get">would get nervous</span> (get - become) and forget
+        his vocabulary.
+      </p>
+      <p>
+        His teacher told him, "Don't worry, your brain
+        <span class="hl-get">is just getting rewired</span> (to be + get
+        passive)." Kenji decided to practice in front of a mirror every day.
+        Currently, he <span class="hl-used">is getting used to</span> the
+        complex grammar rules. He is much more confident now and recently
+        <span class="hl-get">got accepted</span> (passive get) into a university
+        exchange program in Canada!
+      </p>
+
+      <div class="questions-section">
+        <h3>Brain Check</h3>
+
+        <div class="question-block">
+          <span class="q-type">Comprehension 1</span>
+          What specific sound was Kenji not used to making?
+        </div>
+        <div class="question-block">
+          <span class="q-type">Comprehension 2</span>
+          What happened to Kenji when he tried to speak in class?
+        </div>
+        <div class="question-block">
+          <span class="q-type">Comprehension 3</span>
+          What great news did Kenji receive recently regarding his studies?
+        </div>
+        <div class="question-block">
+          <span class="q-type">Reflection 1</span>
+          What is the hardest grammar rule or sound you have had to get used to
+          in English?
+        </div>
+        <div class="question-block">
+          <span class="q-type">Reflection 2</span>
+          How does consistent practice help us get used to things that initially
+          make us nervous?
+        </div>
+
+        <details>
+          <summary>Teacher's Vocabulary Notes</summary>
+          <div class="answer-content">
+            <ul>
+              <li>
+                <strong>Used to struggle:</strong> Past habit of having
+                difficulty (Solía tener dificultades).
+              </li>
+              <li>
+                <strong>Got frustrating:</strong> Became frustrating (Se volvió
+                frustrante).
+              </li>
+              <li>
+                <strong>Is getting rewired:</strong> Passive continuous change
+                (Se está reconfigurando).
+              </li>
+              <li>
+                <strong>Is getting used to:</strong> Process of adaptation (Se
+                está acostumbrando a).
+              </li>
+              <li>
+                <strong>Got accepted:</strong> Passive outcome (Fue aceptado).
+              </li>
+            </ul>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <script>
+      function openTab(evt, storyId) {
+        // Hide all story contents
+        const tabContents = document.getElementsByClassName("story-content");
+        for (let i = 0; i < tabContents.length; i++) {
+          tabContents[i].classList.remove("active");
+        }
+
+        // Remove 'active' class from all buttons
+        const tabBtns = document.getElementsByClassName("tab-btn");
+        for (let i = 0; i < tabBtns.length; i++) {
+          tabBtns[i].classList.remove("active");
+        }
+
+        // Show the current tab, and add an "active" class to the button that opened the tab
+        document.getElementById(storyId).classList.add("active");
+        evt.currentTarget.classList.add("active");
+      }
+    </script>
+  </body>
+</html>
