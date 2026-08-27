@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Storytime: Used To & Agreement</title>
+    <style>
+      :root {
+        --primary: #3498db;
+        --secondary: #2ecc71;
+        --dark: #2c3e50;
+        --bg: #f4f6f7;
+        --text: #333;
+      }
+
+      * {
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: var(--bg);
+        color: var(--text);
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      h1 {
+        font-size: 2.8rem;
+        color: var(--dark);
+        margin-bottom: 10px;
+        text-align: center;
+      }
+
+      .instructions {
+        font-size: 1.2rem;
+        color: #7f8c8d;
+        margin-bottom: 30px;
+        text-align: center;
+      }
+
+      .tabs {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 30px;
+      }
+
+      .tab-btn {
+        font-size: 1.2rem;
+        padding: 12px 25px;
+        background-color: white;
+        color: var(--primary);
+        border: 2px solid var(--primary);
+        border-radius: 30px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s;
+      }
+
+      .tab-btn:hover,
+      .tab-btn.active {
+        background-color: var(--primary);
+        color: white;
+      }
+
+      .story-container {
+        display: none;
+        width: 100%;
+        max-width: 900px;
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        animation: fadeIn 0.5s ease;
+      }
+
+      .story-container.active {
+        display: block;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .story-title {
+        font-size: 2.2rem;
+        color: var(--primary);
+        margin-top: 0;
+        border-bottom: 3px solid #e8f6f3;
+        padding-bottom: 15px;
+      }
+
+      .story-text {
+        font-size: 1.6rem;
+        line-height: 1.6;
+        margin-bottom: 40px;
+        padding: 20px;
+        background-color: #ebf5fb;
+        border-radius: 15px;
+        border-left: 6px solid var(--primary);
+      }
+
+      .timeline-tag {
+        display: inline-block;
+        font-size: 1rem;
+        background: var(--dark);
+        color: white;
+        padding: 3px 10px;
+        border-radius: 10px;
+        vertical-align: middle;
+        margin-right: 10px;
+      }
+
+      .questions-section h3 {
+        font-size: 1.8rem;
+        color: var(--dark);
+      }
+
+      .question-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #f9ebea;
+        margin-bottom: 15px;
+        padding: 15px 25px;
+        border-radius: 15px;
+        border-left: 6px solid #e74c3c;
+      }
+
+      .question-row.positive {
+        background: #eafaf1;
+        border-left-color: var(--secondary);
+      }
+
+      .q-text {
+        font-size: 1.4rem;
+        font-weight: bold;
+        flex-grow: 1;
+      }
+
+      .reveal-btn {
+        font-size: 1.2rem;
+        padding: 10px 20px;
+        background-color: var(--dark);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        margin-left: 20px;
+        transition: background 0.3s;
+      }
+
+      .reveal-btn:hover {
+        background-color: #5d6d7e;
+      }
+
+      .answer-box {
+        display: none;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: white;
+        background-color: var(--secondary);
+        padding: 10px 20px;
+        border-radius: 10px;
+        margin-left: 20px;
+        min-width: 180px;
+        text-align: center;
+      }
+
+      /* NEW STYLES FOR OPEN QUESTIONS */
+      .open-questions {
+        margin-top: 30px;
+        background: #fef9e7;
+        padding: 20px 25px;
+        border-radius: 15px;
+        border-left: 6px solid #f1c40f;
+      }
+
+      .open-questions h3 {
+        color: #d4ac0d;
+        margin-top: 0;
+        font-size: 1.8rem;
+      }
+
+      .open-q-text {
+        font-size: 1.3rem;
+        margin-bottom: 15px;
+        color: #5d6d7e;
+        font-weight: 500;
+      }
+
+      .open-q-text:last-child {
+        margin-bottom: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Interactive Stories: Used to & Agreement</h1>
+    <div class="instructions">
+      Lee la historia con tu estudiante. Luego, practica los "Agreements" y
+      finaliza con las preguntas abiertas para conversar.
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showStory(1)">1. Canada</button>
+      <button class="tab-btn" onclick="showStory(2)">2. The Bakery</button>
+      <button class="tab-btn" onclick="showStory(3)">3. Vegetarian</button>
+      <button class="tab-btn" onclick="showStory(4)">4. Manual Car</button>
+      <button class="tab-btn" onclick="showStory(5)">5. The Puppy</button>
+    </div>
+
+    <!-- STORY 1 -->
+    <div id="story-1" class="story-container active">
+      <h2 class="story-title">❄️ Moving to Canada</h2>
+      <div class="story-text">
+        <span class="timeline-tag">PAST</span> When I first moved to Canada, I
+        suffered a lot. I <strong>wasn't used to</strong> the freezing
+        weather.<br /><br />
+        <span class="timeline-tag">PROCESS</span> During the first winter, I
+        slowly <strong>got used to</strong> wearing heavy coats and boots every
+        day.<br /><br />
+        <span class="timeline-tag">PRESENT CONTINUOUS</span> Now, autumn is
+        starting again. I <strong>am getting used to</strong> the shorter days
+        and less sunlight.<br /><br />
+        <span class="timeline-tag">PRESENT (STATE)</span> However, I
+        <strong>am used to</strong> the snow now.
+      </div>
+
+      <div class="questions-section">
+        <h3>Teacher says... (Student reacts)</h3>
+
+        <div class="question-row">
+          <div class="q-text">1. I wasn't used to the freezing weather.</div>
+          <button class="reveal-btn" onclick="reveal(this)">Reveal 👁️</button>
+          <div class="answer-box">Neither was I</div>
+        </div>
+        <div class="question-row positive">
+          <div class="q-text">2. I got used to wearing heavy coats.</div>
+          <button class="reveal-btn" onclick="reveal(this)">Reveal 👁️</button>
+          <div class="answer-box">So did I</div>
+        </div>
+        <div class="question-row positive">
+          <div class="q-text">3. I am getting used to the shorter days.</div>
+          <button class="reveal-btn" onclick="reveal(this)">Reveal 👁️</button>
+          <div class="answer-box">So am I</div>
+        </div>
+        <div class="question-row">
+          <div class="q-text">4. I am not used to driving in the snow.</div>
+          <button class="reveal-btn" onclick="reveal(this)">Reveal 👁️</button>
+          <div class="answer-box">Neither am I</div>
+        </div>
+        <div class="question-row positive">
+          <div class="q-text">5. I am used to the snow now.</div>
+          <button class="reveal-btn" onclick="reveal(this)">Reveal 👁️</button>
+          <div class="answer-box">So am I</div>
+        </div>
+
+        <div class="open-questions">
+          <h3>🗣️ Let's Talk! (Open Questions)</h3>
+          <div class="open-q-text">
+            1. Have you ever moved to a new place? What did you have to
+            <strong>get used to</strong>?
+          </div>
+          <div class="open-q-text">
+            2. What is something about extreme weather that you would never
+            <strong>get used to</strong>?
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STORY 2 -->
+    <div id="story-2" class="story-container">
+      <h2 class="story-title">🥐 The New Bakery Job</h2>
+      <div class="story-text">
+        <span class="timeline-tag">PAST</span> Two months ago, I got a job at a
+        bakery. At first, I couldn't <strong>get used to</strong> waking up at
+        4:00 AM. It was impossible!<br /><br />
+        <span class="timeline-tag">PROCESS</span> After a few weeks, I finally
+        <strong>got used to</strong> the alarm ringing in the dark.<br /><br />
+        <span class="timeline-tag">PRESENT CONTINUOUS</span> Right now, I
+        <strong>am getting used to</strong> going to bed at 8:00 PM to rest
+        enough.<br /><br />
+        <span class="timeline-tag">PRESENT (STATE)</span> But to be honest, I
+        <strong>am not used to</strong> having free time in the afternoons yet.
+      </div>
+
+      <div class="questions-section">
+        <h3>Teacher says... (Student reacts)</h3>
+        <div class="question-row">
+          <div class="q-text">
+            1. I couldn't get used to waking up at 4:00 AM.
+          </div>
+          <button class="reveal-btn" onclick="reveal(this)">Reveal 👁️</button>
+          <div class="answer-box">Neither could I</div>
+        </div>
+        <div class="question-row positive">
+          <div class="q-text">
+            2. I got used to the alarm ringing in the dark.
+          </div>
+          <button class="reveal-btn" onclick="reveal(this)">Reveal 👁️</button>
+          <div class="answer-box">So did I</div>
+        </div>
+        <div class="question-row positive">
+          <div class="q-text">
+            3. I am getting used to going to bed at 8:00 PM.
+          </div>
+          <button class="reveal-btn" onclick="reveal(this)">Reveal 👁️</button>
+          <div class="answer-box">So am I</div>
+        </div>
+        <div class="question-row">
+          <div class="q-text">
+            4. I haven't gotten used to the smell of bread yet.
+          </div>
+          <button class="reveal-btn" onclick="reveal(this)">Reveal 👁️</button>
+          <div class="answer-box">Neither have I</div>
+        </div>
+        <div class="question-row">
+          <div class="q-text">
+            5. I am not used to having free time in the afternoons.
+          </div>
+          <button class="reveal-btn" onclick="reveal(this)">Reveal 👁️</button>
+          <div class="answer-box">Neither am I</div>
+        </div>
+
+        <div class="open-questions">
+          <h3>🗣️ Let's Talk! (Open Questions)</h3>
+          <div class="open-q-text">
+            1. What time <strong>are you used to</strong> waking up? Was it hard
+            to <strong>get used to</strong> it?
+          </div>
+          <div class="open-q-text">
+            2. If you had to work the night shift, how long would it take you to
+            <strong>get used to</strong> sleeping during the day?
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STORY 3 -->
+    <div id="story-3" class="story-container">
+      <h2 class="story-title">🥗 The Vegetarian Diet</h2>
+      <div class="story-text">
+        <span class="timeline-tag">PAST</span> Last year, I decided to become a
+        vegetarian. I <strong>wasn't used to</strong> cooking without meat.<br /><br />
+        <span class="timeline-tag">PROCESS</span> It took me a long time to
+        <strong>get used to</strong> the taste of tofu.<br /><br />
+        <span class="timeline-tag">PRESENT CONTINUOUS</span> These days, I
+        <strong>am getting used to</strong> reading all the labels in the
+        supermarket.<br /><br />
+        <span class="timeline-tag">PRESENT (STATE)</span> Overall, I
+        <strong>am used to</strong> eating lots of vegetables, and I feel great.
+      </div>
+
+      <div class="questions-section">
+        <h3>Teacher says... (Student reacts)</h3>
+        <div class="question-row">
+          <div class="q-text">1. I wasn't used to cooking without meat.</div>
+          <button class="reveal-btn" onclick="reveal(this)">Reveal 👁️</button>
+          <div class="answer-box">Neither was I</div>
+        </div>
+        <div class="question-row positive">
+          <div class="q-text">2. I got used to the taste of tofu.</div>
+          <button class="reveal-btn" onclick="reveal(this)">Reveal 👁️</button>
+          <div class="answer-box">So did I</div>
+        </div>
+        <div class="question-row positive">
+          <div class="q-text">
+            3. I am getting used to reading all the labels.
+          </div>
+          <button class="reveal-btn" onclick="reveal(this)">Reveal 👁️</button>
+          <div class="answer-box">So am I</div>
+        </div>
+        <div class="question-row">
+          <div class="q-text">
+            4. I didn't get used to drinking almond milk.
+          </div>
+          <button class="reveal-btn" onclick="reveal(this)">Reveal 👁️</button>
+          <div class="answer-box">Neither did I</div>
+        </div>
+        <div class="question-row positive">
+          <div class="q-text">5. I am used to eating lots of vegetables.</div>
+          <button class="reveal-btn" onclick="reveal(this)">Reveal 👁️</button>
+          <div class="answer-box">So am I</div>
+        </div>
+
+        <div class="open-questions">
+          <h3>🗣️ Let's Talk! (Open Questions)</h3>
+          <div class="open-q-text">
+            1. Are there any new foods or habits that you
+            <strong>are getting used to</strong> right now?
+          </div>
+          <div class="open-q-text">
+            2. If you visited a country with very spicy food, do you think you
+            could <strong>get used to</strong> it? Why or why not?
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STORY 4 -->
+    <div id="story-4" class="story-container">
+      <h2 class="story-title">🚗 The Manual Car</h2>
+      <div class="story-text">
+        <span class="timeline-tag">PAST</span> When I bought my first car, it
+        was manual. I didn't <strong>get used to</strong> the clutch at the
+        beginning. I stalled the car everywhere!<br /><br />
+        <span class="timeline-tag">PROCESS</span> With practice, I
+        <strong>got used to</strong> changing gears without looking at them.<br /><br />
+        <span class="timeline-tag">PRESENT CONTINUOUS</span> Right now, I
+        <strong>am getting used to</strong> driving in heavy traffic in the city
+        center.<br /><br />
+        <span class="timeline-tag">FUTURE</span> I hope I will never go back to
+        automatic. I love manual cars!
+      </div>
+
+      <div class="questions-section">
+        <h3>Teacher says... (Student reacts)</h3>
+        <div class="question-row">
+          <div class="q-text">
+            1. I didn't get used to the clutch at the beginning.
+          </div>
+          <button class="reveal-btn" onclick="reveal(this)">Reveal 👁️</button>
+          <div class="answer-box">Neither did I</div>
+        </div>
+        <div class="question-row positive">
+          <div class="q-text">
+            2. I got used to changing gears without looking.
+          </div>
+          <button class="reveal-btn" onclick="reveal(this)">Reveal 👁️</button>
+          <div class="answer-box">So did I</div>
+        </div>
+        <div class="question-row positive">
+          <div class="q-text">
+            3. I am getting used to driving in heavy traffic.
+          </div>
+          <button class="reveal-btn" onclick="reveal(this)">Reveal 👁️</button>
+          <div class="answer-box">So am I</div>
+        </div>
+        <div class="question-row">
+          <div class="q-text">4. I am not used to parking in small spaces.</div>
+          <button class="reveal-btn" onclick="reveal(this)">Reveal 👁️</button>
+          <div class="answer-box">Neither am I</div>
+        </div>
+        <div class="question-row">
+          <div class="q-text">
+            5. I will never get used to automatic cars again!
+          </div>
+          <button class="reveal-btn" onclick="reveal(this)">Reveal 👁️</button>
+          <div class="answer-box">Neither will I</div>
+        </div>
+
+        <div class="open-questions">
+          <h3>🗣️ Let's Talk! (Open Questions)</h3>
+          <div class="open-q-text">
+            1. Think about a new skill you learned recently. What was the
+            hardest part to <strong>get used to</strong>?
+          </div>
+          <div class="open-q-text">
+            2. <strong>Are you used to</strong> heavy traffic in your city? How
+            do you feel about it?
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STORY 5 -->
+    <div id="story-5" class="story-container">
+      <h2 class="story-title">🐶 The New Puppy</h2>
+      <div class="story-text">
+        <span class="timeline-tag">PAST</span> When we adopted Max, our puppy,
+        the house was chaos. We <strong>weren't used to</strong> finding shoes
+        destroyed.<br /><br />
+        <span class="timeline-tag">PRESENT CONTINUOUS</span> He is growing up.
+        We <strong>are getting used to</strong> taking him for walks twice a
+        day.<br /><br />
+        <span class="timeline-tag">PRESENT (STATE)</span> We
+        <strong>are used to</strong> his barking when someone knocks on the
+        door.<br /><br />
+        <span class="timeline-tag">NEGATIVE</span> But honestly, I haven't
+        <strong>gotten used to</strong> all the dog hair on the sofa.
+      </div>
+
+      <div class="questions-section">
+        <h3>Teacher says... (Student reacts)</h3>
+        <div class="question-row">
+          <div class="q-text">1. I wasn't used to finding shoes destroyed.</div>
+          <button class="reveal-btn" onclick="reveal(this)">Reveal 👁️</button>
+          <div class="answer-box">Neither was I</div>
+        </div>
+        <div class="question-row positive">
+          <div class="q-text">
+            2. I am getting used to taking him for walks.
+          </div>
+          <button class="reveal-btn" onclick="reveal(this)">Reveal 👁️</button>
+          <div class="answer-box">So am I</div>
+        </div>
+        <div class="question-row positive">
+          <div class="q-text">3. I am used to his barking.</div>
+          <button class="reveal-btn" onclick="reveal(this)">Reveal 👁️</button>
+          <div class="answer-box">So am I</div>
+        </div>
+        <div class="question-row">
+          <div class="q-text">
+            4. I haven't gotten used to all the dog hair.
+          </div>
+          <button class="reveal-btn" onclick="reveal(this)">Reveal 👁️</button>
+          <div class="answer-box">Neither have I</div>
+        </div>
+        <div class="question-row">
+          <div class="q-text">
+            5. I wouldn't get used to living without a dog now.
+          </div>
+          <button class="reveal-btn" onclick="reveal(this)">Reveal 👁️</button>
+          <div class="answer-box">Neither would I</div>
+        </div>
+
+        <div class="open-questions">
+          <h3>🗣️ Let's Talk! (Open Questions)</h3>
+          <div class="open-q-text">
+            1. <strong>Are you used to</strong> having pets inside the house?
+            What is the most difficult thing to
+            <strong>get used to</strong> with a puppy?
+          </div>
+          <div class="open-q-text">
+            2. What is an annoying habit from a family member or roommate that
+            you have finally <strong>gotten used to</strong>?
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function showStory(num) {
+        document.querySelectorAll(".tab-btn").forEach((btn, index) => {
+          btn.classList.remove("active");
+          if (index === num - 1) btn.classList.add("active");
+        });
+
+        document.querySelectorAll(".story-container").forEach((container) => {
+          container.classList.remove("active");
+        });
+        document.getElementById("story-" + num).classList.add("active");
+
+        document.querySelectorAll(".reveal-btn").forEach((btn) => {
+          btn.style.display = "inline-block";
+        });
+        document.querySelectorAll(".answer-box").forEach((box) => {
+          box.style.display = "none";
+        });
+      }
+
+      function reveal(btn) {
+        btn.style.display = "none";
+        btn.nextElementSibling.style.display = "inline-block";
+        btn.nextElementSibling.style.animation = "fadeIn 0.3s ease";
+      }
+    </script>
+  </body>
+</html>
