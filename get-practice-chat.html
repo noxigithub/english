@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Social Chat Studio - Long Edition</title>
+    <style>
+        :root {
+            --bg-body: #e5ddd5;
+            --chat-bg: #efeae2;
+            --primary: #075e54;
+            --accent: #128c7e;
+            --msg-in: #ffffff;
+            --msg-out: #dcf8c6;
+            --text-dark: #111b21;
+            --text-muted: #667781;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #d1d7db;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .header-title {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #111b21;
+        }
+        .header-title h1 { margin: 0; font-size: 2rem; }
+        .header-title p { margin: 5px 0 0; color: #54656f; font-size: 1rem; }
+
+        /* --- CHAT CONTAINER --- */
+        .chat-app {
+            background: var(--chat-bg);
+            width: 100%;
+            max-width: 650px;
+            height: 780px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #d1d7db;
+        }
+
+        /* Top Bar */
+        .chat-header {
+            background: var(--primary);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: #25d366;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        .user-details .name { font-weight: bold; font-size: 1.1rem; }
+        .user-details .status { font-size: 0.85rem; opacity: 0.85; }
+
+        .story-selector {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .story-selector option { color: black; }
+
+        /* Messages Area */
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 15px 15px;
+        }
+
+        .message {
+            max-width: 78%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 1rem;
+            line-height: 1.4;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            animation: fadeIn 0.3s ease;
+            position: relative;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.incoming {
+            background: var(--msg-in);
+            color: var(--text-dark);
+            align-self: flex-start;
+            border-top-left-radius: 2px;
+        }
+
+        .message.outgoing {
+            background: var(--msg-out);
+            color: var(--text-dark);
+            align-self: flex-end;
+            border-top-right-radius: 2px;
+        }
+
+        .typing-indicator {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-style: italic;
+            align-self: flex-start;
+            background: white;
+            padding: 6px 12px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        /* Input Controls Area */
+        .chat-controls {
+            background: #f0f2f5;
+            padding: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        /* Mode 1: Options Grid */
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .opt-btn {
+            background: white;
+            border: 1px solid #cbd5e1;
+            padding: 12px 15px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+        }
+
+        .opt-btn:hover { background: #e8f5e9; border-color: var(--accent); }
+
+        /* Mode 2: Free Text Area */
+        .free-text-area {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .prompt-label {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #7c3aed;
+            text-transform: uppercase;
+        }
+
+        .text-input-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 15px;
+            border-radius: 20px;
+            border: 1px solid #cbd5e1;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .btn-send {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-send:hover { background: var(--primary); }
+
+    </style>
+</head>
+<body>
+
+    <div class="header-title">
+        <h1>The Social Chat Studio (10 Messages) 💬⚡</h1>
+        <p>10-step full immersion with multiple choice & personal writing prompts.</p>
+    </div>
+
+    <div class="chat-app">
+        <!-- Header -->
+        <div class="chat-header">
+            <div class="user-info">
+                <div class="avatar" id="chat-avatar">S</div>
+                <div class="user-details">
+                    <div class="name" id="chat-name">Sarah (Au Pair Friend)</div>
+                    <div class="status" id="chat-status">online</div>
+                </div>
+            </div>
+            <select class="story-selector" id="story-select" onchange="switchConversation(this.value)">
+                <option value="0">Chat 1: Weekend Outing & Coffee ☕</option>
+                <option value="1">Chat 2: Supermarket Run & Dinner 🛒</option>
+                <option value="2">Chat 3: Unexpected Storm & Road Trip 🌧️</option>
+            </select>
+        </div>
+
+        <!-- Messages Area -->
+        <div class="chat-messages" id="messages-container">
+            <!-- Messages injected here -->
+        </div>
+
+        <div class="typing-indicator" id="typing">Sarah is typing...</div>
+
+        <!-- Controls Area -->
+        <div class="chat-controls">
+            <!-- Mode 1: Options -->
+            <div class="options-grid" id="options-grid">
+                <!-- Buttons injected here -->
+            </div>
+
+            <!-- Mode 2: Free Text Input -->
+            <div class="free-text-area" id="free-text-area">
+                <div class="prompt-label" id="prompt-label">✍️ Your turn to write! Type your response below:</div>
+                <div class="text-input-row">
+                    <input type="text" class="chat-input" id="user-input" placeholder="Type your sentence here..." onkeypress="handleKeyPress(event)">
+                    <button class="btn-send" onclick="sendFreeText()">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- CONVERSATION DATASET (10 MESSAGES EACH) ---
+        const conversations = [
+            // CHAT 1: WEEKEND OUTING & COFFEE
+            {
+                friend: "Sarah (Au Pair Friend)",
+                avatar: "S",
+                steps: [
+                    {
+                        text: "Hey! How is your Friday going? Are you getting ready for the weekend?",
+                        options: [
+                            "Hey! To be honest, I'm getting a little tired today, but I'm excited!",
+                            "Hey! I arrive home ready.",
+                            "Hey! By the way, I got dark."
+                        ],
+                        correct: 0
+                    },
+                    {
+                        text: "I know the feeling! It was a long week. Do you want to get some iced coffee tomorrow morning?",
+                        options: [
+                            "Actually, that sounds great! What time do you want to get to the coffee shop?",
+                            "Anyway, I buy iced coffee.",
+                            "So, I get home coffee."
+                        ],
+                        correct: 0
+                    },
+                    {
+                        text: "Let's meet at 10 AM at Starbucks. By the way, did you get used to driving on the highway here yet?",
+                        isFreeText: true,
+                        promptHint: "✍️ Write your own response: Tell her if you are getting used to driving or if you still get nervous."
+                    },
+                    {
+                        text: "Haha I totally understand! Highway traffic can get scary. Should we get some breakfast after coffee?",
+                        options: [
+                            "Definitely! We can get some pancakes at that place near the park.",
+                            "Definitely! We get to pancakes.",
+                            "Definitely! We arriving pancakes."
+                        ],
+                        correct: 0
+                    },
+                    {
+                        text: "Ooh I love their pancakes! Does the weather forecast say it will get hot tomorrow?",
+                        options: [
+                            "Yeah, it is going to get very warm around noon.",
+                            "Yeah, it gets home hot.",
+                            "Yeah, it arriving warm."
+                        ],
+                        correct: 0
+                    },
+                    {
+                        text: "Good to know! I'll wear shorts then. Are the kids getting excited for the weekend too?",
+                        isFreeText: true,
+                        promptHint: "✍️ Write your own response: Tell her how the kids feel or what they are doing."
+                    },
+                    {
+                        text: "Haha cute! My host kids are getting cranky because they played outside all day.",
+                        options: [
+                            "They probably need to get some sleep early tonight!",
+                            "They need to get to sleep early.",
+                            "They need get home sleep."
+                        ],
+                        correct: 0
+                    },
+                    {
+                        text: "Exactly. Anyway, I should get started on making dinner now. What are you getting for dinner?",
+                        options: [
+                            "I'm going to get some pizza from the local place.",
+                            "I get to pizza local.",
+                            "I arriving pizza."
+                        ],
+                        correct: 0
+                    },
+                    {
+                        text: "Yum! Enjoy! What time do you think you will get home tonight after your errands?",
+                        isFreeText: true,
+                        promptHint: "✍️ Write your own response: Say what time you will get home tonight."
+                    },
+                    {
+                        text: "Sounds like a solid plan. Text me tomorrow when you get to Starbucks! Bye!",
+                        options: [
+                            "Will do! See you tomorrow!",
+                            "Will do! Text when get to home!",
+                            "Bye! Arriving tomorrow!"
+                        ],
+                        correct: 0
+                    }
+                ]
+            },
+
+            // CHAT 2: SUPERMARKET RUN & DINNER
+            {
+                friend: "Jessica (Host Mom / Friend)",
+                avatar: "J",
+                steps: [
+                    {
+                        text: "Hi! I'm leaving the office now. Did you manage to get to H-E-B earlier?",
+                        options: [
+                            "Yes! I got there around 3 PM and got all the groceries on the list.",
+                            "Yes! I arrived to H-E-B to get home.",
+                            "Yes! I get to groceries."
+                        ],
+                        correct: 0
+                    },
+                    {
+                        text: "Awesome, thank you so much! Did the kids get cranky on the ride back?",
+                        options: [
+                            "To be honest, they got a little hungry, but they behaved really well.",
+                            "Actually, they get to cranky.",
+                            "So, they got to home tired."
+                        ],
+                        correct: 0
+                    },
+                    {
+                        text: "You are a lifesaver! Could you please get them a small snack before dinner?",
+                        isFreeText: true,
+                        promptHint: "✍️ Write your own response: Reply saying you will get them apples, fruit, or water right now."
+                    },
+                    {
+                        text: "Perfect. By the way, did we get any fresh milk at the store?",
+                        options: [
+                            "Yes, I got two gallons of milk and some juice.",
+                            "Yes, I get to milk.",
+                            "Yes, I arriving milk."
+                        ],
+                        correct: 0
+                    },
+                    {
+                        text: "Great! Traffic on I-35 is starting to get very heavy right now.",
+                        options: [
+                            "Oh no! Be careful, it gets really crazy around 5 PM.",
+                            "Oh no! It gets to crazy.",
+                            "Oh no! It get home crazy."
+                        ],
+                        correct: 0
+                    },
+                    {
+                        text: "I know! It took me 20 minutes just to get to the main highway exit.",
+                        isFreeText: true,
+                        promptHint: "✍️ Write your own response: Tell her to take her time or ask if she wants you to start cooking."
+                    },
+                    {
+                        text: "That would be amazing! Could you get the oven started at 350 degrees?",
+                        options: [
+                            "Sure thing! I will turn it on right now.",
+                            "Sure thing! I get to turn on.",
+                            "Sure thing! Arriving turn on."
+                        ],
+                        correct: 0
+                    },
+                    {
+                        text: "Thank you! Also, did you get the package that arrived in the mail today?",
+                        options: [
+                            "Yes, I got it and put it on the kitchen table.",
+                            "Yes, I got to it table.",
+                            "Yes, I arriving it kitchen."
+                        ],
+                        correct: 0
+                    },
+                    {
+                        text: "Wonderful! What time do you think the kids should get ready for bed tonight?",
+                        isFreeText: true,
+                        promptHint: "✍️ Write your own response: Suggest a time (e.g. 8:30 PM) for them to get ready for bed."
+                    },
+                    {
+                        text: "Sounds perfect. I should get home in about 15 minutes. See you soon!",
+                        options: [
+                            "Drive safe! See you when you get home!",
+                            "Drive safe! See you when you get to home!",
+                            "See you arrived soon!"
+                        ],
+                        correct: 0
+                    }
+                ]
+            },
+
+            // CHAT 3: UNEXPECTED STORM & ROAD TRIP
+            {
+                friend: "Elena (Au Pair Friend)",
+                avatar: "E",
+                steps: [
+                    {
+                        text: "Hey! Are you still at the park with the kids? Look at the sky!",
+                        options: [
+                            "Yeah, it's getting very dark and windy suddenly!",
+                            "Yeah, it's getting to dark.",
+                            "Yeah, it got home dark."
+                        ],
+                        correct: 0
+                    },
+                    {
+                        text: "You should probably leave now! It's going to get very cold and rain heavily.",
+                        options: [
+                            "You're right! We are getting our bags into the car right now.",
+                            "You're right! We get to bags.",
+                            "You're right! We arriving bags."
+                        ],
+                        correct: 0
+                    },
+                    {
+                        text: "Good decision! How long does it usually take you to get home from that park?",
+                        isFreeText: true,
+                        promptHint: "✍️ Write your own response: Tell her how many minutes it takes to get home."
+                    },
+                    {
+                        text: "Phew, that's quick. Did the kids get scared when the thunderstorm started?",
+                        options: [
+                            "A little bit, but I got them some snacks to calm down.",
+                            "A little bit, but I get to snacks.",
+                            "A little bit, but I arriving snacks."
+                        ],
+                        correct: 0
+                    },
+                    {
+                        text: "Nice trick! By the way, are you still planning to get to Austin this weekend?",
+                        options: [
+                            "Yes! We plan to leave early Saturday morning before it gets busy.",
+                            "Yes! We plan leave get to early.",
+                            "Yes! We arriving Austin Saturday."
+                        ],
+                        correct: 0
+                    },
+                    {
+                        text: "Awesome! What are you planning to do when you get there?",
+                        isFreeText: true,
+                        promptHint: "✍️ Write your own response: Say what place you want to visit or what food you want to get in Austin."
+                    },
+                    {
+                        text: "That sounds so fun! I got a great recommendation for a coffee place there if you want it.",
+                        options: [
+                            "Yes, please! Text me the address so I can get there easily.",
+                            "Yes, please! Text me so I get to there.",
+                            "Yes, please! Text me arriving there."
+                        ],
+                        correct: 0
+                    },
+                    {
+                        text: "Just sent it! Hope you get a table by the window, the view is amazing.",
+                        options: [
+                            "Thank you so much! I'll try to get there early.",
+                            "Thank you! I get to early.",
+                            "Thank you! Arriving early table."
+                        ],
+                        correct: 0
+                    },
+                    {
+                        text: "Anyway, did you get home safely from the park yet?",
+                        isFreeText: true,
+                        promptHint: "✍️ Write your own response: Confirm that you just got home safely."
+                    },
+                    {
+                        text: "Awesome! Stay warm and get cozy on the sofa. Talk to you tomorrow!",
+                        options: [
+                            "Thanks, girl! Talk to you tomorrow!",
+                            "Thanks! Talk when get to home!",
+                            "Bye! Cozy arriving!"
+                        ],
+                        correct: 0
+                    }
+                ]
+            }
+        ];
+
+        let currentStoryIndex = 0;
+        let currentStepIndex = 0;
+
+        function switchConversation(index) {
+            currentStoryIndex = parseInt(index);
+            currentStepIndex = 0;
+            
+            const chatData = conversations[currentStoryIndex];
+            document.getElementById('chat-name').innerText = chatData.friend;
+            document.getElementById('chat-avatar').innerText = chatData.avatar;
+            document.getElementById('messages-container').innerHTML = '';
+            
+            loadStep();
+        }
+
+        function loadStep() {
+            const chatData = conversations[currentStoryIndex];
+            
+            if (currentStepIndex >= chatData.steps.length) {
+                showEndMessage();
+                return;
+            }
+
+            const step = chatData.steps[currentStepIndex];
+
+            // Show typing indicator
+            const typing = document.getElementById('typing');
+            typing.style.display = 'block';
+
+            setTimeout(() => {
+                typing.style.display = 'none';
+                
+                // Add Incoming Message
+                appendMessage(step.text, 'incoming');
+
+                // Set Controls Mode
+                const optionsGrid = document.getElementById('options-grid');
+                const freeTextArea = document.getElementById('free-text-area');
+
+                if (step.isFreeText) {
+                    optionsGrid.style.display = 'none';
+                    freeTextArea.style.display = 'flex';
+                    document.getElementById('prompt-label').innerText = step.promptHint || "✍️ Your turn to write! Type your response below:";
+                    document.getElementById('user-input').focus();
+                } else {
+                    freeTextArea.style.display = 'none';
+                    optionsGrid.style.display = 'flex';
+                    
+                    optionsGrid.innerHTML = '';
+                    step.options.forEach((optText, optIdx) => {
+                        const btn = document.createElement('button');
+                        btn.className = 'opt-btn';
+                        btn.innerText = optText;
+                        btn.onclick = () => handleOptionClick(optIdx, step.correct, optText);
+                        optionsGrid.appendChild(btn);
+                    });
+                }
+            }, 800);
+        }
+
+        function appendMessage(text, type) {
+            const container = document.getElementById('messages-container');
+            const msg = document.createElement('div');
+            msg.className = `message ${type}`;
+            msg.innerText = text;
+            container.appendChild(msg);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function handleOptionClick(selectedIndex, correctIndex, selectedText) {
+            if (selectedIndex === correctIndex) {
+                appendMessage(selectedText, 'outgoing');
+                currentStepIndex++;
+                document.getElementById('options-grid').innerHTML = '';
+                setTimeout(loadStep, 600);
+            } else {
+                alert("❌ Intenta de nuevo. Revisa cuál estructura suena más natural con 'get'.");
+            }
+        }
+
+        function sendFreeText() {
+            const input = document.getElementById('user-input');
+            const text = input.value.trim();
+
+            if (text.length < 2) {
+                alert("Please write a full sentence!");
+                return;
+            }
+
+            appendMessage(text, 'outgoing');
+            input.value = '';
+            
+            document.getElementById('free-text-area').style.display = 'none';
+            currentStepIndex++;
+            
+            setTimeout(loadStep, 600);
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') {
+                sendFreeText();
+            }
+        }
+
+        function showEndMessage() {
+            document.getElementById('options-grid').style.display = 'none';
+            document.getElementById('free-text-area').style.display = 'none';
+            
+            const container = document.getElementById('messages-container');
+            const endBanner = document.createElement('div');
+            endBanner.style.textAlign = 'center';
+            endBanner.style.margin = '20px 0';
+            endBanner.style.color = 'var(--accent)';
+            endBanner.style.fontWeight = 'bold';
+            endBanner.innerText = '🎉 10-Step Conversation Complete! Select another chat from the top menu.';
+            container.appendChild(endBanner);
+        }
+
+        // Init First Conversation
+        switchConversation(0);
+
+    </script>
+</body>
+</html>
