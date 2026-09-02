@@ -1,0 +1,802 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WhatsApp English Practice</title>
+    <style>
+      :root {
+        --wa-teal-dark: #075e54;
+        --wa-teal-light: #128c7e;
+        --wa-green: #25d366;
+        --wa-bg: #e5ddd5;
+        --wa-msg-in: #ffffff;
+        --wa-msg-out: #dcf8c6;
+        --wa-text: #303030;
+        --wa-meta: rgba(0, 0, 0, 0.45);
+      }
+
+      * {
+        box-sizing: border-box;
+        font-family: "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      }
+
+      body {
+        background-color: #d1d7db;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .app-container {
+        width: 100%;
+        max-width: 450px;
+        height: 90vh;
+        background-color: var(--wa-bg);
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      /* MENU DE INICIO */
+      #start-menu {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: white;
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        text-align: center;
+        justify-content: center;
+      }
+
+      #start-menu h1 {
+        color: var(--wa-teal-dark);
+        font-size: 1.8rem;
+        margin-bottom: 30px;
+      }
+
+      .chat-btn {
+        background-color: var(--wa-green);
+        color: white;
+        border: none;
+        padding: 15px;
+        font-size: 1.1rem;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        cursor: pointer;
+        font-weight: bold;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      .chat-btn:hover {
+        background-color: #20ba56;
+      }
+
+      /* HEADER WHATSAPP */
+      .header {
+        background-color: var(--wa-teal-dark);
+        color: white;
+        padding: 10px 15px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        z-index: 10;
+      }
+
+      .back-btn {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 0 5px;
+      }
+
+      .avatar {
+        width: 40px;
+        height: 40px;
+        background-color: #ccc;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.2rem;
+      }
+
+      .contact-info {
+        display: flex;
+        flex-direction: column;
+      }
+      .contact-name {
+        font-weight: bold;
+        font-size: 1.1rem;
+      }
+      .contact-status {
+        font-size: 0.8rem;
+        opacity: 0.8;
+      }
+
+      /* AREA DE CHAT */
+      .chat-area {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png");
+        background-size: cover;
+      }
+
+      .msg {
+        max-width: 80%;
+        padding: 8px 12px;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        position: relative;
+        line-height: 1.4;
+        color: var(--wa-text);
+        animation: popIn 0.3s ease;
+      }
+
+      @keyframes popIn {
+        from {
+          opacity: 0;
+          transform: scale(0.95) translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+
+      .msg-in {
+        background-color: var(--wa-msg-in);
+        align-self: flex-start;
+        border-top-left-radius: 0;
+      }
+
+      .msg-out {
+        background-color: var(--wa-msg-out);
+        align-self: flex-end;
+        border-top-right-radius: 0;
+      }
+
+      .typing-indicator {
+        display: none;
+        align-self: flex-start;
+        background-color: var(--wa-msg-in);
+        padding: 8px 15px;
+        border-radius: 15px;
+        font-style: italic;
+        color: #888;
+        font-size: 0.9rem;
+      }
+
+      /* AREA DE CONTROLES (FOOTER) */
+      .controls-area {
+        background-color: #f0f0f0;
+        padding: 10px;
+        min-height: 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        border-top: 1px solid #ccc;
+      }
+
+      .options-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .option-btn {
+        background-color: white;
+        border: 1px solid #ddd;
+        padding: 12px;
+        border-radius: 20px;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: 0.2s;
+        text-align: left;
+        color: var(--wa-text);
+      }
+
+      .option-btn:hover {
+        background-color: #f8f9fa;
+        border-color: var(--wa-teal-light);
+      }
+      .option-btn.wrong {
+        background-color: #ffcdd2;
+        border-color: #f44336;
+        color: #b71c1c;
+      }
+      .option-btn.correct {
+        background-color: var(--wa-msg-out);
+        border-color: var(--wa-green);
+      }
+
+      .free-text-container {
+        display: none;
+        flex-direction: row;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .free-text-input {
+        flex: 1;
+        padding: 12px 15px;
+        border-radius: 25px;
+        border: none;
+        font-size: 1rem;
+        outline: none;
+      }
+
+      .send-btn {
+        background-color: var(--wa-teal-light);
+        color: white;
+        border: none;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 1.2rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- MENÚ DE INICIO -->
+      <div id="start-menu">
+        <h1>WhatsApp English Practice 💬</h1>
+        <p>Select a conversation to start:</p>
+        <button class="chat-btn" onclick="startChat('chat1')">
+          1. Moving to London 🇬🇧
+        </button>
+        <button class="chat-btn" onclick="startChat('chat2')">
+          2. The New Job 💼
+        </button>
+        <button class="chat-btn" onclick="startChat('chat3')">
+          3. Trip to Japan ✈️
+        </button>
+      </div>
+
+      <!-- HEADER -->
+      <div class="header">
+        <button class="back-btn" onclick="goBack()">←</button>
+        <div class="avatar" id="chat-avatar">👤</div>
+        <div class="contact-info">
+          <span class="contact-name" id="chat-name">Contact</span>
+          <span class="contact-status">online</span>
+        </div>
+      </div>
+
+      <!-- CHAT AREA -->
+      <div class="chat-area" id="chat-area">
+        <!-- Mensajes se inyectarán aquí -->
+        <div class="typing-indicator" id="typing">typing...</div>
+      </div>
+
+      <!-- FOOTER CONTROLS -->
+      <div class="controls-area">
+        <div class="options-grid" id="options-container"></div>
+
+        <div class="free-text-container" id="free-text-container">
+          <input
+            type="text"
+            class="free-text-input"
+            id="free-input"
+            placeholder="Type your message..."
+            onkeypress="handleEnter(event)"
+          />
+          <button class="send-btn" onclick="sendFreeText()">➤</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const chatsData = {
+        chat1: {
+          name: "Alex",
+          avatar: "👱‍♂️",
+          messages: [
+            {
+              bot: "Hey! How have you been? I haven't talked to you since you moved to London!",
+              type: "choice",
+              opts: ["I've been great!", "I am great!", "I was great!"],
+              ans: 0,
+            },
+            {
+              bot: "That's awesome. Did you get a new apartment yet?",
+              type: "choice",
+              opts: [
+                "Yes, I gotten it.",
+                "Yes, I got one last week.",
+                "Yes, I get one.",
+              ],
+              ans: 1,
+            },
+            {
+              bot: "How is the weather there? I heard it's terrible.",
+              type: "free",
+              placeholder: "Tell him about the weather...",
+            }, // 3
+            {
+              bot: "Oh, I hate the rain. Are you used to driving on the left side now?",
+              type: "choice",
+              opts: [
+                "No, I am not used to it yet.",
+                "No, I didn't used to it.",
+                "No, I am not getting used to it.",
+              ],
+              ans: 0,
+            },
+            {
+              bot: "It must be scary! Have you started your new job?",
+              type: "choice",
+              opts: [
+                "Yes, I've started on Monday.",
+                "Yes, I started on Monday.",
+                "Yes, I start on Monday.",
+              ],
+              ans: 1,
+            },
+            {
+              bot: "What exactly do you do there?",
+              type: "free",
+              placeholder: "Explain your job...",
+            }, // 6
+            {
+              bot: "Sounds interesting! Do you still play tennis on weekends?",
+              type: "choice",
+              opts: [
+                "No, I used to play, but now I'm busy.",
+                "No, I am used to playing.",
+                "No, I didn't played.",
+              ],
+              ans: 0,
+            },
+            {
+              bot: "That's a pity. I don't play anymore either.",
+              type: "choice",
+              opts: ["So do I!", "Neither do I!", "I do too!"],
+              ans: 1,
+            },
+            {
+              bot: "We should play if you visit. When are you coming back?",
+              type: "free",
+              placeholder: "Tell him your future plans...",
+            }, // 9
+            {
+              bot: "Great. By the way, have you gotten used to the British accent?",
+              type: "choice",
+              opts: [
+                "Yes, I am slowly getting used to it.",
+                "Yes, I used to it.",
+                "Yes, I getting used to it.",
+              ],
+              ans: 0,
+            },
+            {
+              bot: "Did you understand them at first?",
+              type: "choice",
+              opts: [
+                "No, I didn't understand anything!",
+                "No, I haven't understood.",
+                "No, I don't understand.",
+              ],
+              ans: 0,
+            },
+            {
+              bot: "Haha! What was the hardest word to understand?",
+              type: "free",
+              placeholder: "Write a confused English word...",
+            }, // 12
+            {
+              bot: "I still remember when we went to London together in 2015.",
+              type: "choice",
+              opts: ["Neither did I!", "So did I!", "So do I! We had fun."],
+              ans: 2,
+            },
+            {
+              bot: "Yes! We got lost in the tube.",
+              type: "choice",
+              opts: [
+                "I remember! We were so confused.",
+                "We are so confused.",
+                "We have been confused.",
+              ],
+              ans: 0,
+            },
+            {
+              bot: "Well, I have to go to work now. Let's catch up later!",
+              type: "free",
+              placeholder: "Say goodbye!",
+            }, // 15
+          ],
+        },
+        chat2: {
+          name: "Sarah (Office)",
+          avatar: "👩‍💼",
+          messages: [
+            {
+              bot: "Hey! How is your new job going?",
+              type: "choice",
+              opts: [
+                "I still get used to waking up early.",
+                "I am still getting used to waking up early.",
+                "I am still used to wake up early.",
+              ],
+              ans: 1,
+            },
+            {
+              bot: "What time do you wake up?",
+              type: "choice",
+              opts: [
+                "I usually get up at 5 AM.",
+                "I got up at 5 AM.",
+                "I am getting up at 5 AM.",
+              ],
+              ans: 0,
+            },
+            {
+              bot: "Wow! That's too early. What do you do first?",
+              type: "free",
+              placeholder: "Describe your morning routine...",
+            }, // 3
+            {
+              bot: "I am not used to waking up before 8 AM.",
+              type: "choice",
+              opts: ["Neither do I.", "So am I.", "Neither am I, it's hard!"],
+              ans: 2,
+            },
+            {
+              bot: "Have you made any friends at the office yet?",
+              type: "choice",
+              opts: [
+                "Yes, I have met them yesterday.",
+                "Yes, I meet them yesterday.",
+                "Yes, I met some nice people yesterday.",
+              ],
+              ans: 2,
+            },
+            {
+              bot: "What are they like?",
+              type: "free",
+              placeholder: "Describe your coworkers...",
+            }, // 6
+            {
+              bot: "Do they help you with the new software?",
+              type: "choice",
+              opts: [
+                "Yes, they help me a lot last week.",
+                "Yes, they helped me a lot last week.",
+                "Yes, they have helped me last week.",
+              ],
+              ans: 1,
+            },
+            {
+              bot: "I was very nervous on my first day.",
+              type: "choice",
+              opts: ["So did I!", "Neither was I!", "So was I!"],
+              ans: 2,
+            },
+            {
+              bot: "How do you relax after work?",
+              type: "free",
+              placeholder: "What do you do to relax?...",
+            }, // 9
+            {
+              bot: "I love doing that too. Are you used to the commute yet?",
+              type: "choice",
+              opts: [
+                "No, I am still getting used to the traffic.",
+                "No, I used to the traffic.",
+                "No, I don't get used to.",
+              ],
+              ans: 0,
+            },
+            {
+              bot: "Traffic is terrible. I used to drive, but now I take the train.",
+              type: "choice",
+              opts: [
+                "So did I!",
+                "So do I! It's much faster.",
+                "Neither do I!",
+              ],
+              ans: 1,
+            },
+            {
+              bot: "What do you do while on the train?",
+              type: "free",
+              placeholder: "I usually...",
+            }, // 12
+            {
+              bot: "Oh, I haven't read a good book in months.",
+              type: "choice",
+              opts: ["Neither did I.", "So have I.", "Neither have I."],
+              ans: 2,
+            },
+            {
+              bot: "We should go to the bookstore this weekend.",
+              type: "choice",
+              opts: [
+                "I haven't been there lately.",
+                "I didn't go there lately.",
+                "I haven't go there lately.",
+              ],
+              ans: 0,
+            },
+            {
+              bot: "Awesome, see you on Saturday!",
+              type: "free",
+              placeholder: "Say goodbye!...",
+            }, // 15
+          ],
+        },
+        chat3: {
+          name: "David",
+          avatar: "📸",
+          messages: [
+            {
+              bot: "Hi! I saw your pictures from Japan! When did you get back?",
+              type: "choice",
+              opts: [
+                "I have gotten back two days ago.",
+                "I get back two days ago.",
+                "I got back two days ago.",
+              ],
+              ans: 2,
+            },
+            {
+              bot: "I've never been to Asia. Was it your first time?",
+              type: "choice",
+              opts: [
+                "Yes, it has been my first time.",
+                "Yes, it was my first time.",
+                "Yes, it is my first time.",
+              ],
+              ans: 1,
+            },
+            {
+              bot: "What was your favorite food there?",
+              type: "free",
+              placeholder: "Tell him about the food...",
+            }, // 3
+            {
+              bot: "Yum! Were you used to eating with chopsticks?",
+              type: "choice",
+              opts: [
+                "No, but I got used to it quickly.",
+                "No, but I was used to it quickly.",
+                "No, but I used to it quickly.",
+              ],
+              ans: 0,
+            },
+            {
+              bot: "That's good. I am not used to spicy food. Were the dishes spicy?",
+              type: "choice",
+              opts: [
+                "I used to spicy food.",
+                "I am getting used to spicy food.",
+                "Some were, but I am used to spicy food.",
+              ],
+              ans: 2,
+            },
+            {
+              bot: "Did you buy any souvenirs?",
+              type: "free",
+              placeholder: "What did you buy?...",
+            }, // 6
+            {
+              bot: "Nice! I haven't traveled anywhere this year.",
+              type: "choice",
+              opts: [
+                "Neither have I... until this trip!",
+                "Neither did I.",
+                "So have I.",
+              ],
+              ans: 0,
+            },
+            {
+              bot: "I usually travel in December.",
+              type: "choice",
+              opts: [
+                "So did I!",
+                "Neither do I!",
+                "So do I! Holidays are the best.",
+              ],
+              ans: 2,
+            },
+            {
+              bot: "Where do you want to go next?",
+              type: "free",
+              placeholder: "Next destination...",
+            }, // 9
+            {
+              bot: "Oh, I used to live there when I was a kid!",
+              type: "choice",
+              opts: [
+                "Really? Do you like it?",
+                "Really? Have you liked it?",
+                "Really? Did you like it?",
+              ],
+              ans: 2,
+            },
+            {
+              bot: "Yes, but I couldn't get used to the cold winters.",
+              type: "choice",
+              opts: ["Neither could I!", "Neither can I!", "Neither do I!"],
+              ans: 0,
+            },
+            {
+              bot: "What's the best weather for a vacation?",
+              type: "free",
+              placeholder: "Your favorite weather...",
+            }, // 12
+            {
+              bot: "Agreed. Have you unpacked your bags yet?",
+              type: "choice",
+              opts: [
+                "No, I didn't unpack yet.",
+                "No, I haven't unpacked yet.",
+                "No, I don't unpack yet.",
+              ],
+              ans: 1,
+            },
+            {
+              bot: "Well, get some rest. You must be tired.",
+              type: "choice",
+              opts: [
+                "Yes, I am still getting used to the time zone.",
+                "I used to the time zone.",
+                "I am used to the time zone.",
+              ],
+              ans: 0,
+            },
+            {
+              bot: "Let's grab coffee next week so you can tell me everything!",
+              type: "free",
+              placeholder: "Confirm the coffee date...",
+            }, // 15
+          ],
+        },
+      };
+
+      let currentChatData = [];
+      let step = 0;
+      const chatArea = document.getElementById("chat-area");
+      const typingIndicator = document.getElementById("typing");
+      const optionsContainer = document.getElementById("options-container");
+      const freeTextContainer = document.getElementById("free-text-container");
+      const freeInput = document.getElementById("free-input");
+
+      function startChat(chatId) {
+        document.getElementById("start-menu").style.display = "none";
+        const chat = chatsData[chatId];
+        document.getElementById("chat-name").innerText = chat.name;
+        document.getElementById("chat-avatar").innerText = chat.avatar;
+        currentChatData = chat.messages;
+        step = 0;
+
+        // Limpiar chat anterior
+        document.querySelectorAll(".msg").forEach((el) => el.remove());
+        hideControls();
+
+        triggerBotMessage();
+      }
+
+      function goBack() {
+        document.getElementById("start-menu").style.display = "flex";
+      }
+
+      function appendMessage(text, type) {
+        const div = document.createElement("div");
+        div.className = `msg ${type === "bot" ? "msg-in" : "msg-out"}`;
+        div.innerText = text;
+        chatArea.insertBefore(div, typingIndicator);
+        scrollToBottom();
+      }
+
+      function scrollToBottom() {
+        chatArea.scrollTop = chatArea.scrollHeight;
+      }
+
+      function hideControls() {
+        optionsContainer.innerHTML = "";
+        freeTextContainer.style.display = "none";
+      }
+
+      function triggerBotMessage() {
+        if (step >= currentChatData.length) {
+          setTimeout(
+            () =>
+              appendMessage("Typing... wait, conversation finished! 🎉", "bot"),
+            1000,
+          );
+          return;
+        }
+
+        hideControls();
+        typingIndicator.style.display = "block";
+        scrollToBottom();
+
+        setTimeout(() => {
+          typingIndicator.style.display = "none";
+          const currentMsg = currentChatData[step];
+          appendMessage(currentMsg.bot, "bot");
+          showUserControls(currentMsg);
+        }, 1500); // 1.5s delay for realism
+      }
+
+      function showUserControls(msgData) {
+        if (msgData.type === "choice") {
+          optionsContainer.innerHTML = "";
+          msgData.opts.forEach((opt, index) => {
+            const btn = document.createElement("button");
+            btn.className = "option-btn";
+            btn.innerText = opt;
+            btn.onclick = () => handleChoice(index, msgData.ans, opt, btn);
+            optionsContainer.appendChild(btn);
+          });
+        } else if (msgData.type === "free") {
+          freeTextContainer.style.display = "flex";
+          freeInput.value = "";
+          freeInput.placeholder = msgData.placeholder;
+          freeInput.focus();
+        }
+        scrollToBottom();
+      }
+
+      function handleChoice(selectedIdx, correctIdx, text, btnElement) {
+        // Disable all buttons to prevent multiple clicks
+        document
+          .querySelectorAll(".option-btn")
+          .forEach((b) => (b.disabled = true));
+
+        if (selectedIdx === correctIdx) {
+          btnElement.classList.add("correct");
+          setTimeout(() => {
+            appendMessage(text, "user");
+            step++;
+            triggerBotMessage();
+          }, 500);
+        } else {
+          btnElement.classList.add("wrong");
+          // Allow trying again after 1 second
+          setTimeout(() => {
+            btnElement.classList.remove("wrong");
+            document
+              .querySelectorAll(".option-btn")
+              .forEach((b) => (b.disabled = false));
+          }, 1000);
+        }
+      }
+
+      function handleEnter(e) {
+        if (e.key === "Enter") sendFreeText();
+      }
+
+      function sendFreeText() {
+        const text = freeInput.value.trim();
+        if (text === "") return;
+
+        appendMessage(text, "user");
+        step++;
+        triggerBotMessage();
+      }
+    </script>
+  </body>
+</html>
