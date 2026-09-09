@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Business English: Interactive Workplace Dilemmas</title>
+    <style>
+      :root {
+        --primary-color: #075e54;
+        --secondary-color: #128c7e;
+        --accent-color: #25d366;
+        --bg-color: #f0f2f5;
+        --card-bg: #ffffff;
+        --text-color: #303030;
+        --border-color: #e0e0e0;
+      }
+
+      * {
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: var(--bg-color);
+        margin: 0;
+        padding: 20px;
+        color: var(--text-color);
+        display: flex;
+        justify-content: center;
+      }
+
+      .app-container {
+        width: 100%;
+        max-width: 850px;
+        background-color: var(--card-bg);
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        min-height: 90vh;
+      }
+
+      /* TABS NAVIGATION */
+      .tabs-header {
+        display: flex;
+        background-color: var(--primary-color);
+        overflow-x: auto;
+      }
+
+      .tab-btn {
+        flex: 1;
+        padding: 15px 10px;
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      .tab-btn:hover {
+        color: #ffffff;
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      .tab-btn.active {
+        color: #ffffff;
+        border-bottom: 4px solid var(--accent-color);
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+
+      /* CONTENT PANELS */
+      .content-panel {
+        display: none;
+        padding: 25px;
+        flex: 1;
+        flex-direction: column;
+      }
+
+      .content-panel.active {
+        display: flex;
+      }
+
+      h2 {
+        color: var(--primary-color);
+        margin-top: 0;
+        border-bottom: 2px solid var(--bg-color);
+        padding-bottom: 10px;
+      }
+
+      .instruction-box {
+        background-color: #e8f5e9;
+        border-left: 4px solid var(--accent-color);
+        padding: 12px 15px;
+        margin-bottom: 20px;
+        border-radius: 0 8px 8px 0;
+        font-size: 0.95rem;
+      }
+
+      .story-box {
+        background-color: #f9f9f9;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        line-height: 1.6;
+        font-size: 1.05rem;
+      }
+
+      .vocab-box {
+        background-color: #e1f5fe;
+        border: 1px solid #81d4fa;
+        padding: 12px 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 0.9rem;
+      }
+
+      .btn {
+        background-color: var(--secondary-color);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.2s;
+        margin-top: 10px;
+      }
+
+      .btn:hover {
+        background-color: var(--primary-color);
+      }
+
+      .choice-btn {
+        display: block;
+        width: 100%;
+        text-align: left;
+        background: white;
+        border: 1px solid var(--secondary-color);
+        color: var(--secondary-color);
+        padding: 14px 18px;
+        margin-bottom: 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: 0.2s;
+        line-height: 1.4;
+      }
+
+      .choice-btn:hover {
+        background-color: var(--secondary-color);
+        color: white;
+      }
+
+      textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 1rem;
+        margin-bottom: 15px;
+        resize: vertical;
+      }
+
+      textarea:focus {
+        outline: none;
+        border-color: var(--secondary-color);
+      }
+
+      .target-words {
+        font-weight: bold;
+        color: var(--primary-color);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- TABS HEADERS -->
+      <div class="tabs-header">
+        <button class="tab-btn active" onclick="switchTab('story1', event)">
+          1. The Missed Deadline ⏱️
+        </button>
+        <button class="tab-btn" onclick="switchTab('story2', event)">
+          2. The Client Negotiation 💼
+        </button>
+        <button class="tab-btn" onclick="switchTab('story3', event)">
+          3. The Unexpected Promotion 📈
+        </button>
+      </div>
+
+      <!-- STORY 1: THE MISSED DEADLINE -->
+      <div id="story1" class="content-panel active">
+        <h2>Story 1: The Missed Deadline</h2>
+        <div class="instruction-box">
+          <strong>Instructions:</strong> Read the workplace scenario, choose
+          your strategic response, and complete the narrative challenge using
+          professional English.
+        </div>
+
+        <div class="vocab-box">
+          <strong>Key Business Terms:</strong>
+          <span class="target-words"
+            >deadline, bottleneck, deliverable, action plan, stakeholder</span
+          >
+        </div>
+
+        <div class="story-box" id="s1-text">
+          It is 4:30 PM on a Friday. Your team is supposed to deliver a critical
+          project module to a client by 5:00 PM. Suddenly, your lead developer
+          informs you that a major bug was found in the database integration,
+          and fixing it will take at least four hours. Your Manager is currently
+          in a executive meeting and unavailable.
+        </div>
+
+        <div id="s1-controls">
+          <button class="choice-btn" onclick="s1Step(1)">
+            Send an immediate email to the client explaining the technical issue
+            and request a deadline extension until Monday morning.
+          </button>
+          <button class="choice-btn" onclick="s1Step(2)">
+            Deploy the software as it is, deliver the partial product on time,
+            and promise an update over the weekend.
+          </button>
+          <button class="choice-btn" onclick="s1Step(3)">
+            Call an emergency team meeting, request overtime work today, and
+            notify the manager via urgent Slack message.
+          </button>
+        </div>
+      </div>
+
+      <!-- STORY 2: THE CLIENT NEGOTIATION -->
+      <div id="story2" class="content-panel">
+        <h2>Story 2: The High-Stakes Negotiation</h2>
+        <div class="instruction-box">
+          <strong>Instructions:</strong> Read the negotiation scenario, make
+          tactical decisions, and write your pitch or counter-offer to seal the
+          deal.
+        </div>
+
+        <div class="vocab-box">
+          <strong>Key Business Terms:</strong>
+          <span class="target-words"
+            >budget constraint, compromise, ROI (Return on Investment), scope
+            creep, win-win</span
+          >
+        </div>
+
+        <div class="story-box" id="s2-text">
+          You are leading a pitch meeting with an important international
+          client. You presented a comprehensive software implementation proposal
+          for $50,000. The client loves the features, but their Director says:
+          <em
+            >"Our budget limit is $35,000. If you can't match that price, we
+            will have to go with your competitor."</em
+          >
+        </div>
+
+        <div id="s2-controls">
+          <button class="choice-btn" onclick="s2Step(1)">
+            Accept the $35,000 price immediately to secure the client, but
+            adjust the internal team budget.
+          </button>
+          <button class="choice-btn" onclick="s2Step(2)">
+            Offer a phased delivery model: reduce the project scope to fit
+            $35,000 now, and offer Phase 2 later.
+          </button>
+          <button class="choice-btn" onclick="s2Step(3)">
+            Refuse to drop the price, but offer additional support, training,
+            and a longer warranty to justify the $50,000 value.
+          </button>
+        </div>
+      </div>
+
+      <!-- STORY 3: THE UNEXPECTED PROMOTION -->
+      <div id="story3" class="content-panel">
+        <h2>Story 3: The Unexpected Promotion</h2>
+        <div class="instruction-box">
+          <strong>Instructions:</strong> Navigate an organizational challenge,
+          choose how to lead your new team, and draft your vision speech.
+        </div>
+
+        <div class="vocab-box">
+          <strong>Key Business Terms:</strong>
+          <span class="target-words"
+            >leadership, workload distribution, workplace morale, onboarding,
+            performance review</span
+          >
+        </div>
+
+        <div class="story-box" id="s3-text">
+          Your Department Head resigns unexpectedly. The executive team offers
+          you the Team Lead position starting next week. While excited, you know
+          that two of your senior colleagues also applied for the position and
+          might feel passed over or resentful about reporting to you.
+        </div>
+
+        <div id="s3-controls">
+          <button class="choice-btn" onclick="s3Step(1)">
+            Schedule 1-on-1 private meetings with both colleagues on your first
+            day to address their concerns directly and align goals.
+          </button>
+          <button class="choice-btn" onclick="s3Step(2)">
+            Call a general team meeting to announce new policies and establish
+            clear leadership authority from day one.
+          </button>
+          <button class="choice-btn" onclick="s3Step(3)">
+            Delegate major high-profile sub-projects to those two colleagues to
+            empower them and build trust.
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // TAB NAVIGATION
+      function switchTab(tabId, evt) {
+        document
+          .querySelectorAll(".tab-btn")
+          .forEach((btn) => btn.classList.remove("active"));
+        document
+          .querySelectorAll(".content-panel")
+          .forEach((panel) => panel.classList.remove("active"));
+
+        evt.target.classList.add("active");
+        document.getElementById(tabId).classList.add("active");
+      }
+
+      // STORY 1 LOGIC
+      function s1Step(step) {
+        const textEl = document.getElementById("s1-text");
+        const controlsEl = document.getElementById("s1-controls");
+
+        if (step === 1) {
+          textEl.innerHTML =
+            "You draft an email to the client. Fifteen minutes later, the client replies: <em>'We appreciate the honesty, but we have a board meeting on Monday morning. We need a clear action plan by 8:00 AM.'</em>";
+          controlsEl.innerHTML = `
+            <button class="choice-btn" onclick="s1Step(4)">Promise an early Monday delivery with a 10% discount on the next invoice.</button>
+            <button class="choice-btn" onclick="s1Step(5)">Offer to send a staging preview link so they have something to show during their meeting.</button>
+          `;
+        } else if (step === 2) {
+          textEl.innerHTML =
+            "You release the code with the bug. At 6:00 PM, the client tests the system and experiences a complete database crash. They send an urgent email demanding an explanation.";
+          controlsEl.innerHTML = `
+            <button class="choice-btn" onclick="s1Step(6)">Apologize sincerely, roll back to the previous stable version, and work over the weekend.</button>
+            <button class="choice-btn" onclick="s1Step(7)">Assign your technical support lead to assist them directly while you patch the system.</button>
+          `;
+        } else if (step === 3) {
+          textEl.innerHTML =
+            "Your team agrees to stay late. By 8:00 PM, the bug is fixed and tested. Your Manager leaves the executive meeting, sees your progress, and asks for a status summary.";
+          controlsEl.innerHTML = `
+            <button class="choice-btn" onclick="s1Step(8)">Present the successful resolution and highlight the team's extra effort.</button>
+            <button class="choice-btn" onclick="s1Step(9)">Propose a process review meeting for next week to prevent future bottlenecks.</button>
+          `;
+        } else {
+          // Final Creation
+          textEl.innerHTML =
+            "<strong>Creation Challenge:</strong> You reached the climax of Story 1! Write an official status email (4-6 sentences) to your Manager or Client explaining the final outcome and next steps.";
+          controlsEl.innerHTML = `
+            <textarea id="s1-custom-end" rows="5" placeholder="Write your professional email here..."></textarea>
+            <button class="btn" onclick="finishStory('s1')">Complete Story 1</button>
+          `;
+        }
+      }
+
+      // STORY 2 LOGIC
+      function s2Step(step) {
+        const textEl = document.getElementById("s2-text");
+        const controlsEl = document.getElementById("s2-controls");
+
+        if (step === 1) {
+          textEl.innerHTML =
+            "The client is thrilled and signs immediately. However, when you meet with your operations team, they complain that $35,000 will not cover the required developer hours without burning out the staff.";
+          controlsEl.innerHTML = `
+            <button class="choice-btn" onclick="s2Step(4)">Negotiate internal resource reassignments to balance the workload.</button>
+            <button class="choice-btn" onclick="s2Step(5)">Re-open negotiations with the client for additional paid add-ons later.</button>
+          `;
+        } else if (step === 2) {
+          textEl.innerHTML =
+            "The client listens to your phased proposal. The Director nods and says: <em>'That sounds reasonable. Which specific deliverables will be included in Phase 1 for $35,000?'</em>";
+          controlsEl.innerHTML = `
+            <button class="choice-btn" onclick="s2Step(6)">Include core functionalities now and postpone advanced reporting analytics to Phase 2.</button>
+            <button class="choice-btn" onclick="s2Step(7)">Include full features but limit the user licenses and dedicated support hours for Phase 1.</button>
+          `;
+        } else if (step === 3) {
+          textEl.innerHTML =
+            "You present the extra value package. The client hesitates, compares your proposal with the competitor's sheet, and asks: <em>'Can you give us until tomorrow to decide?'</em>";
+          controlsEl.innerHTML = `
+            <button class="choice-btn" onclick="s2Step(8)">Send a detailed ROI comparison document right after the meeting.</button>
+            <button class="choice-btn" onclick="s2Step(9)">Offer a free 1-month trial period for the extended support service.</button>
+          `;
+        } else {
+          // Final Creation
+          textEl.innerHTML =
+            "<strong>Creation Challenge:</strong> Write your final closing pitch (4-6 sentences) summarizing the value of your proposal and persuading the client to sign the contract.";
+          controlsEl.innerHTML = `
+            <textarea id="s2-custom-end" rows="5" placeholder="Write your pitch here in English..."></textarea>
+            <button class="btn" onclick="finishStory('s2')">Complete Story 2</button>
+          `;
+        }
+      }
+
+      // STORY 3 LOGIC
+      function s3Step(step) {
+        const textEl = document.getElementById("s3-text");
+        const controlsEl = document.getElementById("s3-controls");
+
+        if (step === 1) {
+          textEl.innerHTML =
+            "During the 1-on-1 meeting, senior colleague Mark says candidly: <em>'I'll be honest, I'm disappointed. I've been here longer. How do you plan to handle project leadership?'</em>";
+          controlsEl.innerHTML = `
+            <button class="choice-btn" onclick="s3Step(4)">Acknowledge his experience and offer him the Lead Technical Architect role on the next major account.</button>
+            <button class="choice-btn" onclick="s3Step(5)">Focus on shared goals and establish a collaborative decision-making framework for the department.</button>
+          `;
+        } else if (step === 2) {
+          textEl.innerHTML =
+            "In the team meeting, the atmosphere is quiet and formal. Some team members seem hesitant to share ideas under the new structure.";
+          controlsEl.innerHTML = `
+            <button class="choice-btn" onclick="s3Step(6)">Introduce an open-door policy and anonymous feedback box to encourage communication.</button>
+            <button class="choice-btn" onclick="s3Step(7)">Organize an informal team lunch to build rapport in a relaxed setting.</button>
+          `;
+        } else if (step === 3) {
+          textEl.innerHTML =
+            "Your colleagues appreciate being trusted with major responsibilities. Work productivity increases, but executive management asks why you delegated key deliverables so early.";
+          controlsEl.innerHTML = `
+            <button class="choice-btn" onclick="s3Step(8)">Explain your leadership strategy of empowering key talent to boost long-term retention.</button>
+            <button class="choice-btn" onclick="s3Step(9)">Set up weekly milestone reporting to maintain oversight without micro-managing.</button>
+          `;
+        } else {
+          // Final Creation
+          textEl.innerHTML =
+            "<strong>Creation Challenge:</strong> Write a short introductory announcement message (4-6 sentences) to your team as the new Team Lead, setting a positive tone for the future.";
+          controlsEl.innerHTML = `
+            <textarea id="s3-custom-end" rows="5" placeholder="Write your announcement here in English..."></textarea>
+            <button class="btn" onclick="finishStory('s3')">Complete Story 3</button>
+          `;
+        }
+      }
+
+      function finishStory(storyKey) {
+        const textEl = document.getElementById(storyKey + "-text");
+        const controlsEl = document.getElementById(storyKey + "-controls");
+        const userInput = document.getElementById(
+          storyKey + "-custom-end",
+        ).value;
+
+        if (!userInput.trim())
+          return alert("Please write a short response before completing!");
+
+        textEl.innerHTML =
+          "<strong>Your Final Decision & Written Response:</strong><br><br>" +
+          userInput;
+        controlsEl.innerHTML = `<button class="btn" onclick="location.reload()">Restart All Stories</button>`;
+      }
+    </script>
+  </body>
+</html>
