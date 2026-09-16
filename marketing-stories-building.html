@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Marketing English: Interactive Agency Dilemmas</title>
+    <style>
+      :root {
+        --primary-bg: #4a00e0;
+        --secondary-bg: #8e2de2;
+        --accent-pink: #ff007f;
+        --accent-yellow: #ffb703;
+        --accent-green: #00f5d4;
+        --card-bg: #ffffff;
+        --text-main: #2b2d42;
+        --text-muted: #4a4e69;
+        --radius-lg: 16px;
+        --radius-md: 10px;
+      }
+
+      * {
+        box-sizing: border-box;
+        font-family: "Poppins", "Segoe UI", Arial, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(
+          135deg,
+          var(--primary-bg),
+          var(--secondary-bg)
+        );
+        margin: 0;
+        padding: 20px;
+        color: var(--text-main);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+
+      .app-container {
+        width: 100%;
+        max-width: 900px;
+        background-color: var(--card-bg);
+        border-radius: var(--radius-lg);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        min-height: 85vh;
+        animation: fadeIn 0.5s ease-in-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(15px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* TABS NAVIGATION */
+      .tabs-header {
+        display: flex;
+        background-color: #1a1a2e;
+        padding: 10px 10px 0 10px;
+        gap: 8px;
+        overflow-x: auto;
+      }
+
+      .tab-btn {
+        flex: 1;
+        padding: 18px 15px;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        color: #e0e0e0;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border-radius: var(--radius-md) var(--radius-md) 0 0;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      .tab-btn:hover {
+        background: rgba(255, 255, 255, 0.25);
+        color: #ffffff;
+      }
+
+      .tab-btn.active {
+        background-color: var(--card-bg);
+        color: var(--primary-bg);
+        border-top: 4px solid var(--accent-pink);
+      }
+
+      /* CONTENT PANELS */
+      .content-panel {
+        display: none;
+        padding: 30px;
+        flex: 1;
+        flex-direction: column;
+      }
+
+      .content-panel.active {
+        display: flex;
+      }
+
+      h2 {
+        color: var(--primary-bg);
+        font-size: 1.8rem;
+        margin-top: 0;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .instruction-box {
+        background: linear-gradient(90deg, #ffe5ec, #fff0f5);
+        border-left: 6px solid var(--accent-pink);
+        padding: 15px 20px;
+        margin-bottom: 25px;
+        border-radius: var(--radius-md);
+        font-size: 1.1rem;
+        color: var(--text-main);
+        line-height: 1.5;
+      }
+
+      .vocab-box {
+        background: #eef2ff;
+        border: 2px dashed var(--primary-bg);
+        padding: 15px 20px;
+        border-radius: var(--radius-md);
+        margin-bottom: 25px;
+        font-size: 1.1rem;
+      }
+
+      .target-words {
+        font-weight: 800;
+        color: var(--accent-pink);
+        background: #ffffff;
+        padding: 3px 8px;
+        border-radius: 6px;
+        border: 1px solid #ffd6e8;
+      }
+
+      .story-box {
+        background-color: #f8f9fa;
+        border-radius: var(--radius-md);
+        padding: 25px;
+        margin-bottom: 25px;
+        line-height: 1.7;
+        font-size: 1.25rem;
+        color: #2b2d42;
+        box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.04);
+        border: 1px solid #e9ecef;
+      }
+
+      .choice-btn {
+        display: block;
+        width: 100%;
+        text-align: left;
+        background: #ffffff;
+        border: 2px solid #e2e8f0;
+        color: var(--text-main);
+        padding: 18px 22px;
+        margin-bottom: 15px;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        font-size: 1.15rem;
+        font-weight: 600;
+        transition: all 0.25s ease;
+        line-height: 1.5;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+      }
+
+      .choice-btn:hover {
+        border-color: var(--primary-bg);
+        background-color: #f4f0ff;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(74, 0, 224, 0.15);
+      }
+
+      .btn-submit {
+        background: linear-gradient(90deg, var(--accent-pink), #ff5400);
+        color: white;
+        border: none;
+        padding: 16px 28px;
+        border-radius: 30px;
+        font-size: 1.2rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        margin-top: 15px;
+        box-shadow: 0 4px 15px rgba(255, 0, 127, 0.4);
+      }
+
+      .btn-submit:hover {
+        transform: scale(1.03);
+        box-shadow: 0 6px 20px rgba(255, 0, 127, 0.6);
+      }
+
+      textarea {
+        width: 100%;
+        padding: 16px;
+        border: 2px solid #cbd5e1;
+        border-radius: var(--radius-md);
+        font-size: 1.15rem;
+        margin-bottom: 15px;
+        resize: vertical;
+        font-family: inherit;
+      }
+
+      textarea:focus {
+        outline: none;
+        border-color: var(--accent-pink);
+        box-shadow: 0 0 0 3px rgba(255, 0, 127, 0.2);
+      }
+
+      .badge {
+        background: var(--accent-yellow);
+        color: #000;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- TABS HEADERS -->
+      <div class="tabs-header">
+        <button class="tab-btn active" onclick="switchTab('story1', event)">
+          1. The Viral PR Crisis 📢
+        </button>
+        <button class="tab-btn" onclick="switchTab('story2', event)">
+          2. The Rebranding Strategy 🎨
+        </button>
+        <button class="tab-btn" onclick="switchTab('story3', event)">
+          3. Influencer Launch Campaign 🚀
+        </button>
+      </div>
+
+      <!-- STORY 1: THE VIRAL PR CRISIS -->
+      <div id="story1" class="content-panel active">
+        <h2>
+          1. The Social Media PR Crisis <span class="badge">PR & Comms</span>
+        </h2>
+        <div class="instruction-box">
+          <strong>Marketing Goal:</strong> Navigate a public relations
+          emergency, protect brand reputation, and write an official response in
+          English.
+        </div>
+
+        <div class="vocab-box">
+          <strong>Key Marketing Terms:</strong>
+          <span class="target-words">brand image</span>
+          <span class="target-words">public statement</span>
+          <span class="target-words">backlash</span>
+          <span class="target-words">target audience</span>
+          <span class="target-words">damage control</span>
+        </div>
+
+        <div class="story-box" id="s1-text">
+          You are the Social Media Lead for a global fashion brand. At 8:00 AM
+          on a Monday, a customer’s video showing a product defect goes viral on
+          TikTok, reaching 2 million views. Thousands of negative comments are
+          flooding your brand's official profile, calling for a boycott. Your
+          CMO asks for your immediate recommendation.
+        </div>
+
+        <div id="s1-controls">
+          <button class="choice-btn" onclick="s1Step(1)">
+            Option A: Publish an immediate public apology video on TikTok,
+            offering full refunds and taking accountability.
+          </button>
+          <button class="choice-btn" onclick="s1Step(2)">
+            Option B: Temporarily disable the comments section across all social
+            platforms while the legal team investigates.
+          </button>
+          <button class="choice-btn" onclick="s1Step(3)">
+            Option C: Send a private direct message to the customer offering a
+            huge compensation package if they take the video down.
+          </button>
+        </div>
+      </div>
+
+      <!-- STORY 2: THE REBRANDING STRATEGY -->
+      <div id="story2" class="content-panel">
+        <h2>
+          2. The Rebranding Dilemma <span class="badge">Brand Strategy</span>
+        </h2>
+        <div class="instruction-box">
+          <strong>Marketing Goal:</strong> Modernize an established brand while
+          keeping loyal customers happy.
+        </div>
+
+        <div class="vocab-box">
+          <strong>Key Marketing Terms:</strong>
+          <span class="target-words">brand loyalty</span>
+          <span class="target-words">market research</span>
+          <span class="target-words">brand positioning</span>
+          <span class="target-words">value proposition</span>
+          <span class="target-words">rebranding</span>
+        </div>
+
+        <div class="story-box" id="s2-text">
+          You are leading the rebranding strategy for a 30-year-old organic
+          beverage company. Sales have declined because younger consumers (Gen
+          Z) find the visual identity outdated. However, your traditional focus
+          group shows that older, loyal customers hate the new modern minimalist
+          logo concept.
+        </div>
+
+        <div id="s2-controls">
+          <button class="choice-btn" onclick="s2Step(1)">
+            Option A: Proceed with the full modern rebranding anyway to
+            aggressively target Gen Z and modernize the brand image.
+          </button>
+          <button class="choice-btn" onclick="s2Step(2)">
+            Option B: Cancel the rebranding and focus the budget entirely on
+            digital influencer marketing using the classic logo.
+          </button>
+          <button class="choice-btn" onclick="s2Step(3)">
+            Option C: Create a hybrid design—keep vintage elements in the
+            packaging while updating the typography and digital assets.
+          </button>
+        </div>
+      </div>
+
+      <!-- STORY 3: INFLUENCER LAUNCH CAMPAIGN -->
+      <div id="story3" class="content-panel">
+        <h2>
+          3. Product Launch Campaign <span class="badge">Digital Campaign</span>
+        </h2>
+        <div class="instruction-box">
+          <strong>Marketing Goal:</strong> Allocate campaign budget wisely and
+          craft a compelling influencer outreach pitch.
+        </div>
+
+        <div class="vocab-box">
+          <strong>Key Marketing Terms:</strong>
+          <span class="target-words">ROI (Return on Investment)</span>
+          <span class="target-words">engagement rate</span>
+          <span class="target-words">influencer marketing</span>
+          <span class="target-words">conversion rate</span>
+          <span class="target-words">call to action (CTA)</span>
+        </div>
+
+        <div class="story-box" id="s3-text">
+          You are launching a new eco-friendly skincare line with a $50,000
+          marketing budget. You must choose how to allocate the budget to
+          maximize reach and conversion rates before the upcoming holiday
+          season.
+        </div>
+
+        <div id="s3-controls">
+          <button class="choice-btn" onclick="s3Step(1)">
+            Strategy 1: Hire one mega-celebrity influencer ($50k) for 1
+            Instagram Post and 1 Story.
+          </button>
+          <button class="choice-btn" onclick="s3Step(2)">
+            Strategy 2: Partner with 20 micro-influencers ($2.5k each) who have
+            high engagement rates in the eco-beauty niche.
+          </button>
+          <button class="choice-btn" onclick="s3Step(3)">
+            Strategy 3: Split the budget 50/50 between paid Meta/Google ads and
+            5 mid-tier beauty creators.
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // TAB NAVIGATION
+      function switchTab(tabId, evt) {
+        document
+          .querySelectorAll(".tab-btn")
+          .forEach((btn) => btn.classList.remove("active"));
+        document
+          .querySelectorAll(".content-panel")
+          .forEach((panel) => panel.classList.remove("active"));
+
+        evt.target.classList.add("active");
+        document.getElementById(tabId).classList.add("active");
+      }
+
+      // STORY 1 LOGIC (PR CRISIS)
+      function s1Step(step) {
+        const textEl = document.getElementById("s1-text");
+        const controlsEl = document.getElementById("s1-controls");
+
+        if (step === 1) {
+          textEl.innerHTML =
+            "Your public apology video goes live. The audience respects the quick response, but media outlets are asking for a official written press release detailing how you will audit your supply chain.";
+          controlsEl.innerHTML = `
+            <button class="choice-btn" onclick="s1Step(4)">Announce an external audit of your factories and share progress weekly.</button>
+            <button class="choice-btn" onclick="s1Step(5)">Invite top customer reviewers to visit your headquarters for full transparency.</button>
+          `;
+        } else if (step === 2) {
+          textEl.innerHTML =
+            "Turning off comments causes a secondary backlash! Customers start making YouTube reaction videos calling the brand 'cowardly and secretive'.";
+          controlsEl.innerHTML = `
+            <button class="choice-btn" onclick="s1Step(6)">Re-enable comments immediately and post an official statement addressing the mistake.</button>
+            <button class="choice-btn" onclick="s1Step(7)">Issue a press release explaining that comments were paused to prevent misinformation.</button>
+          `;
+        } else if (step === 3) {
+          textEl.innerHTML =
+            "The customer posts a screenshot of your private offer online with the caption: <em>'They tried to buy my silence!'</em> The situation is now twice as severe.";
+          controlsEl.innerHTML = `
+            <button class="choice-btn" onclick="s1Step(8)">Have the CEO issue a video statement taking full responsibility.</button>
+            <button class="choice-btn" onclick="s1Step(9)">Launch a complete product recall to show commitment to quality.</button>
+          `;
+        } else {
+          // Final Creation Challenge
+          textEl.innerHTML =
+            "✨ <strong>Creative Writing Challenge:</strong> Draft a official 4-sentence public statement for Instagram/LinkedIn addressing the community. Use at least 2 key marketing terms from the vocabulary box!";
+          controlsEl.innerHTML = `
+            <textarea id="s1-custom-end" rows="6" placeholder="Write your official brand statement in English..."></textarea>
+            <button class="btn-submit" onclick="finishStory('s1')">Submit PR Statement 🚀</button>
+          `;
+        }
+      }
+
+      // STORY 2 LOGIC (REBRANDING)
+      function s2Step(step) {
+        const textEl = document.getElementById("s2-text");
+        const controlsEl = document.getElementById("s2-controls");
+
+        if (step === 1) {
+          textEl.innerHTML =
+            "The Gen Z market loves the modern packaging, driving online sales up by 30%. However, supermarket distributors report that traditional buyers can't find the product on shelf anymore.";
+          controlsEl.innerHTML = `
+            <button class="choice-btn" onclick="s2Step(4)">Launch a 'Same Taste, New Look' national advertising campaign.</button>
+            <button class="choice-btn" onclick="s2Step(5)">Add a prominent badge on the package reading 'Original Formula Since 1994'.</button>
+          `;
+        } else if (step === 2) {
+          textEl.innerHTML =
+            "Older customers stay happy, but your brand share drops 15% among younger demographics who choose competitors with sleeker packaging.";
+          controlsEl.innerHTML = `
+            <button class="choice-btn" onclick="s2Step(6)">Launch a limited-edition modern product line specifically for e-commerce.</button>
+            <button class="choice-btn" onclick="s2Step(7)">Focus on sustainability storytelling to attract youth without changing the logo.</button>
+          `;
+        } else if (step === 3) {
+          textEl.innerHTML =
+            "The hybrid design receives great feedback from both focus groups! Now your CMO wants a slogan to present the new identity to stakeholders.";
+          controlsEl.innerHTML = `
+            <button class="choice-btn" onclick="s2Step(8)">Focus the slogan on tradition and heritage.</button>
+            <button class="choice-btn" onclick="s2Step(9)">Focus the slogan on innovation and the future.</button>
+          `;
+        } else {
+          // Final Creation Challenge
+          textEl.innerHTML =
+            "✨ <strong>Creative Writing Challenge:</strong> Write a short pitch paragraph (4-5 sentences) introducing the new brand identity to the board of directors. Explain why this strategy protects brand value.";
+          controlsEl.innerHTML = `
+            <textarea id="s2-custom-end" rows="6" placeholder="Write your pitch to the board in English..."></textarea>
+            <button class="btn-submit" onclick="finishStory('s2')">Submit Pitch 🚀</button>
+          `;
+        }
+      }
+
+      // STORY 3 LOGIC (INFLUENCER LAUNCH)
+      function s3Step(step) {
+        const textEl = document.getElementById("s3-text");
+        const controlsEl = document.getElementById("s3-controls");
+
+        if (step === 1) {
+          textEl.innerHTML =
+            "The celebrity post gets 500,000 likes, but your website conversion rate is very low because their audience isn't specifically interested in eco-skincare.";
+          controlsEl.innerHTML = `
+            <button class="choice-btn" onclick="s3Step(4)">Retarget the post viewers with dedicated discount code ads.</button>
+            <button class="choice-btn" onclick="s3Step(5)">Pivot your messaging to focus on luxury lifestyle appeal.</button>
+          `;
+        } else if (step === 2) {
+          textEl.innerHTML =
+            "The micro-influencer campaign is a massive success! Authentic reviews drive high conversions, but managing 20 creators creates a huge operational bottleneck.";
+          controlsEl.innerHTML = `
+            <button class="choice-btn" onclick="s3Step(6)">Automate your affiliate program using specialized marketing software.</button>
+            <button class="choice-btn" onclick="s3Step(7)">Select the top 5 performing micro-creators and sign long-term brand ambassador deals.</button>
+          `;
+        } else if (step === 3) {
+          textEl.innerHTML =
+            "The balanced approach yields steady performance. Ads build brand awareness while mid-tier creators generate social proof.";
+          controlsEl.innerHTML = `
+            <button class="choice-btn" onclick="s3Step(8)">Increase ad spend on the top-performing video creative.</button>
+            <button class="choice-btn" onclick="s3Step(9)">Offer exclusive giveaway bundles through the creators' channels.</button>
+          `;
+        } else {
+          // Final Creation Challenge
+          textEl.innerHTML =
+            "✨ <strong>Creative Writing Challenge:</strong> Write an email outreach pitch (4-5 sentences) to an influencer inviting them to collaborate on your campaign. Include a clear Call to Action (CTA)!";
+          controlsEl.innerHTML = `
+            <textarea id="s3-custom-end" rows="6" placeholder="Write your influencer pitch email in English..."></textarea>
+            <button class="btn-submit" onclick="finishStory('s3')">Submit Collaboration Email 🚀</button>
+          `;
+        }
+      }
+
+      function finishStory(storyKey) {
+        const textEl = document.getElementById(storyKey + "-text");
+        const controlsEl = document.getElementById(storyKey + "-controls");
+        const userInput = document.getElementById(
+          storyKey + "-custom-end",
+        ).value;
+
+        if (!userInput.trim())
+          return alert("Please complete your writing task before submitting!");
+
+        textEl.innerHTML =
+          "🎉 <strong>Great Job! Campaign Response Saved:</strong><br><br>" +
+          userInput;
+        controlsEl.innerHTML = `<button class="btn-submit" onclick="location.reload()">Restart Marketing Cases</button>`;
+      }
+    </script>
+  </body>
+</html>
