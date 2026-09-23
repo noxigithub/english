@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fluency Flow Studio - Expanded Edition</title>
+    <style>
+      :root {
+        --bg: #f8fafc;
+        --card: #ffffff;
+        --text-dark: #0f172a;
+        --text-muted: #64748b;
+        --guided: #2563eb;
+        --free: #10b981;
+        --accent-purple: #7c3aed;
+        --border: #e2e8f0;
+      }
+
+      * {
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        margin: 0;
+        background: #f1f5f9;
+        color: var(--text-dark);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 2.2rem;
+        color: #1e293b;
+      }
+      .header p {
+        color: var(--text-muted);
+        font-size: 1.05rem;
+        margin-top: 5px;
+      }
+
+      /* --- MODE SWITCHER --- */
+      .mode-nav {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 25px;
+        width: 100%;
+        max-width: 850px;
+      }
+
+      .nav-btn {
+        flex: 1;
+        padding: 16px;
+        border-radius: 16px;
+        border: 2px solid var(--border);
+        background: white;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+      }
+
+      .nav-btn.active.guided-mode {
+        background: var(--guided);
+        color: white;
+        border-color: var(--guided);
+        box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+      }
+
+      .nav-btn.active.free-mode {
+        background: var(--free);
+        color: white;
+        border-color: var(--free);
+        box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2);
+      }
+
+      /* --- STAGE --- */
+      .app-stage {
+        background: var(--card);
+        border-radius: 24px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
+        width: 100%;
+        max-width: 850px;
+        padding: 35px;
+        border: 1px solid var(--border);
+      }
+
+      .section-view {
+        display: none;
+      }
+      .section-view.active {
+        display: block;
+      }
+
+      /* --- GUIDED GYM STYLES --- */
+      .guided-box {
+        background: #f8fafc;
+        border: 2px solid #dbeafe;
+        border-radius: 16px;
+        padding: 25px;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .pyramid-layer {
+        background: white;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 14px 20px;
+        margin-bottom: 10px;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        transition: all 0.2s ease;
+        line-height: 1.5;
+      }
+
+      .pyramid-layer.active {
+        border-color: var(--guided);
+        background: #eff6ff;
+        color: #1e40af;
+        transform: scale(1.01);
+      }
+
+      .highlight-art {
+        color: #2563eb;
+        font-weight: 800;
+        background: #dbeafe;
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+
+      /* --- FREE LOUNGE STYLES --- */
+      .lounge-card {
+        background: #f0fdf4;
+        border-left: 6px solid var(--free);
+        border-radius: 0 16px 16px 0;
+        padding: 25px;
+        margin-bottom: 25px;
+      }
+
+      .lounge-title {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #065f46;
+        margin-bottom: 10px;
+      }
+      .lounge-prompt {
+        font-size: 1.2rem;
+        line-height: 1.6;
+        color: #1e293b;
+        margin-bottom: 15px;
+      }
+
+      .connectors-bar {
+        background: #fdf4ff;
+        border: 2px dashed #f0abfc;
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 25px;
+      }
+
+      .connectors-title {
+        font-size: 0.9rem;
+        font-weight: 800;
+        color: var(--accent-purple);
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+
+      .connector-tag {
+        display: inline-block;
+        background: white;
+        border: 1px solid #e9d5ff;
+        color: #7e22ce;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.95rem;
+        font-weight: bold;
+        margin: 3px;
+      }
+
+      /* --- BUTTONS --- */
+      .btn {
+        background: #0f172a;
+        color: white;
+        border: none;
+        padding: 14px 30px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        background: #1e293b;
+      }
+      .btn-guided {
+        background: var(--guided);
+      }
+      .btn-free {
+        background: var(--free);
+      }
+
+      .teacher-guide {
+        background: #f1f5f9;
+        padding: 15px;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        color: var(--text-muted);
+        margin-top: 20px;
+        font-style: italic;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>Fluency Flow Studio 🎙️💬</h1>
+      <p>
+        Expanded Edition: 14 Pattern Drills + 14 Free Topics for Smooth Speech
+      </p>
+    </div>
+
+    <!-- MODE SWITCHER -->
+    <div class="mode-nav">
+      <button
+        class="nav-btn active guided-mode"
+        id="btn-tab-guided"
+        onclick="switchMode('guided')"
+      >
+        🎯 Part 1: Guided Gym (14 Drills)
+      </button>
+      <button
+        class="nav-btn free-mode"
+        id="btn-tab-free"
+        onclick="switchMode('free')"
+      >
+        💬 Part 2: Free Lounge (14 Topics)
+      </button>
+    </div>
+
+    <div class="app-stage">
+      <!-- MODE 1: GUIDED FLUENCY GYM -->
+      <div id="sec-guided" class="section-view active">
+        <div class="guided-box">
+          <span
+            style="
+              font-size: 0.85rem;
+              font-weight: 800;
+              color: var(--guided);
+              text-transform: uppercase;
+            "
+            id="guided-step-label"
+            >Pattern Drill 1 of 14</span
+          >
+          <h3 style="margin: 10px 0 20px; color: #1e293b" id="guided-title">
+            Building Rhythm with Articles & 'GET'
+          </h3>
+
+          <div id="pyramid-layers-container">
+            <!-- Dynamic Layers Injected Here -->
+          </div>
+
+          <div
+            style="
+              margin-top: 25px;
+              display: flex;
+              justify-content: center;
+              gap: 10px;
+            "
+          >
+            <button
+              class="btn btn-guided"
+              id="btn-add-layer"
+              onclick="addPyramidLayer()"
+            >
+              Add Next Layer ➕
+            </button>
+            <button
+              class="btn"
+              id="btn-next-pyramid"
+              onclick="nextPyramidDrill()"
+              style="display: none; background: #0f172a"
+            >
+              Next Pattern Drill ➡
+            </button>
+          </div>
+        </div>
+
+        <div class="teacher-guide" id="guided-teacher-tip">
+          🗣️ <strong>Teacher Step:</strong> Read the active blue line first.
+          Have the student repeat it 3 times out loud focusing on connecting
+          "get a" (/get-a/) and "to the" (/tu-tha/) smoothly.
+        </div>
+      </div>
+
+      <!-- MODE 2: FREE SPEAKING LOUNGE -->
+      <div id="sec-free" class="section-view">
+        <div class="connectors-bar">
+          <div class="connectors-title">
+            ✨ Fluency Connectors (Use these to keep talking!):
+          </div>
+          <span class="connector-tag">To be honest...</span>
+          <span class="connector-tag">Actually...</span>
+          <span class="connector-tag">By the way...</span>
+          <span class="connector-tag">Well, you know...</span>
+          <span class="connector-tag">Anyway...</span>
+          <span class="connector-tag">At the end of the day...</span>
+        </div>
+
+        <div class="lounge-card">
+          <div
+            style="
+              font-size: 0.85rem;
+              font-weight: 800;
+              color: var(--free);
+              text-transform: uppercase;
+              margin-bottom: 5px;
+            "
+            id="free-step-label"
+          >
+            Free Topic 1 of 14
+          </div>
+          <div class="lounge-title" id="free-topic-title">
+            Topic 1: Daily Errands & Coffee Run
+          </div>
+          <div class="lounge-prompt" id="free-topic-prompt">
+            "Tell me about a time you needed to get groceries or coffee in a
+            rush. What happened, what did you get, and how was the traffic
+            getting back home?"
+          </div>
+
+          <div style="margin-top: 20px">
+            <button class="btn btn-free" onclick="nextFreeTopic()">
+              Next Free Topic ➡
+            </button>
+          </div>
+        </div>
+
+        <div class="teacher-guide">
+          💬 <strong>Teacher Role:</strong> Let the student speak freely for 2-3
+          minutes per prompt. Do NOT interrupt for minor grammar mistakes. Only
+          take notes on missing articles (*a/the*) for a quick 2-minute review
+          at the end.
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // --- 14 PATTERN DRILLS ---
+      const pyramidData = [
+        {
+          title: "Drill 1: Grocery & Coffee Routine",
+          layers: [
+            "I got <span class='highlight-art'>a</span> coffee.",
+            "I got <span class='highlight-art'>a</span> coffee at <span class='highlight-art'>the</span> store.",
+            "To be honest, I got <span class='highlight-art'>a</span> coffee at <span class='highlight-art'>the</span> store.",
+            "To be honest, I got <span class='highlight-art'>a</span> coffee at <span class='highlight-art'>the</span> store before getting home.",
+          ],
+        },
+        {
+          title: "Drill 2: Weather & Temperature Change",
+          layers: [
+            "It got cold.",
+            "It got very cold in <span class='highlight-art'>the</span> afternoon.",
+            "Actually, it got very cold in <span class='highlight-art'>the</span> afternoon.",
+            "Actually, it got very cold in <span class='highlight-art'>the</span> afternoon, so we got <span class='highlight-art'>a</span> warm soup.",
+          ],
+        },
+        {
+          title: "Drill 3: Text Messages & Schedule",
+          layers: [
+            "I got <span class='highlight-art'>a</span> message.",
+            "I got <span class='highlight-art'>a</span> message from <span class='highlight-art'>the</span> school.",
+            "By the way, I got <span class='highlight-art'>a</span> message from <span class='highlight-art'>the</span> school.",
+            "By the way, I got <span class='highlight-art'>a</span> message from <span class='highlight-art'>the</span> school before getting to work.",
+          ],
+        },
+        {
+          title: "Drill 4: Park & Family Reactions",
+          layers: [
+            "The kids got tired.",
+            "The kids got tired at <span class='highlight-art'>the</span> park.",
+            "Well you know, the kids got tired at <span class='highlight-art'>the</span> park.",
+            "Well you know, the kids got tired at <span class='highlight-art'>the</span> park, so we got <span class='highlight-art'>a</span> taxi home.",
+          ],
+        },
+        {
+          title: "Drill 5: Post Office & Packages",
+          layers: [
+            "I got <span class='highlight-art'>a</span> package.",
+            "I got <span class='highlight-art'>a</span> package at <span class='highlight-art'>the</span> post office.",
+            "Actually, I got <span class='highlight-art'>a</span> package at <span class='highlight-art'>the</span> post office.",
+            "Actually, I got <span class='highlight-art'>a</span> package at <span class='highlight-art'>the</span> post office after getting <span class='highlight-art'>a</span> receipt.",
+          ],
+        },
+        {
+          title: "Drill 6: Doctor Appointment & Wait",
+          layers: [
+            "I got <span class='highlight-art'>an</span> appointment.",
+            "I got <span class='highlight-art'>an</span> appointment with <span class='highlight-art'>the</span> doctor.",
+            "To be honest, I got <span class='highlight-art'>an</span> appointment with <span class='highlight-art'>the</span> doctor.",
+            "To be honest, I got <span class='highlight-art'>an</span> appointment with <span class='highlight-art'>the</span> doctor after waiting in <span class='highlight-art'>the</span> lobby.",
+          ],
+        },
+        {
+          title: "Drill 7: Car Maintenance & Gas Station",
+          layers: [
+            "I got <span class='highlight-art'>some</span> gas.",
+            "I got <span class='highlight-art'>some</span> gas at <span class='highlight-art'>the</span> station.",
+            "Well, you know, I got <span class='highlight-art'>some</span> gas at <span class='highlight-art'>the</span> station.",
+            "Well, you know, I got <span class='highlight-art'>some</span> gas at <span class='highlight-art'>the</span> station while getting <span class='highlight-art'>a</span> car wash.",
+          ],
+        },
+        {
+          title: "Drill 8: Airport & Security Line",
+          layers: [
+            "I got <span class='highlight-art'>a</span> boarding pass.",
+            "I got <span class='highlight-art'>a</span> boarding pass at <span class='highlight-art'>the</span> airport.",
+            "Anyway, I got <span class='highlight-art'>a</span> boarding pass at <span class='highlight-art'>the</span> airport.",
+            "Anyway, I got <span class='highlight-art'>a</span> boarding pass at <span class='highlight-art'>the</span> airport before getting to <span class='highlight-art'>the</span> gate.",
+          ],
+        },
+        {
+          title: "Drill 9: Public Transport & Rain",
+          layers: [
+            "I got <span class='highlight-art'>a</span> bus.",
+            "I got <span class='highlight-art'>a</span> bus near <span class='highlight-art'>the</span> center.",
+            "Actually, I got <span class='highlight-art'>a</span> bus near <span class='highlight-art'>the</span> center.",
+            "Actually, I got <span class='highlight-art'>a</span> bus near <span class='highlight-art'>the</span> center when it got dark outside.",
+          ],
+        },
+        {
+          title: "Drill 10: Shopping & Product Discounts",
+          layers: [
+            "I got <span class='highlight-art'>a</span> discount.",
+            "I got <span class='highlight-art'>a</span> discount at <span class='highlight-art'>the</span> mall.",
+            "By the way, I got <span class='highlight-art'>a</span> discount at <span class='highlight-art'>the</span> mall.",
+            "By the way, I got <span class='highlight-art'>a</span> discount at <span class='highlight-art'>the</span> mall on <span class='highlight-art'>a</span> new jacket.",
+          ],
+        },
+        {
+          title: "Drill 11: Dinner & Restaurant Table",
+          layers: [
+            "We got <span class='highlight-art'>a</span> table.",
+            "We got <span class='highlight-art'>a</span> table by <span class='highlight-art'>the</span> window.",
+            "To be honest, we got <span class='highlight-art'>a</span> table by <span class='highlight-art'>the</span> window.",
+            "To be honest, we got <span class='highlight-art'>a</span> table by <span class='highlight-art'>the</span> window after getting <span class='highlight-art'>a</span> reservation.",
+          ],
+        },
+        {
+          title: "Drill 12: Morning Alarm & Getting Dressed",
+          layers: [
+            "I got ready.",
+            "I got ready in <span class='highlight-art'>the</span> morning.",
+            "Well, you know, I got ready in <span class='highlight-art'>the</span> morning.",
+            "Well, you know, I got ready in <span class='highlight-art'>the</span> morning after getting <span class='highlight-art'>a</span> quick shower.",
+          ],
+        },
+        {
+          title: "Drill 13: Online Orders & Email Confirmation",
+          layers: [
+            "I got <span class='highlight-art'>an</span> email.",
+            "I got <span class='highlight-art'>an</span> email from <span class='highlight-art'>the</span> store.",
+            "Actually, I got <span class='highlight-art'>an</span> email from <span class='highlight-art'>the</span> store.",
+            "Actually, I got <span class='highlight-art'>an</span> email from <span class='highlight-art'>the</span> store with <span class='highlight-art'>a</span> tracking code.",
+          ],
+        },
+        {
+          title: "Drill 14: Gym Routine & Fitness",
+          layers: [
+            "I got tired.",
+            "I got tired at <span class='highlight-art'>the</span> gym.",
+            "At the end of the day, I got tired at <span class='highlight-art'>the</span> gym.",
+            "At the end of the day, I got tired at <span class='highlight-art'>the</span> gym after getting <span class='highlight-art'>a</span> good workout.",
+          ],
+        },
+      ];
+
+      // --- 14 FREE SPEAKING TOPICS ---
+      const freeTopics = [
+        {
+          title: "Topic 1: Daily Errands & Coffee Run ☕",
+          prompt:
+            "Tell me about a time you needed to get groceries or coffee in a rush. What happened, what did you get, and how was the traffic getting back home?",
+        },
+        {
+          title: "Topic 2: Sudden Weather Changes 🌧️",
+          prompt:
+            "Have you ever been outdoors when the weather got dark or cold unexpectedly? What did you do, and where did you go to stay warm?",
+        },
+        {
+          title: "Topic 3: A Hectic Morning Schedule 🚗",
+          prompt:
+            "Describe what a hectic morning looks like in your life. What time do you get up, how do you get ready, and what time do you get to your destinations?",
+        },
+        {
+          title: "Topic 4: Weekend Plans & Relaxation 🛋️",
+          prompt:
+            "What are your favorite things to do when you get home on a Friday evening? Do you like getting cozy and watching movies, or going out?",
+        },
+        {
+          title: "Topic 5: Driving & Traffic Encounters 🛣️",
+          prompt:
+            "How do you feel when you get stuck in heavy traffic on a highway? What do you do to pass the time without getting impatient or annoyed?",
+        },
+        {
+          title: "Topic 6: Unplanned Shopping Trips 🛒",
+          prompt:
+            "Tell me about a time you went into a store to get just one thing, but ended up getting a lot of items you didn't plan to buy!",
+        },
+        {
+          title: "Topic 7: Surprises & Good News 🎁",
+          prompt:
+            "Describe a time when you got a surprising text message or email with great news. How did you react and who was the first person you told?",
+        },
+        {
+          title: "Topic 8: Trying New Foods & Restaurants 🍝",
+          prompt:
+            "Tell me about a great restaurant where you recently got a fantastic meal. What did you order, and how was the service at the place?",
+        },
+        {
+          title: "Topic 9: Public Places & Crowds 🏙️",
+          prompt:
+            "Do you enjoy going to the mall or downtown when it gets very crowded, or do you prefer quiet places? Why?",
+        },
+        {
+          title: "Topic 10: Learning & Adapting 🧠",
+          prompt:
+            "Think about something new you started doing recently. What was hard at first, and how are you getting used to it now?",
+        },
+        {
+          title: "Topic 11: Late Nights & Being Sleepy 🌙",
+          prompt:
+            "What happens when you don't get enough sleep? How do you feel the next day, and how do you get through your daily tasks?",
+        },
+        {
+          title: "Topic 12: Family & Pet Anecdotes 🐾",
+          prompt:
+            "Tell me about a funny story involving your family or a pet. What were they doing, and how did everyone react?",
+        },
+        {
+          title: "Topic 13: Travel & Unexpected Delays ✈️",
+          prompt:
+            "Have you ever had a flight, bus, or trip delayed? How did you get to your final destination, and how did you manage the situation?",
+        },
+        {
+          title: "Topic 14: Personal Milestones & Goals 🌟",
+          prompt:
+            "What is an achievement or goal you got recently that made you feel really proud of yourself? How did you celebrate it?",
+        },
+      ];
+
+      let currentDrillIdx = 0;
+      let currentLayerIdx = 0;
+      let currentFreeIdx = 0;
+
+      // --- GUIDED DRILL LOGIC ---
+      function loadGuidedDrill() {
+        const data = pyramidData[currentDrillIdx];
+        document.getElementById("guided-step-label").innerText =
+          `Pattern Drill ${currentDrillIdx + 1} of ${pyramidData.length}`;
+        document.getElementById("guided-title").innerText = data.title;
+
+        const container = document.getElementById("pyramid-layers-container");
+        container.innerHTML = "";
+
+        for (let i = 0; i <= currentLayerIdx; i++) {
+          const layerDiv = document.createElement("div");
+          layerDiv.className = `pyramid-layer ${i === currentLayerIdx ? "active" : ""}`;
+          layerDiv.innerHTML = data.layers[i];
+          container.appendChild(layerDiv);
+        }
+
+        if (currentLayerIdx < data.layers.length - 1) {
+          document.getElementById("btn-add-layer").style.display =
+            "inline-block";
+          document.getElementById("btn-next-pyramid").style.display = "none";
+        } else {
+          document.getElementById("btn-add-layer").style.display = "none";
+          document.getElementById("btn-next-pyramid").style.display =
+            "inline-block";
+        }
+      }
+
+      function addPyramidLayer() {
+        const data = pyramidData[currentDrillIdx];
+        if (currentLayerIdx < data.layers.length - 1) {
+          currentLayerIdx++;
+          loadGuidedDrill();
+        }
+      }
+
+      function nextPyramidDrill() {
+        currentDrillIdx = (currentDrillIdx + 1) % pyramidData.length;
+        currentLayerIdx = 0;
+        loadGuidedDrill();
+      }
+
+      // --- FREE LOUNGE LOGIC ---
+      function loadFreeTopic() {
+        const topic = freeTopics[currentFreeIdx];
+        document.getElementById("free-step-label").innerText =
+          `Free Topic ${currentFreeIdx + 1} of ${freeTopics.length}`;
+        document.getElementById("free-topic-title").innerText = topic.title;
+        document.getElementById("free-topic-prompt").innerText =
+          `"${topic.prompt}"`;
+      }
+
+      function nextFreeTopic() {
+        currentFreeIdx = (currentFreeIdx + 1) % freeTopics.length;
+        loadFreeTopic();
+      }
+
+      // --- NAVIGATION BETWEEN MODES ---
+      function switchMode(mode) {
+        document
+          .querySelectorAll(".nav-btn")
+          .forEach((b) => b.classList.remove("active"));
+        document
+          .querySelectorAll(".section-view")
+          .forEach((s) => s.classList.remove("active"));
+
+        if (mode === "guided") {
+          document.getElementById("btn-tab-guided").classList.add("active");
+          document.getElementById("sec-guided").classList.add("active");
+        } else {
+          document.getElementById("btn-tab-free").classList.add("active");
+          document.getElementById("sec-free").classList.add("active");
+          loadFreeTopic();
+        }
+      }
+
+      // Init App
+      loadGuidedDrill();
+    </script>
+  </body>
+</html>
