@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>100 Dijeron - Game Show</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: radial-gradient(circle at center, #1a1c4b 0%, #0d0e26 70%, #050510 100%);
+            color: white;
+            min-height: 100vh;
+            user-select: none;
+        }
+
+        .font-header {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Neon & TV Lights Effects */
+        .gold-border {
+            border: 4px solid #f59e0b;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.5), inset 0 0 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .neon-glow-blue {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.6), inset 0 0 10px rgba(59, 130, 246, 0.4);
+        }
+
+        .neon-glow-red {
+            box-shadow: 0 0 25px rgba(239, 68, 68, 0.8);
+        }
+
+        /* Card Flip 3D Animation */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .card-inner.flipped {
+            transform: rotateX(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            border-radius: 0.5rem;
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e1b4b 100%);
+            border: 2px solid #3b82f6;
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            border: 2px solid #60a5fa;
+            transform: rotateX(180deg);
+        }
+
+        /* Blinking lights around board */
+        @keyframes chaser {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.8); }
+        }
+
+        .bulb {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #fef08a;
+            box-shadow: 0 0 8px #fde047;
+            animation: chaser 1.2s infinite ease-in-out;
+        }
+
+        .bulb:nth-child(even) {
+            animation-delay: 0.6s;
+        }
+
+        /* Custom Scrollbar for list */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="p-2 md:p-6 flex flex-col justify-between min-h-screen">
+
+    <header class="text-center mb-4 relative">
+        <div class="inline-block relative px-8 py-2 rounded-2xl bg-gradient-to-r from-blue-900 via-indigo-900 to-blue-900 border-4 border-yellow-400 shadow-2xl">
+            <!-- Decorative Bulbs Top -->
+            <div class="absolute -top-3 left-4 right-4 flex justify-between">
+                <div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div>
+            </div>
+            
+            <h1 class="text-3xl md:text-5xl font-black font-header tracking-wider text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 via-yellow-400 to-amber-600 drop-shadow-md uppercase">
+                100 DIJERON
+            </h1>
+            
+            <!-- Decorative Bulbs Bottom -->
+            <div class="absolute -bottom-3 left-4 right-4 flex justify-between">
+                <div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto w-full flex-grow flex flex-col gap-6">
+
+        <!-- Top Status Bar: Scores & Round Points -->
+        <div class="grid grid-cols-3 gap-2 md:gap-6 items-center">
+            
+            <!-- Team A -->
+            <div id="teamA-card" class="bg-gradient-to-br from-blue-950 to-slate-900 border-2 border-blue-500/50 rounded-xl p-3 md:p-4 text-center shadow-lg transition-all">
+                <h2 id="teamA-name-display" class="text-lg md:text-2xl font-bold text-blue-400 truncate">EQUIPO 1</h2>
+                <div id="teamA-score" class="text-3xl md:text-5xl font-black font-header text-white mt-1">0</div>
+                <button onclick="assignPoints('A')" class="mt-2 text-xs md:text-sm bg-blue-600 hover:bg-blue-500 text-white py-1 px-3 rounded-lg font-bold w-full shadow active:scale-95 transition">
+                    + Asignar Puntos
+                </button>
+            </div>
+
+            <!-- Current Round Points Display -->
+            <div class="bg-gradient-to-b from-yellow-500 to-amber-700 p-1 rounded-2xl shadow-2xl gold-border text-center">
+                <div class="bg-slate-950 rounded-xl p-2 md:p-4">
+                    <span class="text-xs md:text-sm font-bold text-yellow-400 tracking-wider uppercase block">PUNTOS RONDA</span>
+                    <span id="round-points" class="text-3xl md:text-6xl font-black font-header text-yellow-300 drop-shadow">0</span>
+                </div>
+            </div>
+
+            <!-- Team B -->
+            <div id="teamB-card" class="bg-gradient-to-br from-red-950 to-slate-900 border-2 border-red-500/50 rounded-xl p-3 md:p-4 text-center shadow-lg transition-all">
+                <h2 id="teamB-name-display" class="text-lg md:text-2xl font-bold text-red-400 truncate">EQUIPO 2</h2>
+                <div id="teamB-score" class="text-3xl md:text-5xl font-black font-header text-white mt-1">0</div>
+                <button onclick="assignPoints('B')" class="mt-2 text-xs md:text-sm bg-red-600 hover:bg-red-500 text-white py-1 px-3 rounded-lg font-bold w-full shadow active:scale-95 transition">
+                    + Asignar Puntos
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Question Banner -->
+        <div class="bg-indigo-950/80 border border-indigo-500/30 rounded-xl p-4 text-center backdrop-blur-md shadow-inner">
+            <span class="text-xs font-bold text-indigo-400 uppercase tracking-widest block mb-1">Pregunta Actual:</span>
+            <p id="question-text" class="text-lg md:text-2xl font-bold text-slate-100">¡Cargando pregunta...</p>
+        </div>
+
+        <!-- Central Game Board Grid -->
+        <div class="relative bg-blue-950/60 p-4 md:p-6 rounded-2xl border-4 border-indigo-600/60 neon-glow-blue">
+            <div id="board-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 h-full min-h-[260px]">
+                <!-- Cards will be dynamically generated here -->
+            </div>
+        </div>
+
+        <!-- Strike Display (X Marks) -->
+        <div class="flex justify-center items-center gap-4 py-2">
+            <span class="text-sm font-bold text-slate-400 uppercase tracking-wider">STRIKES:</span>
+            <div class="flex gap-3" id="strikes-container">
+                <div class="strike-box w-12 h-12 md:w-16 md:h-16 rounded-xl border-2 border-red-900 bg-red-950/40 flex items-center justify-center text-3xl md:text-4xl font-black text-slate-700">X</div>
+                <div class="strike-box w-12 h-12 md:w-16 md:h-16 rounded-xl border-2 border-red-900 bg-red-950/40 flex items-center justify-center text-3xl md:text-4xl font-black text-slate-700">X</div>
+                <div class="strike-box w-12 h-12 md:w-16 md:h-16 rounded-xl border-2 border-red-900 bg-red-950/40 flex items-center justify-center text-3xl md:text-4xl font-black text-slate-700">X</div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="mt-6 max-w-6xl mx-auto w-full">
+        <div class="bg-slate-900/90 border border-slate-700/60 rounded-2xl p-4 shadow-xl flex flex-wrap gap-3 items-center justify-between">
+            
+            <!-- Left Controls: Action Buttons -->
+            <div class="flex flex-wrap gap-2 items-center">
+                <button onclick="addStrike()" class="bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white font-bold py-2 px-4 rounded-xl shadow-lg active:scale-95 transition flex items-center gap-2">
+                    <i class="fa-solid fa-xmark text-lg"></i> STRIKE (X)
+                </button>
+                <button onclick="resetStrikes()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2 px-3 rounded-xl border border-slate-600 text-sm active:scale-95 transition">
+                    Borrar X
+                </button>
+                <button onclick="revealAll()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 px-3 rounded-xl shadow text-sm active:scale-95 transition">
+                    Revelar Todo
+                </button>
+            </div>
+
+            <!-- Navigation Controls -->
+            <div class="flex items-center gap-2">
+                <button onclick="prevQuestion()" class="bg-slate-800 hover:bg-slate-700 text-white font-bold p-2.5 rounded-xl border border-slate-600 active:scale-95 transition">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <span id="question-index" class="text-sm font-bold px-2 text-slate-300">1 / 5</span>
+                <button onclick="nextQuestion()" class="bg-slate-800 hover:bg-slate-700 text-white font-bold p-2.5 rounded-xl border border-slate-600 active:scale-95 transition">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+
+            <!-- Right Controls: Setup & Settings -->
+            <div class="flex gap-2">
+                <button onclick="openCustomQuestionsModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-3 rounded-xl shadow text-sm active:scale-95 transition flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square"></i> Preguntas
+                </button>
+                <button onclick="openSettingsModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold p-2.5 rounded-xl border border-slate-600 active:scale-95 transition">
+                    <i class="fa-solid fa-gear"></i>
+                </button>
+            </div>
+
+        </div>
+    </footer>
+
+    <div id="buzzer-overlay" class="fixed inset-0 bg-red-600/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center gap-4 hidden pointer-events-none transition-opacity duration-200">
+        <div id="buzzer-x-container" class="flex gap-4">
+            <!-- Dynamic Xs will render here -->
+        </div>
+    </div>
+
+    <div id="settings-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-40 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl">
+            <h2 class="text-2xl font-bold mb-4 text-amber-400 flex items-center gap-2">
+                <i class="fa-solid fa-gear"></i> Configuración del Juego
+            </h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Nombre Equipo 1</label>
+                    <input type="text" id="input-teamA" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-blue-500" value="EQUIPO 1">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Nombre Equipo 2</label>
+                    <input type="text" id="input-teamB" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-red-500" value="EQUIPO 2">
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-between gap-3">
+                <button onclick="resetFullGame()" class="bg-red-900/60 hover:bg-red-800 text-red-200 font-bold px-4 py-2 rounded-xl text-sm border border-red-700">
+                    Reiniciar Puntajes
+                </button>
+                <button onclick="saveSettings()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold px-5 py-2 rounded-xl text-sm">
+                    Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="questions-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-40 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-2xl w-full p-6 shadow-2xl max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-emerald-400 flex items-center gap-2">
+                    <i class="fa-solid fa-list-check"></i> Gestor de Preguntas
+                </h2>
+                <button onclick="closeCustomQuestionsModal()" class="text-slate-400 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Question Form -->
+            <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700 mb-4 space-y-3">
+                <input type="text" id="new-q-text" placeholder="Escribe la pregunta aquí..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-emerald-500">
+                
+                <div id="new-answers-container" class="space-y-2">
+                    <!-- Dynamic answer inputs -->
+                </div>
+
+                <div class="flex justify-between items-center pt-2">
+                    <button onclick="addAnswerInput()" class="text-xs bg-slate-700 hover:bg-slate-600 text-emerald-300 font-bold px-3 py-1.5 rounded-lg">
+                        + Añadir Casilla
+                    </button>
+                    <button onclick="saveNewQuestion()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-1.5 rounded-lg text-sm shadow">
+                        Guardar Pregunta
+                    </button>
+                </div>
+            </div>
+
+            <!-- Existing Questions List -->
+            <div class="flex-grow overflow-y-auto pr-1 space-y-2" id="questions-list">
+                <!-- List items rendered via JS -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* --- Default Dataset in Spanish --- */
+        const defaultQuestions = [
+            {
+                question: "Cosas que haces justo después de despertarte",
+                answers: [
+                    { text: "Ver el celular", points: 38 },
+                    { text: "Ir al baño", points: 27 },
+                    { text: "Apagar la alarma", points: 15 },
+                    { text: "Lavarse los dientes", points: 10 },
+                    { text: "Tomar café / agua", points: 6 },
+                    { text: "Estirarse / Desperezarse", points: 4 }
+                ]
+            },
+            {
+                question: "Excusas comunes para llegar tarde al trabajo o escuela",
+                answers: [
+                    { text: "Había mucho tráfico", points: 42 },
+                    { text: "No me sonó la alarma", points: 28 },
+                    { text: "El transporte se retrasó", points: 14 },
+                    { text: "Problema personal / familiar", points: 9 },
+                    { text: "Se me perdieron las llaves", points: 7 }
+                ]
+            },
+            {
+                question: "Comida infaltable en una fiesta de cumpleaños",
+                answers: [
+                    { text: "Pastel / Torta", points: 52 },
+                    { text: "Papas fritas / Botanas", points: 20 },
+                    { text: "Refrescos / Gaseosas", points: 13 },
+                    { text: "Sándwiches / Bocadillos", points: 9 },
+                    { text: "Pizza", points: 6 }
+                ]
+            },
+            {
+                question: "Algo que siempre guardas en la guantera del carro",
+                answers: [
+                    { text: "Documentos / Papeles", points: 45 },
+                    { text: "Linterna / Herramientas", points: 22 },
+                    { text: "Servilletas / Pañuelos", points: 16 },
+                    { text: "Cargador / Cables", points: 10 },
+                    { text: "Lentes de sol", points: 7 }
+                ]
+            },
+            {
+                question: "Animal que la gente suele imitar por su sonido",
+                answers: [
+                    { text: "Perro", points: 35 },
+                    { text: "Gato", points: 29 },
+                    { text: "Vaca", points: 18 },
+                    { text: "Gallo", points: 12 },
+                    { text: "Pato", points: 6 }
+                ]
+            }
+        ];
+
+        /* --- Application State --- */
+        let questions = JSON.parse(localStorage.getItem('feud_questions')) || defaultQuestions;
+        let currentQuestionIdx = 0;
+        let revealedCards = [];
+        let currentRoundPoints = 0;
+        let teamAScore = 0;
+        let teamBScore = 0;
+        let teamAName = "EQUIPO 1";
+        let teamBName = "EQUIPO 2";
+        let currentStrikes = 0;
+
+        /* --- Audio Synthesizer (Web Audio API) --- */
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+        }
+
+        // Play Ding Sound for Correct Answer
+        function playDingSound() {
+            initAudio();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+            osc.frequency.exponentialRampToValueAtTime(1046.50, audioCtx.currentTime + 0.3); // C6
+
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.5);
+        }
+
+        // Play Buzzer Sound for Strikes
+        function playBuzzerSound() {
+            initAudio();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(130, audioCtx.currentTime); // Low harsh frequency
+
+            gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.6);
+        }
+
+        // Play Win Fanfare
+        function playWinSound() {
+            initAudio();
+            const notes = [261.63, 329.63, 392.00, 523.25]; // C, E, G, C
+            notes.forEach((freq, index) => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                osc.type = 'triangle';
+                osc.frequency.value = freq;
+                
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime + (index * 0.12));
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + (index * 0.12) + 0.4);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start(audioCtx.currentTime + (index * 0.12));
+                osc.stop(audioCtx.currentTime + (index * 0.12) + 0.4);
+            });
+        }
+
+        /* --- Rendering Logic --- */
+        function loadQuestion(index) {
+            if (index < 0 || index >= questions.length) return;
+            currentQuestionIdx = index;
+            const qData = questions[currentQuestionIdx];
+
+            // Reset Round State
+            revealedCards = new Array(qData.answers.length).fill(false);
+            currentRoundPoints = 0;
+            currentStrikes = 0;
+            updateStrikesUI();
+            updateRoundPointsUI();
+
+            // Header UI
+            document.getElementById('question-text').innerText = qData.question;
+            document.getElementById('question-index').innerText = `${currentQuestionIdx + 1} / ${questions.length}`;
+
+            // Render Board Grid
+            const grid = document.getElementById('board-grid');
+            grid.innerHTML = '';
+
+            qData.answers.forEach((ans, i) => {
+                const cardHTML = `
+                    <div class="perspective-1000 h-16 cursor-pointer" onclick="revealAnswer(${i})">
+                        <div id="card-inner-${i}" class="card-inner">
+                            <!-- Card Front (Hidden) -->
+                            <div class="card-front flex justify-between items-center px-6 shadow-md">
+                                <span class="font-black text-2xl text-blue-300">${i + 1}</span>
+                                <div class="w-8 h-8 rounded-full bg-blue-900/80 border border-blue-400/50 flex items-center justify-center">
+                                    <i class="fa-solid fa-star text-xs text-yellow-400"></i>
+                                </div>
+                            </div>
+                            <!-- Card Back (Revealed) -->
+                            <div class="card-back flex justify-between items-center px-4 md:px-6 shadow-lg">
+                                <span class="font-bold text-base md:text-xl text-white uppercase tracking-wide truncate pr-2">${ans.text}</span>
+                                <span class="font-black text-xl md:text-2xl text-yellow-300 bg-blue-950/80 px-3 py-1 rounded-lg border border-blue-400/30">${ans.points}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += cardHTML;
+            });
+        }
+
+        function revealAnswer(index) {
+            if (revealedCards[index]) return; // Already revealed
+
+            revealedCards[index] = true;
+            const cardInner = document.getElementById(`card-inner-${index}`);
+            if (cardInner) {
+                cardInner.classList.add('flipped');
+            }
+
+            // Update Points
+            const points = questions[currentQuestionIdx].answers[index].points;
+            currentRoundPoints += points;
+            updateRoundPointsUI();
+
+            // Sound
+            playDingSound();
+        }
+
+        function revealAll() {
+            const qData = questions[currentQuestionIdx];
+            qData.answers.forEach((_, i) => revealAnswer(i));
+        }
+
+        function updateRoundPointsUI() {
+            document.getElementById('round-points').innerText = currentRoundPoints;
+        }
+
+        /* --- Strikes Logic --- */
+        function addStrike() {
+            if (currentStrikes < 3) {
+                currentStrikes++;
+                playBuzzerSound();
+                triggerStrikeOverlay(currentStrikes);
+                updateStrikesUI();
+            }
+        }
+
+        function resetStrikes() {
+            currentStrikes = 0;
+            updateStrikesUI();
+        }
+
+        function updateStrikesUI() {
+            const container = document.getElementById('strikes-container');
+            const boxes = container.children;
+            for (let i = 0; i < 3; i++) {
+                if (i < currentStrikes) {
+                    boxes[i].className = "strike-box w-12 h-12 md:w-16 md:h-16 rounded-xl border-2 border-red-500 bg-red-600 flex items-center justify-center text-3xl md:text-4xl font-black text-white neon-glow-red scale-105 transition-all";
+                } else {
+                    boxes[i].className = "strike-box w-12 h-12 md:w-16 md:h-16 rounded-xl border-2 border-red-900 bg-red-950/40 flex items-center justify-center text-3xl md:text-4xl font-black text-slate-700 transition-all";
+                }
+            }
+        }
+
+        function triggerStrikeOverlay(count) {
+            const overlay = document.getElementById('buzzer-overlay');
+            const xContainer = document.getElementById('buzzer-x-container');
+            xContainer.innerHTML = '';
+
+            for (let i = 0; i < count; i++) {
+                xContainer.innerHTML += `<span class="text-7xl md:text-9xl font-black text-white drop-shadow-[0_10px_10px_rgba(0,0,0,0.8)] animate-bounce">X</span>`;
+            }
+
+            overlay.classList.remove('hidden');
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+            }, 1000);
+        }
+
+        /* --- Score Assignment --- */
+        function assignPoints(team) {
+            if (currentRoundPoints === 0) return;
+
+            if (team === 'A') {
+                teamAScore += currentRoundPoints;
+                document.getElementById('teamA-score').innerText = teamAScore;
+            } else {
+                teamBScore += currentRoundPoints;
+                document.getElementById('teamB-score').innerText = teamBScore;
+            }
+
+            playWinSound();
+            currentRoundPoints = 0;
+            updateRoundPointsUI();
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIdx > 0) {
+                loadQuestion(currentQuestionIdx - 1);
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIdx < questions.length - 1) {
+                loadQuestion(currentQuestionIdx + 1);
+            }
+        }
+
+        /* --- Settings Modal --- */
+        function openSettingsModal() {
+            document.getElementById('input-teamA').value = teamAName;
+            document.getElementById('input-teamB').value = teamBName;
+            document.getElementById('settings-modal').classList.remove('hidden');
+        }
+
+        function saveSettings() {
+            teamAName = document.getElementById('input-teamA').value || "EQUIPO 1";
+            teamBName = document.getElementById('input-teamB').value || "EQUIPO 2";
+
+            document.getElementById('teamA-name-display').innerText = teamAName;
+            document.getElementById('teamB-name-display').innerText = teamBName;
+
+            document.getElementById('settings-modal').classList.add('hidden');
+        }
+
+        function resetFullGame() {
+            if (confirm("¿Estás seguro de reiniciar todos los puntajes del juego?")) {
+                teamAScore = 0;
+                teamBScore = 0;
+                document.getElementById('teamA-score').innerText = "0";
+                document.getElementById('teamB-score').innerText = "0";
+                loadQuestion(0);
+                document.getElementById('settings-modal').classList.add('hidden');
+            }
+        }
+
+        /* --- Custom Questions Manager --- */
+        function openCustomQuestionsModal() {
+            renderQuestionsList();
+            resetQuestionForm();
+            document.getElementById('questions-modal').classList.remove('hidden');
+        }
+
+        function closeCustomQuestionsModal() {
+            document.getElementById('questions-modal').classList.add('hidden');
+        }
+
+        function resetQuestionForm() {
+            document.getElementById('new-q-text').value = '';
+            const container = document.getElementById('new-answers-container');
+            container.innerHTML = '';
+            // Add 4 default answer inputs
+            for (let i = 0; i < 4; i++) {
+                addAnswerInput();
+            }
+        }
+
+        function addAnswerInput() {
+            const container = document.getElementById('new-answers-container');
+            const count = container.children.length;
+            if (count >= 8) return; // max 8 answers
+
+            const div = document.createElement('div');
+            div.className = "flex gap-2 items-center";
+            div.innerHTML = `
+                <span class="text-xs font-bold text-slate-500 w-4">${count + 1}.</span>
+                <input type="text" placeholder="Respuesta" class="answer-text flex-grow bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-emerald-500">
+                <input type="number" placeholder="Pts" class="answer-pts w-20 bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-emerald-500">
+            `;
+            container.appendChild(div);
+        }
+
+        function saveNewQuestion() {
+            const qText = document.getElementById('new-q-text').value.trim();
+            if (!qText) {
+                alert("Por favor ingresa un texto para la pregunta.");
+                return;
+            }
+
+            const textInputs = document.querySelectorAll('.answer-text');
+            const ptsInputs = document.querySelectorAll('.answer-pts');
+            const answers = [];
+
+            textInputs.forEach((input, i) => {
+                const val = input.value.trim();
+                const pts = parseInt(ptsInputs[i].value) || 0;
+                if (val) {
+                    answers.push({ text: val, points: pts });
+                }
+            });
+
+            if (answers.length === 0) {
+                alert("Debes añadir al menos una respuesta válida.");
+                return;
+            }
+
+            // Sort answers descending by points
+            answers.sort((a, b) => b.points - a.points);
+
+            questions.push({ question: qText, answers: answers });
+            localStorage.setItem('feud_questions', JSON.stringify(questions));
+
+            renderQuestionsList();
+            resetQuestionForm();
+            loadQuestion(questions.length - 1); // Jump to new question
+        }
+
+        function deleteQuestion(idx) {
+            if (questions.length <= 1) {
+                alert("Debe haber al menos una pregunta en el juego.");
+                return;
+            }
+            if (confirm("¿Deseas eliminar esta pregunta?")) {
+                questions.splice(idx, 1);
+                localStorage.setItem('feud_questions', JSON.stringify(questions));
+                renderQuestionsList();
+                if (currentQuestionIdx >= questions.length) {
+                    currentQuestionIdx = questions.length - 1;
+                }
+                loadQuestion(currentQuestionIdx);
+            }
+        }
+
+        function renderQuestionsList() {
+            const list = document.getElementById('questions-list');
+            list.innerHTML = '<h3 class="text-xs font-bold uppercase text-slate-400 mb-2">Preguntas Existentes:</h3>';
+
+            questions.forEach((q, idx) => {
+                const item = document.createElement('div');
+                item.className = "bg-slate-800 border border-slate-700/60 p-3 rounded-xl flex justify-between items-center text-sm";
+                item.innerHTML = `
+                    <div class="truncate pr-2">
+                        <span class="font-bold text-amber-400 mr-2">${idx + 1}.</span>
+                        <span class="text-white">${q.question}</span>
+                        <span class="text-xs text-slate-400 block">${q.answers.length} respuestas</span>
+                    </div>
+                    <button onclick="deleteQuestion(${idx})" class="text-red-400 hover:text-red-300 p-1.5 rounded-lg hover:bg-slate-700">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        /* --- Initialize Game on Load --- */
+        window.onload = function () {
+            loadQuestion(0);
+        };
+    </script>
+</body>
+</html>
